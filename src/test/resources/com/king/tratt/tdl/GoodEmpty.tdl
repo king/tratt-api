@@ -1,0 +1,8 @@
+{
+  "sequences": [
+    {
+	  "type": "funnel",
+      "checkPoints": [{}]
+    }
+  ]
+}

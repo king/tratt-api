@@ -1,0 +1,15 @@
+{
+   "sequences": [
+    {
+      "type": "FUNNEL",
+      "name": "EventA-test",
+      "sequenceMaxTime": "pt15m",
+      "checkPoints": [
+        {
+          "eventType": "EventA",
+          "validate": "field3==$varA"
+        }
+      ]
+    }
+  ]
+}

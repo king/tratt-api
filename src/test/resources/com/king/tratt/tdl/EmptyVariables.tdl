@@ -1,0 +1,24 @@
+{
+  "comment": "Validation of the AppStart10 event",
+  "sequenceInvariants": [
+    "field1",
+    "field2"
+  ],
+  "variables": [
+    "var1=",
+    "var2 = B"
+  ],
+  "sequences": [
+    {
+      "type": "funnel",
+      "name": "EventA-test",
+      "sequenceMaxTime": "pt15m",
+      "checkPoints": [
+        {
+          "eventType": "EventA",
+          "validate": "field3==$varA"
+        }
+      ]
+    }
+  ]
+}

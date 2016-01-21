@@ -1,0 +1,46 @@
+{
+  "comment" : "CommentB",
+  "sequenceInvariants" : [ "sequenceInvA", "sequenceInvB" ],
+  "variables" : [ "varB=valB", "varA=valB" ],
+  "sequences" : [ {
+    "type" : "FUNNEL",
+    "name" : "seqA",
+    "sequenceMaxTime" : "PT60S",
+    "checkPoints" : [ {
+      "eventType" : "EventA",
+      "match" : "a=$a",
+      "set" : [ ],
+      "label" : "",
+      "validate" : "b=2",
+      "optional" : false
+    }, {
+      "eventType" : "EventB",
+      "match" : "a=$a",
+      "set" : [ ],
+      "label" : "",
+      "validate" : "c=3",
+      "optional" : false
+    } ],
+    "match" : ""
+  },{
+    "type" : "FUNNEL",
+    "name" : "seqB",
+    "sequenceMaxTime" : "PT60S",
+    "checkPoints" : [ {
+      "eventType" : "EventA",
+      "match" : "a=$a",
+      "set" : [ ],
+      "label" : "",
+      "validate" : "b=2",
+      "optional" : false
+    }, {
+      "eventType" : "EventB",
+      "match" : "a=$a",
+      "set" : [ ],
+      "label" : "",
+      "validate" : "c=3",
+      "optional" : false
+    } ],
+    "match" : ""
+  } ]
+}

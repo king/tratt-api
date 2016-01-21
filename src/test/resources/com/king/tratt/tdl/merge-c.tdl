@@ -1,0 +1,26 @@
+{
+  "comment" : "CommentC",
+  "sequenceInvariants" : [ "sequenceInvA", "sequenceInvC" ],
+  "variables" : [ "varC=valC", "varA=valC" ],
+  "sequences" : [ {
+    "type" : "CONTAINER",
+    "name" : "seqB",
+    "sequenceMaxTime" : "PT60S",
+    "checkPoints" : [ {
+      "eventType" : "EventC",
+      "match" : "a=$a",
+      "set" : [ ],
+      "label" : "",
+      "validate" : "b=2",
+      "optional" : false
+    }, {
+      "eventType" : "EventD",
+      "match" : "a=$a",
+      "set" : [ ],
+      "label" : "",
+      "validate" : "c=3",
+      "optional" : false
+    } ],
+    "match" : ""
+  } ]
+}

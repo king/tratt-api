@@ -1,0 +1,24 @@
+{
+  "comment": "Validation of the AppStart10 event",
+  "sequenceInvariants": [
+    "flavourId",
+    "coreUserId"
+  ],
+  "variables": [
+    "userInstallId=MOIDcfe2d74f17947834512c53060c9e408e"
+  ],
+  "sequences": [
+    {
+      "type": "funnel",
+      "name": "AppStart10",
+      "sequenceMaxTime": "pt15m",
+      "checkPoints": [
+        {
+         "eventType": "scDeviceInstall",
+         "label": "New install (all)",
+         "match": "installId != ''"
+        }
+      ]
+    }
+  ]
+}

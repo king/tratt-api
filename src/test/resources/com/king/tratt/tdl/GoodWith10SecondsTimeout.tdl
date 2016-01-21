@@ -1,0 +1,23 @@
+{
+  "comment": "Validation of EventA",
+  "sequenceInvariants": [
+    "field1",
+    "field2"
+  ],
+  "variables": [
+    "varA=valA"
+  ],
+  "sequences": [
+    {
+      "type": "funnel",
+      "name": "EventA-test",
+      "sequenceMaxTime": "pt10s",
+      "checkPoints": [
+        {
+          "eventType": "EventA",
+          "validate": "field3==$varA"
+        }
+      ]
+    }
+  ]
+}

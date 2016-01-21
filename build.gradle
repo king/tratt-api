@@ -1,0 +1,25 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.8
+group = 'com.king.tracking'
+version = '0.1.0-SNAPSHOT'
+
+task wrapper(type: Wrapper) {
+   gradleVersion = '2.10' //version required
+}
+
+repositories {
+    maven { url "http://artifactory.int.midasplayer.com:8081/artifactory/proper-repo" }
+    jcenter()
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.+'
+    compile 'com.google.code.gson:gson:2.+'
+    compile 'joda-time:joda-time:2.+'
+    testCompile 'junit:junit:4.+'
+    testCompile 'org.mockito:mockito-core:1.+'
+    testCompile 'org.assertj:assertj-core:2.+'
+    testCompile 'org.slf4j:slf4j-simple:1.+'
+}

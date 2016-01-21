@@ -1,0 +1,26 @@
+{
+  "comment" : "CommentA",
+  "sequenceInvariants" : ["sequenceInvA"],
+  "variables" : [ "varB=valB", "varA=valA"],
+  "sequences" : [ {
+    "type" : "FUNNEL",
+    "name" : "seqA",
+    "sequenceMaxTime" : "PT60S",
+    "checkPoints" : [ {
+      "eventType" : "EventA",
+      "match" : "a=$a",
+      "set" : [ ],
+      "label" : "",
+      "validate" : "b=2",
+      "optional" : false
+    }, {
+      "eventType" : "EventB",
+      "match" : "a=$a",
+      "set" : [ ],
+      "label" : "",
+      "validate" : "c=3",
+      "optional" : false
+    } ],
+    "match" : ""
+  } ]
+}
