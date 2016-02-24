@@ -5,8 +5,8 @@
 package com.king.tratt;
 
 import static com.king.tratt.FunctionFactory.VAR_ARG;
-import static com.king.tratt.Util.isBoolean;
-import static com.king.tratt.Util.isLong;
+import static com.king.tratt.TrattUtil.isBoolean;
+import static com.king.tratt.TrattUtil.isLong;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Long.parseLong;
 import static java.lang.String.format;
@@ -16,21 +16,19 @@ import java.util.List;
 
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.EventMetaData;
-import com.king.tratt.spi.FieldMetaData;
 import com.king.tratt.spi.Value;
 import com.king.tratt.spi.ValueFactory;
 
-class MatcherParser<E extends Event, F extends FieldMetaData> {
+class MatcherParser<E extends Event> {
 
     private final TdlNodeParser tdlNodeParser;
     private final ValueFactory<E> valueFactory;
     private final FunctionFactoryProvider<E> functionProvider;
 
-    public MatcherParser(TdlNodeParser tdlNodeParser, ValueFactory<E> valueFactory,
-            FunctionFactoryProvider<E> functionProvider) {
-        this.tdlNodeParser = tdlNodeParser;
+    public MatcherParser(ValueFactory<E> valueFactory) {
+        this.tdlNodeParser = new TdlNodeParser();
         this.valueFactory = valueFactory;
-        this.functionProvider = functionProvider;
+        this.functionProvider = new FunctionFactoryProvider<>();
         tdlNodeParser.addFunctions(functionProvider.getFunctionNames());
     }
 
@@ -41,7 +39,7 @@ class MatcherParser<E extends Event, F extends FieldMetaData> {
             return null;
         }
 
-        //        final Value<E> left = new Constant(eventMetaData.getId());
+        //        final Value<E> left = new Constant(eventMetaData.getId()); <--- USE THIS! TODO
         final Value<E> left = Values.constantLong(eventMetaData.getId());
         // TODO Is this really needed?
         // valueFactory.getEventIdValue() ??
@@ -49,7 +47,7 @@ class MatcherParser<E extends Event, F extends FieldMetaData> {
         return Matcher.equal(left, right);
     }
 
-    public Matcher<E> parseMatcher(EventMetaData eventMetaData, String expression, Environment env) {
+    public Matcher<E> parseMatcher(EventMetaData eventMetaData, String expression, Environment<E> env) {
         if (expression == null || eventMetaData == null) {
             return null;
         }
@@ -63,7 +61,7 @@ class MatcherParser<E extends Event, F extends FieldMetaData> {
         return matcher;
     }
 
-    private Matcher<E> buildMatcher(EventMetaData eventMetaData, Node node, Environment env) {
+    private Matcher<E> buildMatcher(EventMetaData eventMetaData, Node node, Environment<E> env) {
         if (node.getOperatorType() == null) {
             return buildIntBooleanMatcher(eventMetaData, node, env);
         }
@@ -81,12 +79,12 @@ class MatcherParser<E extends Event, F extends FieldMetaData> {
         }
     }
 
-    private Matcher<E> buildIntBooleanMatcher(EventMetaData eventMetaData, Node node, Environment env) {
+    private Matcher<E> buildIntBooleanMatcher(EventMetaData eventMetaData, Node node, Environment<E> env) {
         final Value<E> value = getValue(eventMetaData, node, env);
         return Matcher.intBoolean(value);
     }
 
-    private Matcher<E> buildFunctionMatcher(EventMetaData eventMetaData, Node node, Environment env) {
+    private Matcher<E> buildFunctionMatcher(EventMetaData eventMetaData, Node node, Environment<E> env) {
         final List<Value<E>> arguments = new ArrayList<>();
         for (Node n : node.getSubNodes()) {
             arguments.add(getValue(eventMetaData, n, env));
@@ -107,7 +105,7 @@ class MatcherParser<E extends Event, F extends FieldMetaData> {
         return func.create(arguments);
     }
 
-    private Matcher<E> buildPreMatcher(EventMetaData eventType, Node node, Environment env) {
+    private Matcher<E> buildPreMatcher(EventMetaData eventType, Node node, Environment<E> env) {
         if (!node.getOperatorSymbol().equals("!")) {
             return null;
         }
@@ -120,7 +118,7 @@ class MatcherParser<E extends Event, F extends FieldMetaData> {
         return Matcher.not(matcher);
     }
 
-    private Matcher<E> buildAndOrMatcher(EventMetaData eventMetaData, Node node, Environment env) {
+    private Matcher<E> buildAndOrMatcher(EventMetaData eventMetaData, Node node, Environment<E> env) {
         final Matcher<E> left = buildMatcher(eventMetaData, node.getNode(0), env);
         final Matcher<E> right = buildMatcher(eventMetaData, node.getNode(1), env);
         if (left == null || right == null) {
@@ -135,7 +133,7 @@ class MatcherParser<E extends Event, F extends FieldMetaData> {
         return null;
     }
 
-    private Value<E> getValue(EventMetaData eventMetaData, Node node, Environment env) {
+    private Value<E> getValue(EventMetaData eventMetaData, Node node, Environment<E> env) {
         if(node.getOperatorType() != null) {
             switch(node.getOperatorSymbol()) {
             case "'":
@@ -192,13 +190,13 @@ class MatcherParser<E extends Event, F extends FieldMetaData> {
 
         final String nodeValue = node.getExpression();
         String eventName = eventMetaData.getName();
-        final Value<E> valueProvider = this.valueFactory.getValue(eventName, nodeValue);
-        if(valueProvider != null) {
-            return valueProvider;
-        } else if (env.context.containsKey(nodeValue)) {
+        final Value<E> value = valueFactory.getValue(eventName, nodeValue);
+        if (value != null) {
+            return value;
+        } else if (env.localVariables.containsKey(nodeValue)) {
             return Values.contextValue(nodeValue);
-        } else if (env.variables.containsKey(nodeValue)) {
-            return Values.constant(env.variables.get(nodeValue));
+        } else if (env.tdlVariables.containsKey(nodeValue)) {
+            return Values.constant(env.tdlVariables.get(nodeValue));
         } else if (isLong(nodeValue)) {
             return Values.constantLong(parseLong(nodeValue));
         } else if (isBoolean(nodeValue)) {
@@ -212,7 +210,7 @@ class MatcherParser<E extends Event, F extends FieldMetaData> {
 
     }
 
-    private Matcher<E> buildCompareMatcher(EventMetaData eventMetaData, Node node, Environment env) {
+    private Matcher<E> buildCompareMatcher(EventMetaData eventMetaData, Node node, Environment<E> env) {
         final Value<E> left = getValue(eventMetaData, node.getNode(0), env);
         final Value<E> right = getValue(eventMetaData, node.getNode(1), env);
 
@@ -233,7 +231,7 @@ class MatcherParser<E extends Event, F extends FieldMetaData> {
         return null;
     }
 
-    private Matcher<E> buildMiddleMatcher(EventMetaData eventType, Node node, Environment env) {
+    private Matcher<E> buildMiddleMatcher(EventMetaData eventType, Node node, Environment<E> env) {
         switch (node.getOperatorSymbol()) {
         case "&&":
         case "||":
@@ -251,13 +249,13 @@ class MatcherParser<E extends Event, F extends FieldMetaData> {
         return null;
     }
 
-    private Matcher<E> buildInMatcher(EventMetaData eventMetaData, Node node, Environment env) {
+    private Matcher<E> buildInMatcher(EventMetaData eventMetaData, Node node, Environment<E> env) {
         final Value<E> value = getValue(eventMetaData, node.getNode(0), env);
         final List<Value<E>> values = getValueList(eventMetaData, node.getNode(1), env);
         return Matcher.in(value, values);
     }
 
-    private List<Value<E>> getValueList(EventMetaData eventMetaData, Node node, Environment env) {
+    private List<Value<E>> getValueList(EventMetaData eventMetaData, Node node, Environment<E> env) {
         final List<Value<E>> list = new ArrayList<>();
         for (Node n : node.getSubNodes()) {
             list.add(getValue(eventMetaData, n, env));

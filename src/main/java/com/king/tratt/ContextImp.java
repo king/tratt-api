@@ -19,7 +19,7 @@ class ContextImp implements Context {
         return map.get(name);
     }
 
-    public void set(String name, String value) {
+    void set(String name, String value) {
         map.put(name, value);
     }
 
@@ -27,5 +27,6 @@ class ContextImp implements Context {
     public String toString() {
         return map.toString();
     }
+
 
 }

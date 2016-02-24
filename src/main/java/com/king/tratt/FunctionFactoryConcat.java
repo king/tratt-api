@@ -1,7 +1,7 @@
 package com.king.tratt;
 
-import static com.king.tratt.Util.format;
-import static com.king.tratt.Util.formatJoin;
+import static com.king.tratt.TrattUtil.format;
+import static com.king.tratt.TrattUtil.formatJoin;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
 package com.king.tratt.spi;
 
-public interface ErrorAware<E extends Event> extends DebugStringAware<E> {
+public interface ErrorAware extends DebugStringAware<Event> {
 }

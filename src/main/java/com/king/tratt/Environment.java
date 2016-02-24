@@ -3,19 +3,21 @@ package com.king.tratt;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.king.tratt.spi.Context;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.Value;
 
-class Environment {
-    Context context;
-    Map<String, String> variables = new HashMap<>();
+class Environment<E extends Event> {
 
-    public Environment(Context context) {
-        this.context = context;
+    final Map<String, Value<E>> localVariables = new HashMap<>();
+    final Map<String, String> tdlVariables;
+
+    public Environment(Map<String, String> tdlVariables) {
+        this.tdlVariables = tdlVariables;
     }
 
     @Override
     public String toString() {
-        return "Environment [context=" + context + ", variables=" + variables + "]";
+        return "Environment [localVariables=" + localVariables + ", tdlVariables=" + tdlVariables + "]";
     }
 
 }

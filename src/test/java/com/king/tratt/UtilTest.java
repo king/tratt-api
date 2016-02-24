@@ -1,7 +1,7 @@
 package com.king.tratt;
 
-import static com.king.tratt.Util.format;
-import static com.king.tratt.Util.formatJoin;
+import static com.king.tratt.TrattUtil.format;
+import static com.king.tratt.TrattUtil.formatJoin;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
@@ -13,20 +13,21 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.king.tratt.spi.Value;
+import com.king.tratt.test.imp.TestEvent;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UtilTest {
 
     @Mock
-    Value<MyEvent> v1;
+    Value<TestEvent> v1;
     @Mock
-    Value<MyEvent> v2;
+    Value<TestEvent> v2;
     @Mock
-    Value<MyEvent> v3;
+    Value<TestEvent> v3;
 
     @Test
     public void canReplaceConversionCharacters() throws Exception {
-        MyEvent e = MyEvent.fields("a", "b");
+        TestEvent e = TestEvent.fields("a", "b");
         Mockito.when(v1.asString(e, null)).thenReturn("B");
         Mockito.when(v2.toDebugString(e, null)).thenReturn("DDD");
         Mockito.when(v3.get(e, null)).thenReturn("5");
@@ -42,13 +43,13 @@ public class UtilTest {
 
     @Test
     public void canJoinConversion() throws Exception {
-        MyEvent e = MyEvent.fields("a", "b");
+        TestEvent e = TestEvent.fields("a", "b");
         Mockito.when(v1.get(e, null)).thenReturn("A");
         Mockito.when(v2.get(e, null)).thenReturn("5");
         Mockito.when(v3.get(e, null)).thenReturn("C");
 
         assertThat(formatJoin(e, null, ", ", "~p", Arrays.asList(v1, v2, v3)))
-                .isEqualTo("'A', 5, 'C'");
+        .isEqualTo("'A', 5, 'C'");
     }
 
 }

@@ -1,0 +1,55 @@
+[
+    {
+        "id": 0,
+        "name": "EventA",
+        "parameters": 
+        [
+            {
+                "name": "a",
+                "type": "long"
+            },
+
+            {
+                "name": "b",
+                "type": "String"
+            },
+
+            {
+                "name": "b",
+                "type": "boolean"
+            }
+        ]
+    },
+
+    {
+        "id": 1,
+        "name": "EventB",
+        "parameters": 
+        [
+            {
+                "name": "a",
+                "type": "long"
+            },
+
+            {
+                "name": "b",
+                "type": "String"
+            },
+
+            {
+                "name": "c",
+                "type": "String"
+            },
+
+            {
+                "name": "d",
+                "type": "Long"
+            },
+
+            {
+                "name": "e",
+                "type": "int"
+            }
+        ]
+    }
+]

@@ -18,10 +18,8 @@ class OperatorMatcher {
 
 
     public List<Match> matches(String expression) {
-        final List<Match> operators = getOperatorMatches(expression);
-
+    	List<Match> operators = getOperatorMatches(expression);
         modifyPreOperators(expression, operators);
-
         return operators;
     }
 

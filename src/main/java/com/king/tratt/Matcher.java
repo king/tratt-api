@@ -1,28 +1,27 @@
 package com.king.tratt;
 
-import static com.king.tratt.Util.format;
-import static com.king.tratt.Util.formatJoin;
+import static com.king.tratt.TrattUtil.format;
+import static com.king.tratt.TrattUtil.formatJoin;
 import static java.util.Arrays.asList;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.king.tratt.spi.Context;
-import com.king.tratt.spi.ErrorAware;
+import com.king.tratt.spi.DebugStringAware;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.SufficientContextAware;
 import com.king.tratt.spi.Value;
 
-abstract class Matcher<E extends Event>
-implements ErrorAware<E>, SufficientContextAware<E> {
-
+abstract class Matcher<E extends Event> implements DebugStringAware<E>, SufficientContextAware<E> {
     private static final Logger LOG = LoggerFactory.getLogger(Matcher.class);
     private final List<? extends SufficientContextAware<E>> awares;
 
     private Matcher(SufficientContextAware<E> aware) {
-        this(asList(aware));
+        this(Arrays.asList(aware));
     }
 
     private Matcher(SufficientContextAware<E> aware1, SufficientContextAware<E> aware2) {
@@ -33,11 +32,11 @@ implements ErrorAware<E>, SufficientContextAware<E> {
         this.awares = awares;
     }
 
-    protected abstract boolean _matches(E e, Context context);
+    abstract boolean _matches(E e, Context context);
 
-    protected abstract String _toDebugString(E e, Context context);
+    abstract String _toDebugString(E e, Context context);
 
-    public boolean matches(E e, Context context) {
+    final boolean matches(E e, Context context) {
         try {
             return _matches(e, context);
         } catch (Throwable t) {
@@ -59,9 +58,8 @@ implements ErrorAware<E>, SufficientContextAware<E> {
 
     @Override
     public boolean hasSufficientContext(E e, Context context) {
-        return Util.hasSufficientContext(e, context, awares);
+        return TrattUtil.hasSufficientContext(e, context, awares);
     }
-
     /*
      * Anonymous Matchers goes below
      */
@@ -76,7 +74,7 @@ implements ErrorAware<E>, SufficientContextAware<E> {
 
             @Override
             protected String _toDebugString(E e, Context context) {
-                return format(e, context, "(~d < ~d)", left, right);
+                return TrattUtil.format(e, context, "(~d < ~d)", left, right);
             }
         };
     }
@@ -114,7 +112,7 @@ implements ErrorAware<E>, SufficientContextAware<E> {
             }
 
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String _toDebugString(Event e, Context context) {
                 return format(e, context, "(~d && ~d)", left, right);
             }
         };
@@ -138,7 +136,7 @@ implements ErrorAware<E>, SufficientContextAware<E> {
             }
 
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String _toDebugString(Event e, Context context) {
                 return format(e, context, "(~d || ~d)", left, right);
             }
         };
@@ -224,7 +222,7 @@ implements ErrorAware<E>, SufficientContextAware<E> {
     }
 
     static <E extends Event> Matcher<E> in(Value<E> value, List<Value<E>> values) {
-        return new Matcher<E>(Util.concat(value, values)) {
+        return new Matcher<E>(TrattUtil.concat(value, values)) {
 
             @Override
             protected boolean _matches(E e, Context context) {
@@ -257,9 +255,8 @@ implements ErrorAware<E>, SufficientContextAware<E> {
             protected String _toDebugString(E e, Context context) {
                 /*
                  * Do not call "matcher.toDebugString(...) as it will give
-                 * be surrounded by false error signs ( >> << )
-                 * false error
-                 * strings in this case (underlying matcher should fail
+                 * be surrounded by false error signs ( >> << ).
+                 * In this case (underlying matcher should fail
                  * for this matcher to pass -> negative test)
                  */
                 return "!" + matcher._toDebugString(e, context);
@@ -281,5 +278,4 @@ implements ErrorAware<E>, SufficientContextAware<E> {
             }
         };
     }
-
 }

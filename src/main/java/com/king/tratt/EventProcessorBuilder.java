@@ -1,13 +1,19 @@
 package com.king.tratt;
 
+import static com.king.tratt.TrattUtil.nullArgumentError;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import com.king.tratt.spi.ApiConfiguratorProvider;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.EventIterator;
+import com.king.tratt.spi.EventMetaDataFactory;
+import com.king.tratt.spi.SimpleProcessor;
+import com.king.tratt.spi.Stoppable;
+import com.king.tratt.spi.ValueFactory;
 import com.king.tratt.tdl.CheckPoint;
 import com.king.tratt.tdl.Tdl;
 import com.king.tratt.tdl.TdlBuilder;
@@ -19,18 +25,41 @@ public final class EventProcessorBuilder<E extends Event> {
     //public final class EventProcessorBuilder {
 
     TdlBuilder tdlBuilder = Tdl.newBuilder();
+    final List<Stoppable> stoppables = new ArrayList<>();
     //    List<ProcessListener<E>> listeners = new ArrayList<>();
-    List<EventIterator<E>> iterators = new ArrayList<>();
+    BlockingQueue<E> pipeline = new LinkedBlockingQueue<>();
+    List<EventIterator<E>> eventIterators = new ArrayList<>();
+    List<SimpleProcessor<E>> simpleProcessors = new ArrayList<>();
     long timeoutSeconds = 900;
+    PipelineProducerStrategy<E> producerStrategy = PipelineProducerStrategy.getDefault();
     boolean tdlValidationEnabled = true;
-    private ApiConfiguratorProvider<E> confProvider;
+    //    ApiConfigurator<E> confProvider;
+    ValueFactory<E> valueFactory;
+    EventMetaDataFactory<?> mdFactory;
+
 
     EventProcessorBuilder() {
-        ServiceLoader<ApiConfiguratorProvider<?>> serviceLoader;
+        //        ServiceLoader<ApiConfiguratorProvider<?>> serviceLoader;
         // TODO setup ServiceLoader to find ApiConfiguratorProvider
         //        metadataProvider = new FromClassEventMetaDataProvider();
         /* for package private usage only */
     }
+
+    //    /**
+    //     * inject API configuration.
+    //     *
+    //     * @param provider
+    //     * @return
+    //     */
+    //    public EventProcessorBuilder<E> setApiConfiguratorProvider(ApiConfigurator<E> provider) {
+    //        this.confProvider = provider;
+    //        return this;
+    //    }
+    //
+    //    public EventProcessorBuilder<E> setApiConfiguration(ApiConfigurator<E> provider) {
+    //        this.confProvider = provider;
+    //        return this;
+    //    }
 
     /**
      * inject API configuration.
@@ -38,13 +67,23 @@ public final class EventProcessorBuilder<E extends Event> {
      * @param provider
      * @return
      */
-    public EventProcessorBuilder<E> setApiConfiguratorProvider(ApiConfiguratorProvider<E> provider) {
-        this.confProvider = provider;
+    public EventProcessorBuilder<E> setValueFactory(ValueFactory<E> valueFactory) {
+        this.valueFactory = valueFactory;
+        return this;
+    }
+
+    public EventProcessorBuilder<E> setEventMetaDataFatory(EventMetaDataFactory<?> mdFactory) {
+        this.mdFactory = mdFactory;
         return this;
     }
 
     public EventProcessorBuilder<E> addEventIterator(EventIterator<E> eventIterator) {
-        iterators.add(eventIterator);
+        eventIterators.add(eventIterator);
+        return this;
+    }
+
+    public EventProcessorBuilder<E> addSimpleProcessor(SimpleProcessor<E> simpleProcessor) {
+        simpleProcessors.add(simpleProcessor);
         return this;
     }
 
@@ -53,8 +92,8 @@ public final class EventProcessorBuilder<E extends Event> {
      *
      * @return
      */
-    public StartedEventProcessor start() {
-        return new StartedEventProcessor(this);
+    public StartedEventProcessor<E> start() {
+        return new StartedEventProcessor<E>(this);
     }
 
     /**
@@ -68,7 +107,7 @@ public final class EventProcessorBuilder<E extends Event> {
      * @return this builder
      */
     public EventProcessorBuilder<E> addVariable(String name, Long value) {
-        //        tdlBuilder.addVariable(name, value);
+        tdlBuilder.addVariable(name, value);
         return this;
     }
 
@@ -83,7 +122,7 @@ public final class EventProcessorBuilder<E extends Event> {
      * @return this builder
      */
     public EventProcessorBuilder<E> addVariable(String name, Integer value) {
-        //        tdlBuilder.addVariable(name, value);
+        tdlBuilder.addVariable(name, value);
         return this;
     }
 
@@ -98,7 +137,7 @@ public final class EventProcessorBuilder<E extends Event> {
      * @return this builder
      */
     public EventProcessorBuilder<E> addVariable(String name, String value) {
-        //        tdlBuilder.addVariable(name, value);
+        tdlBuilder.addVariable(name, value);
         return this;
     }
 
@@ -121,15 +160,15 @@ public final class EventProcessorBuilder<E extends Event> {
      * @param rest additional TDL
      * @return
      */
-    //    public EventProcessorBuilder addTdls(Tdl first, Tdl... rest) {
-    //        tdlBuilder.addTdls(concat(first, rest));
-    //        return this;
-    //    }
-    //
-    //    public EventProcessorBuilder addTdls(List<Tdl> tdls) {
-    //        tdlBuilder.addTdls(tdls);
-    //        return this;
-    //    }
+    public EventProcessorBuilder<E> addTdls(Tdl first, Tdl... rest) {
+        tdlBuilder.addTdls(TrattUtil.concat(first, rest));
+        return this;
+    }
+
+    public EventProcessorBuilder<E> addTdls(List<Tdl> tdls) {
+        tdlBuilder.addTdls(tdls);
+        return this;
+    }
 
     /**
      * Set a {@link Preprocessor} if such has been used. The {@link Preprocessor} contains
@@ -187,7 +226,7 @@ public final class EventProcessorBuilder<E extends Event> {
             throw new IllegalArgumentException(message);
         }
         if (timeUnit == null) {
-            //            throw nullArgumentError("timeUnit");
+            throw nullArgumentError("timeUnit");
         }
         timeoutSeconds = timeUnit.toSeconds(duration);
         return this;
@@ -206,7 +245,8 @@ public final class EventProcessorBuilder<E extends Event> {
      * Set the value of the TDL comment field.
      */
     public EventProcessorBuilder<E> setComment(String comment) {
-        //        tdlBuilder.setComment(comment);
+        tdlBuilder.setComment(comment);
         return this;
     }
+
 }

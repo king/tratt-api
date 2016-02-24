@@ -1,115 +1,45 @@
 package com.king.tratt;
 
-import static com.king.tratt.MyEvent.fields;
+import static com.king.tratt.test.imp.TestEvent.fields;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import com.king.tratt.spi.Context;
-import com.king.tratt.spi.DynamicValue;
 import com.king.tratt.spi.EventMetaData;
-import com.king.tratt.spi.EventMetaDataProvider;
-import com.king.tratt.spi.Value;
-import com.king.tratt.spi.ValueFactory;
+import com.king.tratt.test.imp.TestApiConfigurator;
+import com.king.tratt.test.imp.TestEvent;
+import com.king.tratt.test.imp.TestValueFactory;
 
-@RunWith(MockitoJUnitRunner.class)
+// @RunWith(MockitoJUnitRunner.class)
 public class MatcherParserTest {
 
-    private MatcherParser<MyEvent, FieldMd> matcherParser;
+    private MatcherParser<TestEvent> matcherParser;
     private ContextImp context = new ContextImp();
     private Environment env = new Environment(context);
-    @Mock
-    private EventMetaDataProvider<EventMd> eventMetaDataProvider;
-    private Matcher<MyEvent> m;
+    private TestApiConfigurator confProvider = new TestApiConfigurator();
+    private Matcher<TestEvent> m;
 
     @Before
     public void setup() throws Exception {
-        EventMd abTestCaseAssigned = mock(EventMd.class);
-        when(eventMetaDataProvider.getMetaData("AbTestCaseAssigned")).thenReturn(abTestCaseAssigned);
-        when(abTestCaseAssigned.getName()).thenReturn("AbTestCaseAssigned");
-
-        FieldMd a0 = mock(FieldMd.class);
-        when(abTestCaseAssigned.getField("a")).thenReturn(a0);
-        when(a0.getIndex()).thenReturn(0);
-
-        FieldMd a1 = mock(FieldMd.class);
-        when(abTestCaseAssigned.getField("b")).thenReturn(a1);
-        when(a1.getIndex()).thenReturn(1);
-
-        FieldMd a2 = mock(FieldMd.class);
-        when(abTestCaseAssigned.getField("c")).thenReturn(a2);
-        when(a2.getIndex()).thenReturn(2);
-
-        when(abTestCaseAssigned.getField("kiwi"))
-        .thenThrow(new IllegalArgumentException("Missing parameter \"kiwi\" in event AbTestCaseAssigned"));
-        when(abTestCaseAssigned.getField("2")).thenThrow(
-                new IllegalArgumentException("Missing parameter \"2\" in event EventType.AbTestCaseAssigned"));
-        when(abTestCaseAssigned.getField("3")).thenThrow(
-                new IllegalArgumentException("Missing parameter \"3\" in event EventType.AbTestCaseAssigned"));
-        when(abTestCaseAssigned.getField("5")).thenThrow(
-                new IllegalArgumentException("Missing parameter \"5\" in event EventType.AbTestCaseAssigned"));
-        when(abTestCaseAssigned.getField("10")).thenThrow(
-                new IllegalArgumentException("Missing parameter \"10\" in event EventType.AbTestCaseAssigned"));
-        when(abTestCaseAssigned.getField("10000")).thenThrow(
-                new IllegalArgumentException("Missing parameter \"10000\" in event EventType.AbTestCaseAssigned"));
-        when(abTestCaseAssigned.getField("17")).thenThrow(
-                new IllegalArgumentException("Missing parameter \"17\" in event EventType.AbTestCaseAssigned"));
-
-
-        EventMd testEvent = mock(EventMd.class);
-        when(eventMetaDataProvider.getMetaData("TestEvent")).thenReturn(testEvent);
-        when(testEvent.getName()).thenReturn("TestEvent");
-
-        a0 = mock(FieldMd.class);
-        when(testEvent.getField("a")).thenReturn(a0);
-        when(a0.getIndex()).thenReturn(0);
-
-        ValueFactory<MyEvent> valueProvider = new ValueFactory<MyEvent>() {
-
-            @Override
-            public Value<MyEvent> getValue(String eventName, String fieldName) {
-                try {
-                    int index = eventMetaDataProvider.getMetaData(eventName).getField(fieldName).getIndex();
-                    return new DynamicValue<MyEvent>() {
-
-                        @Override
-                        public String toDebugString(MyEvent e, Context context) {
-                            return String.format("[[source:event.%s]]%s", fieldName, e.getField(index));
-                        }
-
-                        @Override
-                        protected Value<MyEvent> _get(MyEvent e, Context context) {
-                            return Values.plain(e.getField(index));
-                        }
-                    };
-                } catch (RuntimeException e) {
-                    return null;
-                }
-            }
-        };
-
-        matcherParser = new MatcherParser<>(new TdlNodeParser(), valueProvider, new FunctionFactoryProvider<>());
+        TestValueFactory f = confProvider.getValueFactory();
+        //        TestValueFactory f = confProvider.getValueFactory();
+        matcherParser = new MatcherParser<>(new TdlNodeParser(), f, new FunctionFactoryProvider<>());
     }
 
-    private Matcher<MyEvent> matcher(String eventName, String expression) {
-        EventMetaData eventMetaData = eventMetaDataProvider.getMetaData(eventName);
+    private Matcher<TestEvent> matcher(String eventName, String expression) {
+        EventMetaData eventMetaData = confProvider.getEventMetaDataFactory().getEventMetaData(eventName);
         return matcherParser.parseMatcher(eventMetaData, expression, env);
     }
 
     @Test
     public void testMatchEquals() throws Exception {
         // given
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("2", "3", "10");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
 
         // when
-        m = matcher("AbTestCaseAssigned", "a==1");
+        m = matcher("EventA", "a==1");
 
         // then
         assertThat(m.toDebugString(e1, null))
@@ -123,12 +53,12 @@ public class MatcherParserTest {
     @Test
     public void testMatchLessEquals() throws Exception {
         // given
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("2", "3", "10");
-        MyEvent e3 = fields("5", "6", "15");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
+        TestEvent e3 = fields("5", "6", "15");
 
         // when
-        m = matcher("AbTestCaseAssigned", "a<=2");
+        m = matcher("EventB", "a<=2");
 
         // then
         assertThat(m.toDebugString(e1, null))
@@ -145,10 +75,10 @@ public class MatcherParserTest {
     @Test
     public void testMatchLess() throws Exception {
         // given
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("2", "3", "10");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
         // when
-        m = matcher("AbTestCaseAssigned", "a<2");
+        m = matcher("EventB", "a<2");
         // then
         assertThat(m.toDebugString(e1, null))
         .isEqualTo("([[source:event.a]]1 < [[source:constant]]2)");
@@ -160,11 +90,11 @@ public class MatcherParserTest {
 
     @Test
     public void testMatchGreaterEquals() throws Exception {
-        m = matcher("AbTestCaseAssigned", "a>=2");
+        m = matcher("EventB", "a>=2");
 
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("2", "3", "10");
-        MyEvent e3 = fields("5", "6", "15");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
+        TestEvent e3 = fields("5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
         .isEqualTo(" >> ([[source:event.a]]1 >= [[source:constant]]2) << ");
@@ -180,11 +110,11 @@ public class MatcherParserTest {
 
     @Test
     public void testMatchGreater() throws Exception {
-        m = matcher("AbTestCaseAssigned", "a>2");
+        m = matcher("EventB", "a>2");
 
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("2", "3", "10");
-        MyEvent e3 = fields("5", "6", "15");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
+        TestEvent e3 = fields("5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
         .isEqualTo(" >> ([[source:event.a]]1 > [[source:constant]]2) << ");
@@ -200,11 +130,11 @@ public class MatcherParserTest {
 
     @Test
     public void testMatchLessEqualsReversed() throws Exception {
-        m = matcher("AbTestCaseAssigned", "2>=a");
+        m = matcher("EventB", "2>=a");
 
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("2", "3", "10");
-        MyEvent e3 = fields("5", "6", "15");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
+        TestEvent e3 = fields("5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
         .isEqualTo("([[source:constant]]2 >= [[source:event.a]]1)");
@@ -220,10 +150,10 @@ public class MatcherParserTest {
 
     @Test
     public void testMatchLessReversed() throws Exception {
-        m = matcher("AbTestCaseAssigned", "2>a");
+        m = matcher("EventB", "2>a");
 
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("2" , "3", "10");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
 
         assertThat(m.toDebugString(e1, null))
         .isEqualTo("([[source:constant]]2 > [[source:event.a]]1)");
@@ -236,11 +166,11 @@ public class MatcherParserTest {
 
     @Test
     public void testMatchGreaterEqualsReversed() throws Exception {
-        m = matcher("AbTestCaseAssigned", "2<=a");
+        m = matcher("EventB", "2<=a");
 
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("2" , "3", "10");
-        MyEvent e3 = fields("5" , "6", "15");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
+        TestEvent e3 = fields("5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
         .isEqualTo(" >> ([[source:constant]]2 <= [[source:event.a]]1) << ");
@@ -256,11 +186,11 @@ public class MatcherParserTest {
 
     @Test
     public void testMatchGreaterReversed() throws Exception {
-        m = matcher("AbTestCaseAssigned", "2<a");
+        m = matcher("EventB", "2<a");
 
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("2" , "3", "10");
-        MyEvent e3 = fields("5" , "6", "15");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
+        TestEvent e3 = fields("5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
         .isEqualTo(" >> ([[source:constant]]2 < [[source:event.a]]1) << ");
@@ -276,11 +206,11 @@ public class MatcherParserTest {
 
     @Test
     public void testMatchNotEquals() throws Exception {
-        m = matcher("AbTestCaseAssigned", "a!=2");
+        m = matcher("EventB", "a!=2");
 
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("2" , "3", "10");
-        MyEvent e3 = fields("5" , "6", "15");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
+        TestEvent e3 = fields("5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
         .isEqualTo("([[source:event.a]]1 != [[source:constant]]2)");
@@ -296,11 +226,11 @@ public class MatcherParserTest {
 
     @Test
     public void testMatchNotEquals2() throws Exception {
-        m = matcher("AbTestCaseAssigned", "!(a==2)");
+        m = matcher("EventB", "!(a==2)");
 
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("2" , "3", "10");
-        MyEvent e3 = fields("5" , "6", "15");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
+        TestEvent e3 = fields("5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
         .isEqualTo("!([[source:event.a]]1 == [[source:constant]]2)");
@@ -316,18 +246,18 @@ public class MatcherParserTest {
 
     @Test
     public void testAnd() throws Exception {
-        m = matcher("AbTestCaseAssigned", "a==2 && b==3");
+        m = matcher("EventB", "a==2 && b==3");
 
-        MyEvent e1 = fields("2", "2", "5");
-        MyEvent e2 = fields("2" , "3", "10");
-        MyEvent e3 = fields("2" , "6", "15");
+        TestEvent e1 = fields("2", "2", "5");
+        TestEvent e2 = fields("2", "3", "10");
+        TestEvent e3 = fields("2", "6", "15");
 
         assertThat(m.toDebugString(e1, null)).isEqualTo(
-                "(([[source:event.a]]2 == [[source:constant]]2) &&  >> ([[source:event.b]]2 == [[source:constant]]3) << )");
+                "(([[source:event.a]]2 == [[source:constant]]2) &&  >> ([[source:event.b]]'2' == [[source:constant]]3) << )");
         assertThat(m.toDebugString(e2, null)).isEqualTo(
-                "(([[source:event.a]]2 == [[source:constant]]2) && ([[source:event.b]]3 == [[source:constant]]3))");
+                "(([[source:event.a]]2 == [[source:constant]]2) && ([[source:event.b]]'3' == [[source:constant]]3))");
         assertThat(m.toDebugString(e3, null)).isEqualTo(
-                "(([[source:event.a]]2 == [[source:constant]]2) &&  >> ([[source:event.b]]6 == [[source:constant]]3) << )");
+                "(([[source:event.a]]2 == [[source:constant]]2) &&  >> ([[source:event.b]]'6' == [[source:constant]]3) << )");
 
         assertThat(m.matches(e1, null)).isFalse();
         assertThat(m.matches(e2, null)).isTrue();
@@ -336,11 +266,11 @@ public class MatcherParserTest {
 
     @Test
     public void testOr() throws Exception {
-        m = matcher("AbTestCaseAssigned", "a==2 || b>=3");
+        m = matcher("EventB", "a==2 || b>=3");
 
-        MyEvent e1 = fields("1", "2", "5");
-        MyEvent e2 = fields("1", "3", "10");
-        MyEvent e3 = fields("2" , "6", "15");
+        TestEvent e1 = fields("1", "2", "5");
+        TestEvent e2 = fields("1", "3", "10");
+        TestEvent e3 = fields("2", "6", "15");
 
         assertThat(m.toDebugString(e1, null)).isEqualTo(
                 "( >> ([[source:event.a]]1 == [[source:constant]]2) <<  ||  >> ([[source:event.b]]2 >= [[source:constant]]3) << )");

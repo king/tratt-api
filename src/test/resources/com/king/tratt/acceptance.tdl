@@ -1,0 +1,30 @@
+{
+    "comment": "CommentA",
+    "sequenceInvariants": ["sequenceInvA"],
+    "variables": ["varB=valB", "varA=valA"],
+    "sequences": 
+    [
+        {
+            "type": "CONTAINER",
+            "name": "seqA",
+            "sequenceMaxTime": "PT60S",
+            "checkPoints": 
+            [
+                {
+                    "eventType": "EventA",
+                    "match": "a=$varB",
+                    "set": ["EA_localVarA='aaa'", "EA_localVarB=b"],
+                    "label": "",
+                    "validate": "b='aaa' && c==true"
+                },
+
+                {
+                    "eventType": "EventB",
+                    "match": "a=$varA",
+                    "validate": "b=='bbb' && c=='ccc' && d==localVar",
+                    "set": ["EB_localVarA=c", "EB_localVarB=5"]
+                }
+            ]
+        }
+    ]
+}

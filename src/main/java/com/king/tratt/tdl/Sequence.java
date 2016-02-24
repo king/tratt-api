@@ -20,6 +20,7 @@ public final class Sequence {
         seqInternal = seq;
     }
 
+    // TODO return String?
     public Type getType() {
         return Type.valueOf(seqInternal.type.toUpperCase());
     }

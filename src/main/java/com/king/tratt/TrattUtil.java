@@ -1,26 +1,42 @@
 package com.king.tratt;
 
+import static java.lang.ClassLoader.getSystemResource;
 import static java.util.Arrays.asList;
+import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.regex.Matcher.quoteReplacement;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.king.tratt.spi.Context;
 import com.king.tratt.spi.DebugStringAware;
 import com.king.tratt.spi.Event;
+import com.king.tratt.spi.EventIterator;
+import com.king.tratt.spi.SimpleProcessor;
+import com.king.tratt.spi.Stoppable;
 import com.king.tratt.spi.SufficientContextAware;
 import com.king.tratt.spi.Value;
 
-class Util {
+public class TrattUtil {
 
     private static final Pattern IS_BOOLEAN = Pattern.compile("true|false", CASE_INSENSITIVE);
+    private static final String CLASSPATH_PROTOCOL = "classpath:";
+    private static final String FILE_PROTOCOL = "file:";
 
-    private Util() {
+    private TrattUtil() {
         throw new AssertionError("Not meant for instantiation");
     }
 
@@ -54,6 +70,10 @@ class Util {
         return true;
     }
 
+    static <T> List<T> concat(T first, @SuppressWarnings("unchecked") T... rest) {
+        return concat(first, asList(rest));
+    }
+
     static <T> List<T> concat(T value, List<T> values) {
         List<T> list = new ArrayList<>();
         list.add(value);
@@ -81,7 +101,7 @@ class Util {
         return new IllegalArgumentException(String.format(message, name));
     }
 
-    /*
+    /**
      * Takes a protocol prefixed path. Accepted protocols are "file" and "classpath".
      * Example:
      * "classpath:root-folder/file.txt"
@@ -89,31 +109,24 @@ class Util {
      * "file:/c:/temp/file.txt"
      * No prefix works as well, and will be used as: new File("path").
      */
-    //    static Path toPath(String prefixedPath) {
-    //        try {
-    //            URI uri;
-    //            if (prefixedPath.startsWith(CLASSPATH_PROTOCOL)) {
-    //                String stringPath = prefixedPath.substring(CLASSPATH_PROTOCOL.length());
-    //                uri = getSystemResource(stringPath).toURI();
-    //            } else if (prefixedPath.startsWith(FILE_PROTOCOL)) {
-    //                uri = new URL(prefixedPath).toURI();
-    //            } else {
-    //                uri = new File(prefixedPath).toURI();
-    //            }
-    //            return Paths.get(uri);
-    //        } catch (Exception e) {
-    //            throw new IllegalArgumentException(prefixedPath, e);
-    //        }
-    //
-    //    }
+    public static Path toPath(String prefixedPath) {
+        try {
+            URI uri;
+            if (prefixedPath.startsWith(CLASSPATH_PROTOCOL)) {
+                String stringPath = prefixedPath.substring(CLASSPATH_PROTOCOL.length());
+                uri = getSystemResource(stringPath).toURI();
+            } else if (prefixedPath.startsWith(FILE_PROTOCOL)) {
+                uri = new URL(prefixedPath).toURI();
+            } else {
+                uri = new File(prefixedPath).toURI();
+            }
+            return Paths.get(uri);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(prefixedPath, e);
+        }
 
-    //    static <T> List<T> concat(T first, @SuppressWarnings("unchecked") T... rest) {
-    //        List<T> list = new ArrayList<T>();
-    //        list.add(first);
-    //        list.addAll(Arrays.asList(rest));
-    //        return list;
-    //    }
-    //
+    }
+
     static <E extends Event> String formatJoin(E e, Context context, String glue, String format,
             List<? extends Object> args) {
         StringBuilder sb = new StringBuilder();
@@ -160,6 +173,7 @@ class Util {
         return sb.toString();
     }
 
+    //TODO : change "g" to "v"; v as in value
     @SuppressWarnings("unchecked")
     private static <E extends Event> String doConversion(E e, Context context, String action, Object o) {
         switch (action) {
@@ -174,6 +188,72 @@ class Util {
         default:
             String message = "Unsupported conversion: '%s'";
             throw new IllegalStateException(String.format(message, action));
+        }
+    }
+
+    static ExecutorService newThreadPool() {
+        AtomicInteger counter = new AtomicInteger();
+        return newCachedThreadPool(runnable -> new Thread(runnable, "TRATT." + counter.incrementAndGet()));
+    }
+
+    static <E extends Event> CachedProcessor<E> startProcessingEventsAndCreateCach(
+            BlockingQueue<E> pipeline, List<EventIterator<E>> eventIterators,
+            List<Stoppable> stoppables, List<SimpleProcessor<E>> simpleProcessors,
+            PipelineProducerStrategy<E> producerStrategy, ExecutorService executor) {
+
+        for (EventIterator<E> eventIterator : eventIterators) {
+            // Create Producer and start producing events to the eventPipeline.
+            eventIterator.start();
+            executor.submit(new PipelineProducer<>(eventIterator, pipeline, producerStrategy));
+            stoppables.add(eventIterator);
+        }
+
+        // Create consumer and add processors to forward events to, then start consuming the pipeline.
+        CachedProcessor<E> cachedEvents = new CachedProcessor<>();
+        PipelineConsumer<E> pipelineConsumer = new PipelineConsumer<>(pipeline);
+        pipelineConsumer.addProcessor(cachedEvents);
+        for (SimpleProcessor<E> processor : simpleProcessors) {
+            pipelineConsumer.addProcessor(processor);
+        }
+        executor.submit(pipelineConsumer);
+        return cachedEvents;
+    }
+
+    //    static EventCacher<Event> startProcessingEventsAndCreateEventCacher(
+    //            BlockingQueue<Event> eventPipeline,
+    //            Set<EventIterator<Event>> eventIterators, List<Stoppable> stoppables,
+    //            PipelineProducerStrategy<Event> producerStrategy, Map<Object, Processor<Event>> eventProcessors,
+    //            ExecutorService executor) {
+    //
+    //        CachingEventProcessor<E> eventCacher = Processors.eventCacher();
+    //
+    //        PipelineProducer<Event> producer;
+    //        for (EventIterator<Event> eventIterator : eventIterators) {
+    //            // Create Producer and start producing events to the eventPipeline.
+    //            producer = new PipelineProducer<>(eventIterator, eventPipeline, producerStrategy, executor);
+    //            producer.start();
+    //            stoppables.add(producer);
+    //        }
+    //
+    //        // Create consumer and add processors to forward events to, then start consuming the pipeline.
+    //        PipelineConsumer<Event> pipelineConsumer = new PipelineConsumer<>(eventPipeline, executor);
+    //        pipelineConsumer.addProcessor(eventCacher);
+    //        for (Processor<Event> processor : eventProcessors.values()) {
+    //            pipelineConsumer.addProcessor(processor);
+    //        }
+    //        pipelineConsumer.start();
+    //
+    //        return eventCacher;
+    //    }
+
+    static void shutdownStoppablesAndExecutorService(List<Stoppable> stoppables, ExecutorService executor) {
+        for (Stoppable stopable : stoppables) {
+            stopable.stop();
+        }
+        try {
+            executor.awaitTermination(5, SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }

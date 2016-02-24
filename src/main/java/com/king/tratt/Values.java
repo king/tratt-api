@@ -1,8 +1,8 @@
 package com.king.tratt;
 
-import static com.king.tratt.Util.format;
-import static com.king.tratt.Util.isBoolean;
-import static com.king.tratt.Util.isLong;
+import static com.king.tratt.TrattUtil.format;
+import static com.king.tratt.TrattUtil.isBoolean;
+import static com.king.tratt.TrattUtil.isLong;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Long.parseLong;
 
@@ -86,7 +86,7 @@ public class Values {
             return plainBoolean((boolean) value);
         } else if (value instanceof String) {
             String str = (String) value;
-            if (Util.isLong(str)) {
+            if (TrattUtil.isLong(str)) {
                 return plainLong(parseLong(str));
             } else if (isBoolean(str)) {
                 return plainBoolean(parseBoolean(str));
@@ -230,6 +230,7 @@ public class Values {
 
             @Override
             protected Value<E> _get(E e, Context context) {
+                // TODO context.get(...) should return Value<E>!
                 return constant(context.get(name));
             }
 

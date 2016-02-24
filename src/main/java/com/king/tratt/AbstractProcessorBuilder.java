@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.king.tratt.spi.ApiConfiguratorProvider;
+import com.king.tratt.spi._ApiConfigurator;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.EventIterator;
 import com.king.tratt.spi.Stoppable;
@@ -23,10 +23,10 @@ abstract class AbstractProcessorBuilder<R, E extends Event> {
     protected BlockingQueue<E> pipeline = new LinkedBlockingQueue<>();
     protected PipelineProducerStrategy<E> producerStrategy = PipelineProducerStrategy.getDefault();
     //    final EventMetaDataProvider<FieldMetaData, EventMetaData<FieldMetaData>> metadataProvider;
-    protected ApiConfiguratorProvider<?> confProvider;
+    protected _ApiConfigurator<?> confProvider;
 
     protected AbstractProcessorBuilder() {
-        ServiceLoader<ApiConfiguratorProvider<?>> serviceLoader;
+        ServiceLoader<_ApiConfigurator<?>> serviceLoader;
         // TODO setup ServiceLoader to find ApiConfiguratorProvider
         //        metadataProvider = new FromClassEventMetaDataProvider();
     }
