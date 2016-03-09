@@ -1,4 +1,4 @@
-package com.king.tratt.spi;
+package com.king.tratt;
 
 
 @FunctionalInterface

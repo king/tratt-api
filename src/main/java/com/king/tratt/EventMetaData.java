@@ -1,7 +1,7 @@
-package com.king.tratt.spi;
+package com.king.tratt;
 
 public interface EventMetaData {
-    long getId();
+    long getId(); // TODO can this be changed to String?
     String getName();
 
     //    FieldMetaData getField(String fieldName);

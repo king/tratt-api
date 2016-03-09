@@ -3,23 +3,19 @@ package com.king.tratt;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.king.tratt.spi.Context;
+public final class Context {
 
-class ContextImp implements Context {
+    private final Map<String, Object> map = new HashMap<>();
 
-    private final Map<String, String> map = new HashMap<>();
-
-    @Override
     public boolean containsKey(String name) {
         return map.containsKey(name);
     }
 
-    @Override
-    public String get(String name) {
+    public Object get(String name) {
         return map.get(name);
     }
 
-    void set(String name, String value) {
+    void set(String name, Object value) {
         map.put(name, value);
     }
 
@@ -27,6 +23,4 @@ class ContextImp implements Context {
     public String toString() {
         return map.toString();
     }
-
-
 }

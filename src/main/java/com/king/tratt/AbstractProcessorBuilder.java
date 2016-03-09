@@ -10,9 +10,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.king.tratt.spi._ApiConfigurator;
-import com.king.tratt.spi.Event;
-import com.king.tratt.spi.EventIterator;
-import com.king.tratt.spi.Stoppable;
 
 abstract class AbstractProcessorBuilder<R, E extends Event> {
 

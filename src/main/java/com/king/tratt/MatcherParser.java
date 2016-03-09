@@ -5,19 +5,14 @@
 package com.king.tratt;
 
 import static com.king.tratt.FunctionFactory.VAR_ARG;
-import static com.king.tratt.TrattUtil.isBoolean;
-import static com.king.tratt.TrattUtil.isLong;
+import static com.king.tratt.Tratt.util;
+import static com.king.tratt.Tratt.values;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Long.parseLong;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.king.tratt.spi.Event;
-import com.king.tratt.spi.EventMetaData;
-import com.king.tratt.spi.Value;
-import com.king.tratt.spi.ValueFactory;
 
 class MatcherParser<E extends Event> {
 
@@ -34,7 +29,7 @@ class MatcherParser<E extends Event> {
 
     //    @Override
     @Deprecated
-    public Matcher<E> createEventTypeMatcher(EventMetaData eventMetaData) throws Exception {
+    public Matcher<E> createEventTypeMatcher(EventMetaData eventMetaData) {
         if (eventMetaData == null) {
             return null;
         }
@@ -43,8 +38,9 @@ class MatcherParser<E extends Event> {
         final Value<E> left = Values.constantLong(eventMetaData.getId());
         // TODO Is this really needed?
         // valueFactory.getEventIdValue() ??
-        final Value<E> right = valueFactory.getValue(eventMetaData.getName(), "eventTypeId");
-        return Matcher.equal(left, right);
+        // final Value<E> right = valueFactory.getValue(eventMetaData.getName(),
+        // "eventTypeId");
+        return Matcher.equal(left, values.eventId());
     }
 
     public Matcher<E> parseMatcher(EventMetaData eventMetaData, String expression, Environment<E> env) {
@@ -197,9 +193,9 @@ class MatcherParser<E extends Event> {
             return Values.contextValue(nodeValue);
         } else if (env.tdlVariables.containsKey(nodeValue)) {
             return Values.constant(env.tdlVariables.get(nodeValue));
-        } else if (isLong(nodeValue)) {
+        } else if (util.isLong(nodeValue)) {
             return Values.constantLong(parseLong(nodeValue));
-        } else if (isBoolean(nodeValue)) {
+        } else if (util.isBoolean(nodeValue)) {
             return Values.constantBoolean(parseBoolean(nodeValue));
         }
         String message = "Faulty value is '%s', where possible problems could be: "

@@ -3,9 +3,6 @@ package com.king.tratt;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.king.tratt.spi.Event;
-import com.king.tratt.spi.Value;
-
 class Environment<E extends Event> {
 
     final Map<String, Value<E>> localVariables = new HashMap<>();

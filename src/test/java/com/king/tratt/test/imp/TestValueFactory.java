@@ -2,8 +2,8 @@ package com.king.tratt.test.imp;
 
 import static java.lang.String.format;
 
-import com.king.tratt.spi.Value;
-import com.king.tratt.spi.ValueFactory;
+import com.king.tratt.Value;
+import com.king.tratt.ValueFactory;
 
 public class TestValueFactory implements ValueFactory<TestEvent> {
 

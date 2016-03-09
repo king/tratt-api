@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.king.tratt.spi.EventMetaData;
 import com.king.tratt.test.imp.TestApiConfigurator;
 import com.king.tratt.test.imp.TestEvent;
 import com.king.tratt.test.imp.TestValueFactory;

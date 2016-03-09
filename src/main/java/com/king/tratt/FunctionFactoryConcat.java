@@ -1,14 +1,8 @@
 package com.king.tratt;
 
-import static com.king.tratt.TrattUtil.format;
-import static com.king.tratt.TrattUtil.formatJoin;
+import static com.king.tratt.Tratt.util;
 
 import java.util.List;
-
-import com.king.tratt.spi.Context;
-import com.king.tratt.spi.Event;
-import com.king.tratt.spi.StringValue;
-import com.king.tratt.spi.Value;
 
 class FunctionFactoryConcat<E extends Event> implements FunctionFactory<E> {
 
@@ -28,8 +22,8 @@ class FunctionFactoryConcat<E extends Event> implements FunctionFactory<E> {
 
             @Override
             public String toDebugString(E e, Context context) {
-                String joinedValues = formatJoin(e, context, ", ", "'~g'", arguments);
-                return format(e, context, "[[source:concat(~s)]]'~g'", joinedValues, this);
+                String joinedValues = util.formatJoin(e, context, ", ", "'~g'", arguments);
+                return util.format(e, context, "[[source:concat(~s)]]'~g'", joinedValues, this);
             }
 
             @Override

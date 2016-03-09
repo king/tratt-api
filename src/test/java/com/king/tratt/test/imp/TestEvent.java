@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
-import com.king.tratt.spi.Event;
+import com.king.tratt.Event;
 
 public class TestEvent implements Event {
 
@@ -29,7 +29,7 @@ public class TestEvent implements Event {
     }
 
     @Override
-    public long getTimestamp() {
+    public long getTimestampMillis() {
         try {
             return DATE_FORMATER.parse(timestamp).getTime();
         } catch (ParseException e) {

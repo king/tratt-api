@@ -1,13 +1,8 @@
 package com.king.tratt;
 
-import static com.king.tratt.TrattUtil.format;
+import static com.king.tratt.Tratt.util;
 
 import java.util.List;
-
-import com.king.tratt.spi.Context;
-import com.king.tratt.spi.Event;
-import com.king.tratt.spi.StringValue;
-import com.king.tratt.spi.Value;
 
 class FunctionFactorySplit<E extends Event> implements FunctionFactory<E> {
 
@@ -34,7 +29,7 @@ class FunctionFactorySplit<E extends Event> implements FunctionFactory<E> {
 
             @Override
             public String toDebugString(E e, Context context) {
-                return format(e, context, "[[source:split('~g', '~g', ~g)]]'~g'",
+                return util.format(e, context, "[[source:split('~g', '~g', ~g)]]'~g'",
                         strValue, delimiterValue, indexValue, this);
             }
 

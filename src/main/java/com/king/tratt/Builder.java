@@ -3,8 +3,7 @@ package com.king.tratt;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tratt.spi.ApiConfiguratorProvider;
-import com.king.tratt.spi.EventIterator;
+import com.king.tratt.spi._ApiConfigurator;
 
 public class Builder {
 
@@ -15,7 +14,7 @@ public class Builder {
         return this;
     }
 
-    public Builder setApiConfiguratorProvider(ApiConfiguratorProvider p) {
+    public Builder setApiConfiguratorProvider(_ApiConfigurator p) {
 
         return this;
     }

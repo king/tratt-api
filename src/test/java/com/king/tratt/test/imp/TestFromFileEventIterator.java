@@ -1,5 +1,6 @@
 package com.king.tratt.test.imp;
 
+import static com.king.tratt.Tratt.util;
 import static java.nio.file.Files.readAllLines;
 
 import java.nio.charset.Charset;
@@ -8,16 +9,15 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.king.tratt.TrattUtil;
-import com.king.tratt.spi.EventIterator;
+import com.king.tratt.EventIterator;
 
-public class TestFileEventIterator implements EventIterator<TestEvent> {
+public class TestFromFileEventIterator implements EventIterator<TestEvent> {
     private volatile Iterator<String> iterator;
     private AtomicBoolean hasNext = new AtomicBoolean(true);
     final Path path;
 
-    public TestFileEventIterator(String path) {
-        this.path = TrattUtil.toPath(path);
+    public TestFromFileEventIterator(String path) {
+        this.path = util.toPath(path);
     }
 
     @Override

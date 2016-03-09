@@ -1,6 +1,6 @@
 package com.king.tratt;
 
-import static com.king.tratt.TrattUtil.nullArgumentError;
+import static com.king.tratt.Tratt.util;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toMap;
 
@@ -20,10 +20,10 @@ class VariableParser {
 
     static Map<String, String> parse(String keyPrefix, List<String> nameValues) {
         if (keyPrefix == null) {
-            throw nullArgumentError("keyPrefix");
+            throw util.nullArgumentError("keyPrefix");
         }
         if (nameValues == null) {
-            throw nullArgumentError("nameValues");
+            throw util.nullArgumentError("nameValues");
         }
         if (nameValues.isEmpty()) {
             return Collections.emptyMap();

@@ -1,4 +1,4 @@
-package com.king.tratt.spi;
+package com.king.tratt;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +28,7 @@ public abstract class Value<E extends Event> implements DebugStringAware<E>, Suf
         try {
             return _get(e, context);
         } catch (Throwable t) {
-            if (!hasSufficientContext(e, context)) {
+            if (!hasSufficientContext(context)) {
                 return "[Insufficient Context!]";
             }
             String message = "@ERROR on line: " + t.getStackTrace()[0] + ". " +
@@ -40,9 +40,9 @@ public abstract class Value<E extends Event> implements DebugStringAware<E>, Suf
     }
 
     @Override
-    public boolean hasSufficientContext(E e, Context context) {
+    public boolean hasSufficientContext(Context context) {
         for (SufficientContextAware<E> aware : awares) {
-            if (!aware.hasSufficientContext(e, context)) {
+            if (!aware.hasSufficientContext(context)) {
                 return false;
             }
         }

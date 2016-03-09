@@ -1,18 +1,8 @@
 package com.king.tratt;
 
-import static com.king.tratt.TrattUtil.format;
-import static com.king.tratt.TrattUtil.isBoolean;
-import static com.king.tratt.TrattUtil.isLong;
+import static com.king.tratt.Tratt.util;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Long.parseLong;
-
-import com.king.tratt.spi.BooleanValue;
-import com.king.tratt.spi.Context;
-import com.king.tratt.spi.DynamicValue;
-import com.king.tratt.spi.Event;
-import com.king.tratt.spi.LongValue;
-import com.king.tratt.spi.StringValue;
-import com.king.tratt.spi.Value;
 
 /*
  * Static factory method for various Values:
@@ -22,9 +12,9 @@ public class Values {
     private static final String SOURCE_CONSTANT = "[[source:constant]]%s";
 
     static <E extends Event> Value<E> constant(String value) {
-        if (isLong(value)) {
+        if (util.isLong(value)) {
             return constantLong(parseLong(value));
-        } else if (isBoolean(value)) {
+        } else if (util.isBoolean(value)) {
             return constantBoolean(parseBoolean(value));
         }
         return constantString(value);
@@ -86,9 +76,9 @@ public class Values {
             return plainBoolean((boolean) value);
         } else if (value instanceof String) {
             String str = (String) value;
-            if (TrattUtil.isLong(str)) {
+            if (util.isLong(str)) {
                 return plainLong(parseLong(str));
-            } else if (isBoolean(str)) {
+            } else if (util.isBoolean(str)) {
                 return plainBoolean(parseBoolean(str));
             }
             return plainString(str);
@@ -149,7 +139,7 @@ public class Values {
         return new LongValue<E>(value, modulus) {
             @Override
             public String toDebugString(E e, Context context) {
-                return format(e, context, "(~d % ~d)~g", value, modulus, this);
+                return util.format(e, context, "(~d % ~d)~g", value, modulus, this);
             }
 
             @Override
@@ -164,7 +154,7 @@ public class Values {
 
             @Override
             public String toDebugString(E e, Context context) {
-                return format(e, context, "(~d + ~d)~g", left, right, this);
+                return util.format(e, context, "(~d + ~d)~g", left, right, this);
             }
 
             @Override
@@ -179,7 +169,7 @@ public class Values {
 
             @Override
             public String toDebugString(E e, Context context) {
-                return format(e, context, "(~d - ~d)~g", left, right, this);
+                return util.format(e, context, "(~d - ~d)~g", left, right, this);
             }
 
             @Override
@@ -195,7 +185,7 @@ public class Values {
 
             @Override
             public String toDebugString(E e, Context context) {
-                return format(e, context, "(~d * ~d)~g", left, right, this);
+                return util.format(e, context, "(~d * ~d)~g", left, right, this);
             }
 
             @Override
@@ -210,7 +200,7 @@ public class Values {
 
             @Override
             public String toDebugString(E e, Context context) {
-                return format(e, context, "(~d / ~d)~g", left, right, this);
+                return util.format(e, context, "(~d / ~d)~g", left, right, this);
             }
 
             @Override
@@ -221,22 +211,37 @@ public class Values {
     }
 
     static <E extends Event> Value<E> contextValue(String name) {
-        return new DynamicValue<E>() {
+        return new Value<E>() {
 
             @Override
             public String toDebugString(E e, Context context) {
-                return format(e, context, "[[source:context.~s]]~g", name, this);
+                return util.format(e, context, "[[source:context.~s]]~g", name, this);
             }
 
             @Override
-            protected Value<E> _get(E e, Context context) {
+            protected Object _get(E e, Context context) {
                 // TODO context.get(...) should return Value<E>!
-                return constant(context.get(name));
+                return context.get(name);
             }
 
             @Override
-            public boolean hasSufficientContext(E e, Context context) {
+            public boolean hasSufficientContext(Context context) {
                 return context.containsKey(name);
+            }
+        };
+    }
+
+    static <E extends Event> Value<E> eventId() {
+        return new LongValue<E>() {
+
+            @Override
+            public String toDebugString(E e, Context context) {
+                return util.format(e, context, "[[source:event.id]]~g", this);
+            }
+
+            @Override
+            protected Long _get(E e, Context context) {
+                return e.getId();
             }
         };
     }

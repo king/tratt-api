@@ -1,5 +1,7 @@
 package com.king.tratt;
 
+import static com.king.tratt.Tratt.util;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -12,12 +14,6 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.king.tratt.spi.Event;
-import com.king.tratt.spi.EventIterator;
-import com.king.tratt.spi.EventMetaDataFactory;
-import com.king.tratt.spi.SimpleProcessor;
-import com.king.tratt.spi.Stoppable;
-import com.king.tratt.spi.ValueFactory;
 import com.king.tratt.tdl.Tdl;
 
 // import com.king.event.Event;
@@ -42,7 +38,7 @@ public class StartedEventProcessor<E extends Event> {
     private static String ERROR_MESSAGE = "Sequence '%s' is not valid due to: %s \n";
     //    final String requestId;
     //    private final Future<CompletedEventProcessor> tdlProcessorResults;
-    private final ExecutorService executor;
+    final ExecutorService executor;
     final Tdl tdl;
     //    private final List<ProcessListener<Event>> listeners;
     private final List<EventIterator<E>> eventIterators;
@@ -51,17 +47,20 @@ public class StartedEventProcessor<E extends Event> {
     private final List<Stoppable> stoppables;
     private final BlockingQueue<E> pipeline;
     private final boolean tdlValidationEnabled;
-    private final long timeoutSeconds;
+    final long timeoutSeconds;
     //    private final String trackingToolUrl;
     private final ArrayList<SimpleProcessor<E>> simpleProcessors;
-    private final EventMetaDataFactory<?> metadataFactory;
-    private final ValueFactory<E> valueFactory;
+    final EventMetaDataFactory<?> metadataFactory;
+    final ValueFactory<E> valueFactory;
+    final List<SequenceProcessorListener<E>> sequenceListeners;
+    final ProgressSequenceProcessorListener<E> progressListener;
+    CompletionStrategy<E> completionStrategy;
 
 
-    public StartedEventProcessor(EventProcessorBuilder<E> builder) {
+    StartedEventProcessor(EventProcessorBuilder<E> builder) {
         // first copy...
         pipeline = builder.pipeline; // don't copy!
-        metadataFactory = builder.mdFactory;
+        metadataFactory = builder.metaDataFactory;
         valueFactory = builder.valueFactory;
         tdlValidationEnabled = builder.tdlValidationEnabled;
         //        trackingToolUrl = builder.trackingToolUrl;
@@ -70,12 +69,19 @@ public class StartedEventProcessor<E extends Event> {
         simpleProcessors = new ArrayList<>(builder.simpleProcessors);
         producerStrategy = builder.producerStrategy;
         tdl = builder.tdlBuilder.build();
-        //        listeners = new ArrayList<>(builder.listeners);
+        sequenceListeners = new ArrayList<>(builder.sequenceListeners);
         stoppables = new ArrayList<>(builder.stoppables);
+        completionStrategy = builder.completionStrategy;
+        progressListener = new ProgressSequenceProcessorListener<E>(tdl.getSequences());
+        sequenceListeners.add(progressListener);
         //        statsDataHolder = StatisticsDataHolder.copyOf(builder.statisticsDataHolder);
         //        requestId = builder.requestId == null ? valueOf(nanoTime()) : builder.requestId;
 
         // ...then check invariants
+        // TODO chack metadataFactory, valueFactory, etc!
+        if (completionStrategy == null) {
+            completionStrategy = progressListener;
+        }
         //        checkEventIteratorsNotEmpty(iterators);
         //        if (tdlValidationEnabled) {
         //            validateTdl(tdl);
@@ -90,22 +96,24 @@ public class StartedEventProcessor<E extends Event> {
         //            throw new IllegalStateException(message);
         //        }
 
-        executor = TrattUtil.newThreadPool();
+        executor = util.newThreadPool();
         stoppables.add(() -> executor.shutdownNow());
+    }
 
-        CachedProcessor<E> cachedEvents = TrattUtil.startProcessingEventsAndCreateCach(
+    public StartedEventProcessor<E> start() {
+        CachedProcessor<E> cachedEvents = util.startProcessingEventsAndCreateCach(
                 pipeline, eventIterators, stoppables, simpleProcessors, producerStrategy, executor);
-
         if (!tdl.getSequences().isEmpty()) {
             //            listeners.add(new LoggingProcessListener(tdl));
             //            listeners.add(new StatisticsProcessListener(requestId, statsDataHolder,
             //                    tdl, trackingToolUrl, executor));
-            TdlProcessor<E> tdlProcessor = new TdlProcessor<E>(cachedEvents, valueFactory, metadataFactory);
+            TdlProcessor<E> tdlProcessor = new TdlProcessor<E>(cachedEvents, this);
             List<SequenceResult> results = tdlProcessor.processTdl(tdl);
             //            tdlProcessorResults = newFutureTask(tdlProcessor, tdl);
         } else {
             //            tdlProcessorResults = newInvalidCompletedFuture();
         }
+        return this;
     }
 
     private void validateTdl(Tdl tdl) {
@@ -215,7 +223,7 @@ public class StartedEventProcessor<E extends Event> {
      * Shutdowns all EventProcessors.
      */
     public void shutdown() {
-        TrattUtil.shutdownStoppablesAndExecutorService(stoppables, executor);
+        util.shutdownStoppablesAndExecutorService(stoppables, executor);
     }
 
     /**

@@ -1,15 +1,18 @@
-/*
- * // (C) king.com Ltd 2014
- */
+package com.king.tratt;
 
-package com.king.tratt.spi;
-
+@FunctionalInterface
 public interface EventMetaDataFactory<T extends EventMetaData> {
-
+	
+	/**
+	 * TODO
+	 * @param eventName
+	 * @return
+	 */
     T getEventMetaData(String eventName);
 
     /**
-     * Do not override this.
+     * Should return the special value null, which means this factory does not
+     * recognize the given {@code eventName}
      *
      * @return null
      */

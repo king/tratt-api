@@ -1,7 +1,7 @@
 package com.king.tratt;
 
-import static com.king.tratt.TrattUtil.format;
-import static com.king.tratt.TrattUtil.formatJoin;
+import static com.king.tratt.Util.format;
+import static com.king.tratt.Util.formatJoin;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.king.tratt.spi.Value;
 import com.king.tratt.test.imp.TestEvent;
 
 @RunWith(MockitoJUnitRunner.class)

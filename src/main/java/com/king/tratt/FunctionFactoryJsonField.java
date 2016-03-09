@@ -1,16 +1,12 @@
 package com.king.tratt;
 
-import static com.king.tratt.TrattUtil.format;
+import static com.king.tratt.Tratt.util;
 
 import java.util.List;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.king.tratt.spi.Context;
-import com.king.tratt.spi.DynamicValue;
-import com.king.tratt.spi.Event;
-import com.king.tratt.spi.Value;
 
 class FunctionFactoryJsonField<E extends Event> implements FunctionFactory<E> {
     Value<E> pathValue;
@@ -37,7 +33,7 @@ class FunctionFactoryJsonField<E extends Event> implements FunctionFactory<E> {
 
             @Override
             public String toDebugString(E e, Context context) {
-                return format(e, context, "[[source:jsonfield('~g', '~g')]]~p", pathValue, jsonValue, this);
+                return util.format(e, context, "[[source:jsonfield('~g', '~g')]]~p", pathValue, jsonValue, this);
             }
 
             @Override

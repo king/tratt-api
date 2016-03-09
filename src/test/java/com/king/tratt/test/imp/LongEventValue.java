@@ -1,7 +1,7 @@
 package com.king.tratt.test.imp;
 
-import com.king.tratt.spi.Context;
-import com.king.tratt.spi.LongValue;
+import com.king.tratt.Context;
+import com.king.tratt.LongValue;
 
 
 public class LongEventValue extends LongValue<TestEvent> {

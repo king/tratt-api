@@ -1,7 +1,7 @@
 package com.king.tratt.test.imp;
 
-import com.king.tratt.spi.Context;
-import com.king.tratt.spi.StringValue;
+import com.king.tratt.Context;
+import com.king.tratt.StringValue;
 
 public class StringEventValue extends StringValue<TestEvent> {
 

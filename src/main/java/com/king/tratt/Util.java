@@ -8,6 +8,7 @@ import static java.util.regex.Matcher.quoteReplacement;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 import java.io.File;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -17,34 +18,30 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.king.tratt.spi.Context;
-import com.king.tratt.spi.DebugStringAware;
-import com.king.tratt.spi.Event;
-import com.king.tratt.spi.EventIterator;
-import com.king.tratt.spi.SimpleProcessor;
-import com.king.tratt.spi.Stoppable;
-import com.king.tratt.spi.SufficientContextAware;
-import com.king.tratt.spi.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class TrattUtil {
-
+public class Util {
+    private static final Logger LOG = LoggerFactory.getLogger(Util.class);
     private static final Pattern IS_BOOLEAN = Pattern.compile("true|false", CASE_INSENSITIVE);
     private static final String CLASSPATH_PROTOCOL = "classpath:";
     private static final String FILE_PROTOCOL = "file:";
 
-    private TrattUtil() {
-        throw new AssertionError("Not meant for instantiation");
+    Util() {
+        /* For package private usage only */
     }
 
 
     /*
      * Check if a String can be parsed to a 'Long'.
      */
-    static boolean isLong(String str) {
+    boolean isLong(String str) {
         try {
             Long.parseLong(str);
             return true;
@@ -56,47 +53,47 @@ public class TrattUtil {
     /*
      * Check if a String can be parsed to a 'Boolean'.
      */
-    static boolean isBoolean(String nodeValue) {
+    boolean isBoolean(String nodeValue) {
         return IS_BOOLEAN.matcher(nodeValue).matches();
     }
 
-    static <E extends Event> boolean hasSufficientContext(E e, Context context,
+    <E extends Event> boolean hasSufficientContext(Context context,
             List<? extends SufficientContextAware<E>> awares) {
         for (SufficientContextAware<E> aware : awares) {
-            if (!aware.hasSufficientContext(e, context)) {
+            if (!aware.hasSufficientContext(context)) {
                 return false;
             }
         }
         return true;
     }
 
-    static <T> List<T> concat(T first, @SuppressWarnings("unchecked") T... rest) {
+    <T> List<T> concat(T first, @SuppressWarnings("unchecked") T... rest) {
         return concat(first, asList(rest));
     }
 
-    static <T> List<T> concat(T value, List<T> values) {
+    <T> List<T> concat(T value, List<T> values) {
         List<T> list = new ArrayList<>();
         list.add(value);
         list.addAll(values);
         return list;
     }
 
-    static NullPointerException nullArgumentError(String name) {
+    NullPointerException nullArgumentError(String name) {
         String message = "Argument '%s' is null.";
         return new NullPointerException(String.format(message, name));
     }
 
-    static IllegalArgumentException varArgError(String... args) {
+    IllegalArgumentException varArgError(String... args) {
         return varArgError((Object[]) args);
     }
 
-    static IllegalArgumentException varArgError(Object... args) {
+    IllegalArgumentException varArgError(Object... args) {
         String message = "One of the var-args is either null or empty: %s";
         String arraysToString = Arrays.toString(args);
         return new IllegalArgumentException(String.format(message, arraysToString));
     }
 
-    static IllegalArgumentException emptyStringArgumentError(String name) {
+    IllegalArgumentException emptyStringArgumentError(String name) {
         String message = "Argument '%s' is empty string.";
         return new IllegalArgumentException(String.format(message, name));
     }
@@ -109,7 +106,7 @@ public class TrattUtil {
      * "file:/c:/temp/file.txt"
      * No prefix works as well, and will be used as: new File("path").
      */
-    public static Path toPath(String prefixedPath) {
+    public Path toPath(String prefixedPath) {
         try {
             URI uri;
             if (prefixedPath.startsWith(CLASSPATH_PROTOCOL)) {
@@ -127,7 +124,7 @@ public class TrattUtil {
 
     }
 
-    static <E extends Event> String formatJoin(E e, Context context, String glue, String format,
+    <E extends Event> String formatJoin(E e, Context context, String glue, String format,
             List<? extends Object> args) {
         StringBuilder sb = new StringBuilder();
         String separator = "";
@@ -153,7 +150,7 @@ public class TrattUtil {
      */
     private static final Pattern CONVERSION_PATTERN = Pattern.compile("(~[gdsp])");
 
-    static <E extends Event> String format(final E e, final Context context, String format, Object... args) {
+    <E extends Event> String format(final E e, final Context context, String format, Object... args) {
         List<Object> replacements = new ArrayList<>(asList(args));
         Matcher m = CONVERSION_PATTERN.matcher(format);
         StringBuffer sb = new StringBuffer();
@@ -175,7 +172,7 @@ public class TrattUtil {
 
     //TODO : change "g" to "v"; v as in value
     @SuppressWarnings("unchecked")
-    private static <E extends Event> String doConversion(E e, Context context, String action, Object o) {
+    private <E extends Event> String doConversion(E e, Context context, String action, Object o) {
         switch (action) {
         case "~g":
             return ((Value<E>) o).asString(e, context);
@@ -191,12 +188,41 @@ public class TrattUtil {
         }
     }
 
-    static ExecutorService newThreadPool() {
+    ExecutorService newThreadPool() {
         AtomicInteger counter = new AtomicInteger();
-        return newCachedThreadPool(runnable -> new Thread(runnable, "TRATT." + counter.incrementAndGet()));
+		return newCachedThreadPool(runnable -> {
+            Thread thread = new Thread(runnable, "TRATT." + counter.incrementAndGet());
+            thread.setUncaughtExceptionHandler((Thread t, Throwable e) -> {
+                String message = "Thread '%s' crashed unexpectedly due to:\n";
+                LOG.error(String.format(message, t), e);
+            });
+            return thread;
+		});
+	}
+
+    ExecutorService newThreadPool(final String requestId) {
+		return Executors.newCachedThreadPool(new ThreadFactory() {
+
+			private final AtomicInteger counter = new AtomicInteger();
+
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread t = new Thread(r, requestId + "." + counter.incrementAndGet());
+				t.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+
+					@Override
+					public void uncaughtException(Thread t, Throwable e) {
+						String message = "Thread '%s' crashed unexpectedly due to:\n";
+						LOG.error(String.format(message, t), e);
+					}
+				});
+				return t;
+			}
+		});
     }
 
-    static <E extends Event> CachedProcessor<E> startProcessingEventsAndCreateCach(
+
+    <E extends Event> CachedProcessor<E> startProcessingEventsAndCreateCach(
             BlockingQueue<E> pipeline, List<EventIterator<E>> eventIterators,
             List<Stoppable> stoppables, List<SimpleProcessor<E>> simpleProcessors,
             PipelineProducerStrategy<E> producerStrategy, ExecutorService executor) {
@@ -219,7 +245,7 @@ public class TrattUtil {
         return cachedEvents;
     }
 
-    //    static EventCacher<Event> startProcessingEventsAndCreateEventCacher(
+    // EventCacher<Event> startProcessingEventsAndCreateEventCacher(
     //            BlockingQueue<Event> eventPipeline,
     //            Set<EventIterator<Event>> eventIterators, List<Stoppable> stoppables,
     //            PipelineProducerStrategy<Event> producerStrategy, Map<Object, Processor<Event>> eventProcessors,
@@ -246,7 +272,7 @@ public class TrattUtil {
     //        return eventCacher;
     //    }
 
-    static void shutdownStoppablesAndExecutorService(List<Stoppable> stoppables, ExecutorService executor) {
+    void shutdownStoppablesAndExecutorService(List<Stoppable> stoppables, ExecutorService executor) {
         for (Stoppable stopable : stoppables) {
             stopable.stop();
         }

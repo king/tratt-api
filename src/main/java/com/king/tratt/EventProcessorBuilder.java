@@ -1,6 +1,6 @@
 package com.king.tratt;
 
-import static com.king.tratt.TrattUtil.nullArgumentError;
+import static com.king.tratt.Tratt.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,12 +8,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import com.king.tratt.spi.Event;
-import com.king.tratt.spi.EventIterator;
-import com.king.tratt.spi.EventMetaDataFactory;
-import com.king.tratt.spi.SimpleProcessor;
-import com.king.tratt.spi.Stoppable;
-import com.king.tratt.spi.ValueFactory;
 import com.king.tratt.tdl.CheckPoint;
 import com.king.tratt.tdl.Tdl;
 import com.king.tratt.tdl.TdlBuilder;
@@ -24,18 +18,18 @@ import com.king.tratt.tdl.TdlBuilder;
 public final class EventProcessorBuilder<E extends Event> {
     //public final class EventProcessorBuilder {
 
-    TdlBuilder tdlBuilder = Tdl.newBuilder();
+    final TdlBuilder tdlBuilder = Tdl.newBuilder();
     final List<Stoppable> stoppables = new ArrayList<>();
-    //    List<ProcessListener<E>> listeners = new ArrayList<>();
-    BlockingQueue<E> pipeline = new LinkedBlockingQueue<>();
-    List<EventIterator<E>> eventIterators = new ArrayList<>();
-    List<SimpleProcessor<E>> simpleProcessors = new ArrayList<>();
+    final List<SequenceProcessorListener<E>> sequenceListeners = new ArrayList<>();
+    final BlockingQueue<E> pipeline = new LinkedBlockingQueue<>();
+    final List<EventIterator<E>> eventIterators = new ArrayList<>();
+    final List<SimpleProcessor<E>> simpleProcessors = new ArrayList<>();
     long timeoutSeconds = 900;
     PipelineProducerStrategy<E> producerStrategy = PipelineProducerStrategy.getDefault();
     boolean tdlValidationEnabled = true;
-    //    ApiConfigurator<E> confProvider;
     ValueFactory<E> valueFactory;
-    EventMetaDataFactory<?> mdFactory;
+    EventMetaDataFactory<?> metaDataFactory;
+	CompletionStrategy completionStrategy;
 
 
     EventProcessorBuilder() {
@@ -73,7 +67,7 @@ public final class EventProcessorBuilder<E extends Event> {
     }
 
     public EventProcessorBuilder<E> setEventMetaDataFatory(EventMetaDataFactory<?> mdFactory) {
-        this.mdFactory = mdFactory;
+        this.metaDataFactory = mdFactory;
         return this;
     }
 
@@ -93,7 +87,7 @@ public final class EventProcessorBuilder<E extends Event> {
      * @return
      */
     public StartedEventProcessor<E> start() {
-        return new StartedEventProcessor<E>(this);
+        return new StartedEventProcessor<E>(this).start();
     }
 
     /**
@@ -161,7 +155,7 @@ public final class EventProcessorBuilder<E extends Event> {
      * @return
      */
     public EventProcessorBuilder<E> addTdls(Tdl first, Tdl... rest) {
-        tdlBuilder.addTdls(TrattUtil.concat(first, rest));
+        tdlBuilder.addTdls(util.concat(first, rest));
         return this;
     }
 
@@ -198,26 +192,33 @@ public final class EventProcessorBuilder<E extends Event> {
     //    }
 
     /**
-     * For experimental usage only! Be aware that method signature will change without any notice.
-     *
-     * @param processListener
-     * @return this builder
-     */
-    //    @Deprecated
-    //    public EventProcessorBuilder addProcessListener(ProcessListener<Event> processListener) {
-    //        listeners.add(processListener);
-    //        return this;
-    //    }
+	 * For experimental usage only! Be aware that method signature will change
+	 * without any notice. TODO
+	 * 
+	 * @param listener
+	 * @return this builder
+	 */
+	public EventProcessorBuilder<E> addProcessorListener(SequenceProcessorListener<E> listener) {
+		sequenceListeners.add(listener);
+		return this;
+	}
+	
+	public EventProcessorBuilder<E> addCompletionStrategy(CompletionStrategy strategy) {
+		completionStrategy = strategy;
+		return this;
+	}
 
     /**
-     * Set max allowed duration for the {@link StartedEventProcessor} as returned from
-     * {@link #start()} method. If max allowed duration is passed then the
-     * {@link StartedEventProcessor#await*()} methods will throw an exception.
+     * Set max allowed duration for the {@link StartedEventProcessor} as
+     * returned from {@link #start()} method. If max allowed duration is passed
+     * then the {@link StartedEventProcessor#await*()} methods will throw an
+     * exception.
      * <p>
-     * Default value is 300 seconds.
+     * Default value is 900 seconds.
      *
      * @param duration
-     * @param timeUnit of duration
+     * @param timeUnit
+     *            of duration
      * @return this builder
      */
     public EventProcessorBuilder<E> setTimeout(long duration, TimeUnit timeUnit) {
@@ -226,7 +227,7 @@ public final class EventProcessorBuilder<E extends Event> {
             throw new IllegalArgumentException(message);
         }
         if (timeUnit == null) {
-            throw nullArgumentError("timeUnit");
+            throw util.nullArgumentError("timeUnit");
         }
         timeoutSeconds = timeUnit.toSeconds(duration);
         return this;

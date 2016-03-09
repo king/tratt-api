@@ -1,11 +1,11 @@
 package com.king.tratt;
 
-import com.king.tratt.spi.Event;
-
 /**
- * Entry point for the event tracking automation API.
+ * Tratt API entry point.
  */
 public final class Tratt {
+    public static final Util util = new Util();
+    public static final Values values = new Values();
 
     private Tratt() {
         throw new AssertionError("Not meant for instantiation!");
