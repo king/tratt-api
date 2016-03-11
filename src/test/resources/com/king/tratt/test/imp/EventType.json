@@ -2,53 +2,56 @@
     {
         "id": 0,
         "name": "EventA",
-        "parameters": 
-        [
+        "parameters": [
+            {
+                "name": "id",
+                "type": "String"
+            },
             {
                 "name": "a",
                 "type": "long"
             },
-
             {
                 "name": "b",
                 "type": "String"
             },
-
             {
-                "name": "b",
+                "name": "c",
                 "type": "boolean"
             }
         ]
     },
-
     {
         "id": 1,
         "name": "EventB",
-        "parameters": 
-        [
+        "parameters": [
+            {
+                "name": "id",
+                "type": "String"
+            },
             {
                 "name": "a",
                 "type": "long"
             },
-
             {
                 "name": "b",
                 "type": "String"
             },
-
             {
                 "name": "c",
                 "type": "String"
             },
-
             {
                 "name": "d",
                 "type": "Long"
             },
-
             {
                 "name": "e",
                 "type": "int"
+            },
+            {
+                "name": "f",
+                "type": "boolean"
             }
         ]
     }

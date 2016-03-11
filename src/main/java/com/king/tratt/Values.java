@@ -1,8 +1,17 @@
 package com.king.tratt;
 
 import static com.king.tratt.Tratt.util;
+import static com.king.tratt.Tratt.values;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Long.parseLong;
+
+import com.king.tratt.metadata.spi.BooleanValue;
+import com.king.tratt.metadata.spi.Context;
+import com.king.tratt.metadata.spi.DynamicValue;
+import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.metadata.spi.LongValue;
+import com.king.tratt.metadata.spi.StringValue;
+import com.king.tratt.metadata.spi.Value;
 
 /*
  * Static factory method for various Values:
@@ -11,7 +20,7 @@ public class Values {
 
     private static final String SOURCE_CONSTANT = "[[source:constant]]%s";
 
-    static <E extends Event> Value<E> constant(String value) {
+    <E extends Event> Value<E> constant(String value) {
         if (util.isLong(value)) {
             return constantLong(parseLong(value));
         } else if (util.isBoolean(value)) {
@@ -24,7 +33,7 @@ public class Values {
      * Constant values
      */
 
-    static <E extends Event> Value<E> constantString(final String str) {
+    <E extends Event> Value<E> constantString(final String str) {
         return new StringValue<E>() {
 
             @Override
@@ -39,7 +48,7 @@ public class Values {
         };
     }
 
-    static <E extends Event> Value<E> constantLong(long l) {
+    <E extends Event> Value<E> constantLong(long l) {
         return new LongValue<E>() {
 
             @Override
@@ -54,7 +63,7 @@ public class Values {
         };
     }
 
-    static <E extends Event> Value<E> constantBoolean(boolean b) {
+    <E extends Event> Value<E> constantBoolean(boolean b) {
         return new BooleanValue<E>() {
 
             @Override
@@ -69,7 +78,7 @@ public class Values {
         };
     }
 
-    public static <E extends Event> Value<E> plain(Object value) {
+    public <E extends Event> Value<E> plain(Object value) {
         if (value instanceof Long) {
             return plainLong((long) value);
         } else if (value instanceof Boolean) {
@@ -90,7 +99,7 @@ public class Values {
     /*
      * Plain values
      */
-    static <E extends Event> Value<E> plainString(final String str) {
+    <E extends Event> Value<E> plainString(final String str) {
         return new StringValue<E>() {
 
             @Override
@@ -105,7 +114,7 @@ public class Values {
         };
     }
 
-    static <E extends Event> Value<E> plainLong(long l) {
+    <E extends Event> Value<E> plainLong(long l) {
         return new LongValue<E>() {
 
             @Override
@@ -120,7 +129,7 @@ public class Values {
         };
     }
 
-    static <E extends Event> Value<E> plainBoolean(boolean b) {
+    <E extends Event> Value<E> plainBoolean(boolean b) {
         return new BooleanValue<E>() {
 
             @Override
@@ -135,7 +144,7 @@ public class Values {
         };
     }
 
-    static <E extends Event> Value<E> modulus(final Value<E> value, final Value<E> modulus) {
+    <E extends Event> Value<E> modulus(final Value<E> value, final Value<E> modulus) {
         return new LongValue<E>(value, modulus) {
             @Override
             public String toDebugString(E e, Context context) {
@@ -149,7 +158,7 @@ public class Values {
         };
     }
 
-    static <E extends Event> Value<E> sum(Value<E> left, Value<E> right) {
+    <E extends Event> Value<E> sum(Value<E> left, Value<E> right) {
         return new LongValue<E>(left, right) {
 
             @Override
@@ -164,7 +173,7 @@ public class Values {
         };
     }
 
-    static <E extends Event> Value<E> subtract(Value<E> left, Value<E> right) {
+    <E extends Event> Value<E> subtract(Value<E> left, Value<E> right) {
         return new LongValue<E>(left, right) {
 
             @Override
@@ -180,7 +189,7 @@ public class Values {
         };
     }
 
-    static <E extends Event> Value<E> multiply(Value<E> left, Value<E> right) {
+    <E extends Event> Value<E> multiply(Value<E> left, Value<E> right) {
         return new LongValue<E>(left, right) {
 
             @Override
@@ -195,7 +204,7 @@ public class Values {
         };
     }
 
-    static <E extends Event> Value<E> divide(Value<E> left, Value<E> right) {
+    <E extends Event> Value<E> divide(Value<E> left, Value<E> right) {
         return new LongValue<E>(left, right) {
 
             @Override
@@ -210,8 +219,8 @@ public class Values {
         };
     }
 
-    static <E extends Event> Value<E> contextValue(String name) {
-        return new Value<E>() {
+    <E extends Event> Value<E> context(String name) {
+        return new DynamicValue<E>() {
 
             @Override
             public String toDebugString(E e, Context context) {
@@ -219,9 +228,8 @@ public class Values {
             }
 
             @Override
-            protected Object _get(E e, Context context) {
-                // TODO context.get(...) should return Value<E>!
-                return context.get(name);
+            protected Value<E> _get(E e, Context context) {
+                return values.plain(context.get(name));
             }
 
             @Override
@@ -231,7 +239,7 @@ public class Values {
         };
     }
 
-    static <E extends Event> Value<E> eventId() {
+    <E extends Event> Value<E> eventId() {
         return new LongValue<E>() {
 
             @Override

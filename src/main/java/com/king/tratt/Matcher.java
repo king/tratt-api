@@ -9,6 +9,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.king.tratt.metadata.spi.Context;
+import com.king.tratt.metadata.spi.DebugStringAware;
+import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.metadata.spi.SufficientContextAware;
+import com.king.tratt.metadata.spi.Value;
+
 abstract class Matcher<E extends Event> implements DebugStringAware<E>, SufficientContextAware<E> {
     private static final Logger LOG = LoggerFactory.getLogger(Matcher.class);
     private final List<? extends SufficientContextAware<E>> awares;

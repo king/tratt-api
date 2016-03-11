@@ -1,4 +1,4 @@
-package com.king.tratt;
+package com.king.tratt.metadata.spi;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.king.tratt.test.imp;
 
-import com.king.tratt.Context;
-import com.king.tratt.LongValue;
+import com.king.tratt.metadata.spi.Context;
+import com.king.tratt.metadata.spi.LongValue;
 
 
 public class TimeStampEventValue extends LongValue<TestEvent> {

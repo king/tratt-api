@@ -1,7 +1,6 @@
 {
     "comment": "CommentA",
-    "sequenceInvariants": ["sequenceInvA"],
-    "variables": ["varB=valB", "varA=valA"],
+    "variables": ["varB=B", "varA=A"],
     "sequences": 
     [
         {
@@ -9,20 +8,16 @@
             "name": "seqA",
             "sequenceMaxTime": "PT60S",
             "checkPoints": 
-            [
-                {
+            [{
                     "eventType": "EventA",
-                    "match": "a=$varB",
-                    "set": ["EA_localVarA='aaa'", "EA_localVarB=b"],
-                    "label": "",
-                    "validate": "b='aaa' && c==true"
-                },
-
-                {
+                    "match": "id==$varB && a==123",
+                    "validate": "b=='abc' && c==EB_fieldF",
+                    "set": ["EA_localVarA='aaa'", "EA_fieldA=a"]
+                },{
                     "eventType": "EventB",
-                    "match": "a=$varA",
-                    "validate": "b=='bbb' && c=='ccc' && d==localVar",
-                    "set": ["EB_localVarA=c", "EB_localVarB=5"]
+                    "match": "id==$varA && a==456",
+                    "validate": "b=='ABC' && c=='EFG' && d==EA_fieldA && e==789 && f==true",
+                    "set": ["EB_fieldF=f", "EB_localVarB=5"]
                 }
             ]
         }

@@ -2,6 +2,9 @@ package com.king.tratt;
 
 import java.util.Iterator;
 
+import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.metadata.spi.Stoppable;
+
 /*
  * Interface that decouples the source of the Events, for
  * example: Kafka queue, or a pre-recorded dump file.

@@ -5,42 +5,31 @@ import static com.king.tratt.Tratt.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.metadata.spi.EventMetaDataFactory;
+import com.king.tratt.metadata.spi.Stoppable;
+import com.king.tratt.metadata.spi.ValueFactory;
 import com.king.tratt.tdl.Tdl;
-
-// import com.king.event.Event;
-// import com.king.tracking.api.Processors.EventCacher;
-// import com.king.tracking.eventtracker.event.KafkaEventValueProvider;
-// import com.king.tracking.eventtracker.kafka.Stoppable;
-// import com.king.tracking.eventtracker.processor.ProcessListener;
-// import com.king.tracking.eventtracker.processor.Processor;
-// import com.king.tracking.metadata.EventMetaData;
-// import com.king.tracking.metadata.EventMetaDataProvider;
-// import com.king.tracking.metadata.FieldMetaData;
-// import com.king.tracking.reducer.ValueProvider;
-// import com.king.tracking.tdl.Tdl;
-// import com.king.tracking.tdl.TdlFileValidator;
-// import com.king.tracking.validationtool.InvalidTdlException;
-// import com.king.tracking.validationtool.TdlValidationToolResult;
-// import com.king.tratt.spi.EventIterator;
 
 public class StartedEventProcessor<E extends Event> {
 
     private static Logger logger = LoggerFactory.getLogger(StartedEventProcessor.class);
     private static String ERROR_MESSAGE = "Sequence '%s' is not valid due to: %s \n";
     //    final String requestId;
-    //    private final Future<CompletedEventProcessor> tdlProcessorResults;
+    private Future<CompletedEventProcessor> tdlProcessorResults;
     final ExecutorService executor;
     final Tdl tdl;
-    //    private final List<ProcessListener<Event>> listeners;
     private final List<EventIterator<E>> eventIterators;
     //    private final StatisticsDataHolder statsDataHolder;
     private final PipelineProducerStrategy<E> producerStrategy;
@@ -83,9 +72,9 @@ public class StartedEventProcessor<E extends Event> {
             completionStrategy = progressListener;
         }
         //        checkEventIteratorsNotEmpty(iterators);
-        //        if (tdlValidationEnabled) {
-        //            validateTdl(tdl);
-        //        }
+        if (tdlValidationEnabled) {
+            validateTdl(tdl);
+        }
 
         logger.debug("Actual used TDL:\n" + tdl);
         logger.debug("Timeout set to: " + timeoutSeconds + " seconds.");
@@ -100,29 +89,27 @@ public class StartedEventProcessor<E extends Event> {
         stoppables.add(() -> executor.shutdownNow());
     }
 
-    public StartedEventProcessor<E> start() {
+    StartedEventProcessor<E> start() {
         CachedProcessor<E> cachedEvents = util.startProcessingEventsAndCreateCach(
                 pipeline, eventIterators, stoppables, simpleProcessors, producerStrategy, executor);
         if (!tdl.getSequences().isEmpty()) {
             //            listeners.add(new LoggingProcessListener(tdl));
             //            listeners.add(new StatisticsProcessListener(requestId, statsDataHolder,
             //                    tdl, trackingToolUrl, executor));
-            TdlProcessor<E> tdlProcessor = new TdlProcessor<E>(cachedEvents, this);
-            List<SequenceResult> results = tdlProcessor.processTdl(tdl);
-            //            tdlProcessorResults = newFutureTask(tdlProcessor, tdl);
+            tdlProcessorResults = newFutureTask(new TdlProcessor<E>(cachedEvents, this));
         } else {
-            //            tdlProcessorResults = newInvalidCompletedFuture();
+            tdlProcessorResults = newInvalidCompletedFuture();
         }
         return this;
     }
 
     private void validateTdl(Tdl tdl) {
-        //        ValueProvider<Event> valueProvider = new KafkaEventValueProvider(metadataFactory);
-        //        TdlFileValidator validator = new TdlFileValidator(valueProvider, metadataFactory, tdl, true);
-        //        if(validator.getError() != null){
-        //            TdlValidationToolResult result = new TdlValidationToolResult(false, validator.getError(), validator.getFieldErrorDescriptors());
-        //            throw new InvalidTdlException(result);
-        //        }
+        TdlValidator<E> validator = new TdlValidator<E>(valueFactory, metadataFactory, tdl);
+        if (validator.getError() != null) {
+            TdlValidationResult result = new TdlValidationResult(false, validator.getError(),
+                    validator.getFieldErrorDescriptors());
+            throw new InvalidTdlException(result);
+        }
     }
 
     private Future<CompletedEventProcessor> newInvalidCompletedFuture() {
@@ -158,20 +145,15 @@ public class StartedEventProcessor<E extends Event> {
         };
     }
 
-    //    private synchronized Future<CompletedEventProcessor> newFutureTask(final KafkaTdlProcessor tdlProcessor,
-    //            final Tdl tdlFile) {
-    //        Callable<CompletedEventProcessor> r = new Callable<CompletedEventProcessor>() {
-    //
-    //            @Override
-    //            public CompletedEventProcessor call() {
-    //                List<SequenceResult> results = tdlProcessor.processTdl(tdlFile);
-    //                return new CompletedEventProcessor(results);
-    //            }
-    //        };
-    //        FutureTask<CompletedEventProcessor> task = new FutureTask<CompletedEventProcessor>(r);
-    //        new Thread(task).start();
-    //        return task;
-    //    }
+    private synchronized Future<CompletedEventProcessor> newFutureTask(TdlProcessor<E> tdlProcessor) {
+        Callable<CompletedEventProcessor> r = () -> {
+                List<SequenceResult> results = tdlProcessor.processTdl(tdl);
+                return new CompletedEventProcessor(results);
+        };
+        FutureTask<CompletedEventProcessor> task = new FutureTask<CompletedEventProcessor>(r);
+        new Thread(task).start();
+        return task;
+    }
 
     /**
      * Waits until all Sequences have successfully ended. All EventProcessors are automatically
@@ -182,21 +164,21 @@ public class StartedEventProcessor<E extends Event> {
      *
      * @throws TdlFailureException when at least one EventProcessor (Sequence) fails or times out.
      */
-    //    public void awaitSuccess() {
-    //        CompletedEventProcessor completed = awaitCompletion();
-    //
-    //        if (completed.isValid() || completed.getSequenceResults().isEmpty()) {
-    //            return;
-    //        }
-    //
-    //        StringBuilder errorMessage = new StringBuilder();
-    //        for (SequenceResult result : completed.getSequenceResults()) {
-    //            if (!result.isValid()) {
-    //                errorMessage.append(String.format(ERROR_MESSAGE, result.getName(), result.getCauses()));
-    //            }
-    //        }
-    //        throw new TdlFailureException(errorMessage.toString());
-    //    }
+    public void awaitSuccess() {
+        CompletedEventProcessor completed = awaitCompletion();
+
+        if (completed.isValid() || completed.getSequenceResults().isEmpty()) {
+            return;
+        }
+
+        StringBuilder errorMessage = new StringBuilder();
+        for (SequenceResult result : completed.getSequenceResults()) {
+            if (!result.isValid()) {
+                errorMessage.append(String.format(ERROR_MESSAGE, result.getName(), result.getCauses()));
+            }
+        }
+        throw new TdlFailureException(errorMessage.toString());
+    }
 
     /**
      * Waits until all Sequences have ended. All EventProcessors are automatically
@@ -208,16 +190,16 @@ public class StartedEventProcessor<E extends Event> {
      * @throws TimeoutException when at least one EventProcessor (Sequence) fails, or
      *         a timeout occurs.
      */
-    //    public CompletedEventProcessor awaitCompletion() {
-    //        try {
-    //            // blocking call.
-    //            return tdlProcessorResults.get();
-    //        } catch (InterruptedException | ExecutionException e) {
-    //            throw new IllegalStateException(e);
-    //        } finally {
-    //            shutdown();
-    //        }
-    //    }
+    public CompletedEventProcessor awaitCompletion() {
+        try {
+            // blocking call.
+            return tdlProcessorResults.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            shutdown();
+        }
+    }
 
     /**
      * Shutdowns all EventProcessors.
@@ -233,8 +215,8 @@ public class StartedEventProcessor<E extends Event> {
      * @return true if EventProcessor is completed, otherwise false.
      */
 
-    //    public boolean isCompleted() {
-    //        return tdlProcessorResults.isDone();
-    //    }
+    public boolean isCompleted() {
+        return tdlProcessorResults.isDone();
+    }
 
 }

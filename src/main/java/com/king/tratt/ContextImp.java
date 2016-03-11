@@ -3,7 +3,9 @@ package com.king.tratt;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class Context {
+import com.king.tratt.metadata.spi.Context;
+
+public final class ContextImp implements Context{
 
     private final Map<String, Object> map = new HashMap<>();
 

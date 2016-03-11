@@ -33,6 +33,10 @@ class VariableParser {
                 .collect(toMap(k -> k.name, v -> v.value));
     }
 
+    static NameValue parse(String nameValue) {
+        return parse("", nameValue);
+    }
+
     static NameValue parse(String keyPrefix, String nameValue) {
         if (nameValue == null) {
             String message = "Name/Value cannot be null: '%s'";

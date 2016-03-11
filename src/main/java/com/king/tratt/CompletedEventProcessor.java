@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.king.tracking.tdl.Sequence;
-
-
 public final class CompletedEventProcessor {
 
     private final Map<String, SequenceResult> sequenceResults = new HashMap<>();

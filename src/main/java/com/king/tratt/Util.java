@@ -27,6 +27,13 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.king.tratt.metadata.spi.Context;
+import com.king.tratt.metadata.spi.DebugStringAware;
+import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.metadata.spi.Stoppable;
+import com.king.tratt.metadata.spi.SufficientContextAware;
+import com.king.tratt.metadata.spi.Value;
+
 public class Util {
     private static final Logger LOG = LoggerFactory.getLogger(Util.class);
     private static final Pattern IS_BOOLEAN = Pattern.compile("true|false", CASE_INSENSITIVE);
@@ -181,7 +188,7 @@ public class Util {
         case "~s":
             return o.toString();
         case "~p":
-            return Values.plain(((Value<E>) o).get(e, context)).toDebugString(e, context);
+            return Tratt.values.plain(((Value<E>) o).get(e, context)).toDebugString(e, context);
         default:
             String message = "Unsupported conversion: '%s'";
             throw new IllegalStateException(String.format(message, action));

@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.metadata.spi.EventMetaData;
+import com.king.tratt.metadata.spi.Value;
 import com.king.tratt.tdl.CheckPoint;
 
 public final class CheckPointMatcher<E extends Event> {
@@ -14,13 +17,13 @@ public final class CheckPointMatcher<E extends Event> {
     private final Environment<E> env;
     private final EventMetaData eventMetaData;
     private final CheckPoint checkPoint;
-    private final Context context;
+    private final ContextImp context;
     private final List<Matcher<E>> matchers;
     private final List<Matcher<E>> validators;
     private Map<String, Value<E>> valuesToStore;
 
     CheckPointMatcher(int seqIndex, int cpIndex, CheckPoint checkPoint, Environment<E> env,
-            MatcherParser<E> matcherParser, StartedEventProcessor<E> started, Context context,
+            MatcherParser<E> matcherParser, StartedEventProcessor<E> started, ContextImp context,
             Map<String, Value<E>> valuesToStore) {
         this.checkPoint = checkPoint;
         this.env = env;

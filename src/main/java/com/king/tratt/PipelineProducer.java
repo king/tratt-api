@@ -7,6 +7,8 @@ import java.util.concurrent.BlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.king.tratt.metadata.spi.Event;
+
 class PipelineProducer<E extends Event> implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PipelineProducer.class);

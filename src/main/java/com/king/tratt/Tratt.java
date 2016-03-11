@@ -1,5 +1,7 @@
 package com.king.tratt;
 
+import com.king.tratt.metadata.spi.Event;
+
 /**
  * Tratt API entry point.
  */

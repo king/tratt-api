@@ -1,12 +1,17 @@
 package com.king.tratt;
 
 import static com.king.tratt.Tratt.util;
+import static com.king.tratt.Tratt.values;
 
 import java.util.List;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.king.tratt.metadata.spi.Context;
+import com.king.tratt.metadata.spi.DynamicValue;
+import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.metadata.spi.Value;
 
 class FunctionFactoryJsonField<E extends Event> implements FunctionFactory<E> {
     Value<E> pathValue;
@@ -48,7 +53,7 @@ class FunctionFactoryJsonField<E extends Event> implements FunctionFactory<E> {
                 } catch (Throwable t) {
                     result = "[@ERROR malformed json string]";
                 }
-                return Values.plain(result);
+                return values.plain(result);
             }
 
             private String getJsonFieldValue(String path, String json) {

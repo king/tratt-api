@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.joda.time.Duration;
-
 import com.king.tratt.tdl.Sequence.Type;
 import com.king.tratt.tdl.TdlInternal.SequenceInternal;
 

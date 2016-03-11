@@ -1,26 +1,28 @@
 package com.king.tratt;
 
+import com.king.tratt.metadata.spi.Event;
+
 public interface SequenceProcessorListener<E extends Event> {
 
-    default void onStart(OnStart<E> onStart) {
+    default void onSequenceStart(OnStart<E> onStart) {
     };
 
-    default void onEnd(OnEnd<E> onEnd) {
+    default void onSequenceEnd(OnEnd<E> onEnd) {
     };
 
-    default void onSuccess(OnSuccess<E> onSuccess) {
+    default void onCheckPointSuccess(OnSuccess<E> onSuccess) {
     };
 
-    default void onFailure(OnFailure<E> onFailure) {
+    default void onCheckPointFailure(OnFailure<E> onFailure) {
     };
 
-    default void onCheckPointTimeout(OnCheckPointTimeout<E> onTimeOut) {
+    default void onCheckPointTimeout(OnCheckPointTimeout<E> onTimeout) {
     };
 
-    default void onSequenceTimeout(OnSequenceTimeout<E> onTimeOut) {
+    default void onSequenceTimeout(OnSequenceTimeout<E> onTimeout) {
     };
 
-    default void onMatch(OnMatch<E> onMatch) {
+    default void onCheckPointMatch(OnMatch<E> onMatch) {
     };
 
     static class Base<E extends Event> {

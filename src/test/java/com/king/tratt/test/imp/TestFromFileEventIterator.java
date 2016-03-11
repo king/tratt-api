@@ -29,7 +29,8 @@ public class TestFromFileEventIterator implements EventIterator<TestEvent> {
     public TestEvent next() {
         String eventString = iterator.next();
         String[] parameters = eventString.split("\\s+");
-        TestEvent e = new TestEvent(parameters[0], parameters[1], Arrays.copyOfRange(parameters, 3, parameters.length));
+        System.out.println(Arrays.toString(parameters));
+        TestEvent e = new TestEvent(parameters[0], parameters[1], Arrays.copyOfRange(parameters, 2, parameters.length));
         return e;
     }
 

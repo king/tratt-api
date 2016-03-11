@@ -20,11 +20,14 @@ import java.util.stream.IntStream;
 
 import com.king.tratt.ProgressSequenceProcessorListener.SequenceStatus;
 import com.king.tratt.SequenceResult.Cause;
+import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.metadata.spi.Value;
 import com.king.tratt.tdl.CheckPoint;
 import com.king.tratt.tdl.Sequence;
 import com.king.tratt.tdl.Tdl;
 
 class TdlProcessor<E extends Event> {
+    private static final String VARIABLE_PREFIX = "$";
 
     private final CachedProcessor<E> cachedEvents;
     private final StartedEventProcessor<E> started;
@@ -38,33 +41,15 @@ class TdlProcessor<E extends Event> {
 
     public List<SequenceResult> processTdl(Tdl tdl) {
         MatcherParser<E> matcherParser = new MatcherParser<>(started.valueFactory);
-
-        // Storage<StreamKey, StateContext> storage = new StateContextStorage();
-        // EventMetaDataProvider<FieldMetaData, EventMetaData<FieldMetaData>>
-        // metadataProvider = new FromClassEventMetaDataProvider();
-        // NodeParser nodeParser = new TdlNodeParser();
-        // ValueProvider<Event> valueProvider = new
-        // KafkaEventValueProvider(metadataProvider);
-        // FunctionProvider<Event> functionProvider = new
-        // FunctionProviderImpl<>();
-        // @SuppressWarnings("unchecked")
-        // MatcherParser<Event> matcherParser = new
-        // MatcherParserImpl<>(nodeParser, valueProvider, functionProvider);
-        // ContextImp context = new ContextImp();
-        // ContextProvider contextProvider = new ContextProviderImpl();
-        // TimeParser<Event> timeParser = new EventTimeParser();
-
-        Map<String, String> tdlVariables = VariableParser.parse(tdl.getVariables());
-        tdl.getSequenceInvariants(); // TODO parse? / Remove at the moment?
-
+        Map<String, String> tdlVariables = VariableParser.parse(VARIABLE_PREFIX, tdl.getVariables());
         CopyOnWriteArrayList<SequenceProcessor<E>> processors;
         processors = IntStream.range(0, tdl.getSequences().size()).mapToObj(seqIndex -> {
             Sequence sequence = tdl.getSequences().get(seqIndex);
-            Context context = new Context();
+            ContextImp context = new ContextImp();
             List<CheckPoint> checkPoints = sequence.getCheckPoints();
             Environment<E> env = new Environment<E>(tdlVariables);
-            LocalVariablesToValueMapper<E> mapper = new LocalVariablesToValueMapper<>(started);
-            env.localVariables.putAll(
+            SetterToValueMapper<E> mapper = new SetterToValueMapper<>(started.valueFactory);
+            env.sequenceVariables.putAll(
                     checkPoints.stream().flatMap(mapper::getValues)
                     .collect(toMap(Entry::getKey, Entry::getValue)));
             List<CheckPointMatcher<E>> cpMatchers = IntStream.range(0, checkPoints.size())
@@ -78,13 +63,9 @@ class TdlProcessor<E extends Event> {
                     .collect(toList());
             SequenceProcessor<E> processor = new ContainerSequenceProcessor<E>();
             // TODO add factory for different SequenceProcessors
-            // if (sequence.getType().equals(Sequence.Type.CONTAINER)) {
-            // processor = new ContainerProcessor<E>();
-            // }
             processor.setCheckPointMatchers(cpMatchers);
             processor.setListeners(started.sequenceListeners);
             processor.setSequence(sequence);
-            processor.setEnv(env);
             processor.setContext(context);
             return processor;
         }).collect(Collectors.collectingAndThen(toList(), CopyOnWriteArrayList<SequenceProcessor<E>>::new));

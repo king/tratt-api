@@ -3,6 +3,8 @@ package com.king.tratt;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 
+import com.king.tratt.metadata.spi.Event;
+
 @FunctionalInterface
 interface PipelineProducerStrategy<E extends Event> {
 

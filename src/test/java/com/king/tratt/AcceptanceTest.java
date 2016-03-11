@@ -1,9 +1,6 @@
 package com.king.tratt;
 
-import static java.lang.System.out;
 import static java.util.concurrent.TimeUnit.SECONDS;
-
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
@@ -42,11 +39,13 @@ public class AcceptanceTest {
                 .addVariable("varA", 222)
                 .addVariable("varB", 111111)
                 .addTdls(Tdl.fromPath("classpath:com/king/tratt/acceptance.tdl"))
-                .addSimpleProcessor(e -> out.println("A " + e)).addSimpleProcessor(e -> out.println("B " + e))
+                // .addSimpleProcessor(e -> out.println("A " + e))
+                // .addSimpleProcessor(e -> out.println("B " + e))
                 .start();
         System.out.println(Thread.getAllStackTraces().keySet());
 
-        TimeUnit.SECONDS.sleep(5);
+        started.awaitSuccess();
+
         started.shutdown();
         System.out.println(Thread.getAllStackTraces().keySet());
 

@@ -3,9 +3,12 @@ package com.king.tratt;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.metadata.spi.Value;
+
 class Environment<E extends Event> {
 
-    final Map<String, Value<E>> localVariables = new HashMap<>();
+    final Map<String, Value<E>> sequenceVariables = new HashMap<>();
     final Map<String, String> tdlVariables;
 
     public Environment(Map<String, String> tdlVariables) {
@@ -14,7 +17,7 @@ class Environment<E extends Event> {
 
     @Override
     public String toString() {
-        return "Environment [localVariables=" + localVariables + ", tdlVariables=" + tdlVariables + "]";
+        return "Environment [sequenceVariables=" + sequenceVariables + ", tdlVariables=" + tdlVariables + "]";
     }
 
 }

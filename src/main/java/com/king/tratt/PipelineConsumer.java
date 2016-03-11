@@ -6,6 +6,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.king.tratt.metadata.spi.Event;
+
 final class PipelineConsumer<E extends Event> implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PipelineConsumer.class);

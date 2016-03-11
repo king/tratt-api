@@ -1,15 +1,15 @@
-package com.king.tratt;
+package com.king.tratt.metadata.spi;
 
 import java.util.List;
 
-public abstract class LongValue<E extends Event> extends Value<E> {
+public abstract class StringValue<E extends Event> extends Value<E> {
 
     @SafeVarargs
-    public LongValue(SufficientContextAware<E>... values) {
+    public StringValue(SufficientContextAware<E>... values) {
         super(values);
     }
 
-    public LongValue(List<? extends SufficientContextAware<E>> awares) {
+    public StringValue(List<? extends SufficientContextAware<E>> awares) {
         super(awares);
     }
 
@@ -22,6 +22,5 @@ public abstract class LongValue<E extends Event> extends Value<E> {
     }
 
     @Override
-    protected abstract Long _get(E e, Context context);
-
+    protected abstract String _get(E e, Context context);
 }

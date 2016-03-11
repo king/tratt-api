@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.king.tratt.metadata.spi.Value;
 import com.king.tratt.test.imp.TestEvent;
 
 @RunWith(MockitoJUnitRunner.class)

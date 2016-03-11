@@ -1,4 +1,4 @@
-package com.king.tratt;
+package com.king.tratt.metadata.spi;
 
 public interface DebugStringAware<E extends Event> {
 

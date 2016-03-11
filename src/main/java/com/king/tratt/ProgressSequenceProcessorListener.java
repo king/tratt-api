@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.king.tratt.metadata.spi.Event;
 import com.king.tratt.tdl.Sequence;
 
 class ProgressSequenceProcessorListener<E extends Event> implements CompletionStrategy<E> {
@@ -21,27 +22,33 @@ class ProgressSequenceProcessorListener<E extends Event> implements CompletionSt
 
     @Override
     public boolean isCompleted() {
+        System.out.println("**********iscompleted: " + open);
         return open.get() <= 0;
     }
 
     @Override
-    public void onStart(OnStart<E> onStart) {
+    public void onSequenceStart(OnStart<E> onStart) {
         status(onStart).started = true;
     }
 
     @Override
-    public void onEnd(OnEnd<E> onEnd) {
+    public void onSequenceEnd(OnEnd<E> onEnd) {
         status(onEnd).done = true;
         open.getAndDecrement();
     }
 
     @Override
-    public void onFailure(OnFailure<E> onFailure) {
+    public void onCheckPointFailure(OnFailure<E> onFailure) {
         status(onFailure).invalid = true;
     }
 
     @Override
-    public void onTimeout(OnTimeout<E> onTimeout) {
+    public void onCheckPointTimeout(OnCheckPointTimeout<E> onTimeout) {
+        status(onTimeout).timeout = true;
+    }
+
+    @Override
+    public void onSequenceTimeout(OnSequenceTimeout<E> onTimeout) {
         status(onTimeout).timeout = true;
     }
 

@@ -14,13 +14,18 @@ import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.metadata.spi.EventMetaData;
+import com.king.tratt.metadata.spi.Value;
+import com.king.tratt.metadata.spi.ValueFactory;
+
 class MatcherParser<E extends Event> {
 
     private final TdlNodeParser tdlNodeParser;
     private final ValueFactory<E> valueFactory;
     private final FunctionFactoryProvider<E> functionProvider;
 
-    public MatcherParser(ValueFactory<E> valueFactory) {
+    MatcherParser(ValueFactory<E> valueFactory) {
         this.tdlNodeParser = new TdlNodeParser();
         this.valueFactory = valueFactory;
         this.functionProvider = new FunctionFactoryProvider<>();
@@ -29,13 +34,13 @@ class MatcherParser<E extends Event> {
 
     //    @Override
     @Deprecated
-    public Matcher<E> createEventTypeMatcher(EventMetaData eventMetaData) {
+    Matcher<E> createEventTypeMatcher(EventMetaData eventMetaData) {
         if (eventMetaData == null) {
             return null;
         }
 
         //        final Value<E> left = new Constant(eventMetaData.getId()); <--- USE THIS! TODO
-        final Value<E> left = Values.constantLong(eventMetaData.getId());
+        final Value<E> left = values.constantLong(eventMetaData.getId());
         // TODO Is this really needed?
         // valueFactory.getEventIdValue() ??
         // final Value<E> right = valueFactory.getValue(eventMetaData.getName(),
@@ -43,7 +48,7 @@ class MatcherParser<E extends Event> {
         return Matcher.equal(left, values.eventId());
     }
 
-    public Matcher<E> parseMatcher(EventMetaData eventMetaData, String expression, Environment<E> env) {
+    Matcher<E> parseMatcher(EventMetaData eventMetaData, String expression, Environment<E> env) {
         if (expression == null || eventMetaData == null) {
             return null;
         }
@@ -135,16 +140,16 @@ class MatcherParser<E extends Event> {
             case "'":
                 final String nodeValue = node.getNode(0).getExpression();
                 //                return new Constant<E>(nodeValue);
-                return Values.constantString(nodeValue);
+                return values.constantString(nodeValue);
             case "%":
                 final Value<E> value = getValue(eventMetaData, node.getNode(0), env);
                 final Value<E> modulus = getValue(eventMetaData, node.getNode(1), env);
                 //                return new Modulus<E>(value, modulus);
-                return Values.modulus(value, modulus);
+                return values.modulus(value, modulus);
             case "+": {
                 final Value<E> left = getValue(eventMetaData, node.getNode(0), env);
                 final Value<E> right = getValue(eventMetaData, node.getNode(1), env);
-                return Values.sum(left, right); //new Plus<E>(left, right);
+                return values.sum(left, right); // new Plus<E>(left, right);
             }
             case "-": {
                 Value<E> left;
@@ -154,20 +159,23 @@ class MatcherParser<E extends Event> {
                     left = getValue(eventMetaData, node.getNode(0), env);
                     right = getValue(eventMetaData, node.getNode(1), env);
                 } else {
-                    left = Values.constantLong(0);
+                    left = values.constantLong(0);
                     right = getValue(eventMetaData, node.getNode(0), env);
                 }
-                return Values.subtract(left, right); //new Minus<E>(left, right);
+                return values.subtract(left, right); // new Minus<E>(left,
+                                                     // right);
             }
             case "*":{
                 Value<E> left = getValue(eventMetaData, node.getNode(0), env);
                 Value<E> right = getValue(eventMetaData, node.getNode(1), env);
-                return Values.multiply(left, right); //new Times<E>(left, right);
+                return values.multiply(left, right); // new Times<E>(left,
+                                                     // right);
             }
             case "/":{
                 Value<E> left = getValue(eventMetaData, node.getNode(0), env);
                 Value<E> right = getValue(eventMetaData, node.getNode(1), env);
-                return Values.divide(left, right); //new Divided<E>(left, right);
+                return values.divide(left, right); // new Divided<E>(left,
+                                                   // right);
             }
             case "(":{
                 return getValue(eventMetaData, node.getNode(0), env);
@@ -189,14 +197,14 @@ class MatcherParser<E extends Event> {
         final Value<E> value = valueFactory.getValue(eventName, nodeValue);
         if (value != null) {
             return value;
-        } else if (env.localVariables.containsKey(nodeValue)) {
-            return Values.contextValue(nodeValue);
+        } else if (env.sequenceVariables.containsKey(nodeValue)) {
+            return values.context(nodeValue);
         } else if (env.tdlVariables.containsKey(nodeValue)) {
-            return Values.constant(env.tdlVariables.get(nodeValue));
+            return values.constant(env.tdlVariables.get(nodeValue));
         } else if (util.isLong(nodeValue)) {
-            return Values.constantLong(parseLong(nodeValue));
+            return values.constantLong(parseLong(nodeValue));
         } else if (util.isBoolean(nodeValue)) {
-            return Values.constantBoolean(parseBoolean(nodeValue));
+            return values.constantBoolean(parseBoolean(nodeValue));
         }
         String message = "Faulty value is '%s', where possible problems could be: "
                 + "No field with that name defined in  '%s' event, or "

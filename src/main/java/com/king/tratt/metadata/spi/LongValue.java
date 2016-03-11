@@ -1,15 +1,15 @@
-package com.king.tratt;
+package com.king.tratt.metadata.spi;
 
 import java.util.List;
 
-public abstract class BooleanValue<E extends Event> extends Value<E> {
+public abstract class LongValue<E extends Event> extends Value<E> {
 
     @SafeVarargs
-    public BooleanValue(SufficientContextAware<E>... values) {
+    public LongValue(SufficientContextAware<E>... values) {
         super(values);
     }
 
-    public BooleanValue(List<? extends SufficientContextAware<E>> awares) {
+    public LongValue(List<? extends SufficientContextAware<E>> awares) {
         super(awares);
     }
 
@@ -22,6 +22,6 @@ public abstract class BooleanValue<E extends Event> extends Value<E> {
     }
 
     @Override
-    protected abstract Boolean _get(E e, Context context);
+    protected abstract Long _get(E e, Context context);
 
 }
