@@ -63,7 +63,7 @@ public interface SequenceProcessorListener<E extends Event> {
         }
 
         public String getFailureString() {
-            cpMatcher.getDebugString(event);
+            return cpMatcher.getDebugString(event);
         }
     }
 

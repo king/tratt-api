@@ -2,6 +2,7 @@ package com.king.tratt.tdl;
 
 import static com.king.tratt.tdl.Util.nullArgumentError;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -96,7 +97,7 @@ public final class SequenceBuilder {
         if (timeUnit == null) {
             throw nullArgumentError("timeUnit");
         }
-        sequenceMaxTime = Duration.millis(timeUnit.toMillis(duration)).toString();
+        sequenceMaxTime = Duration.ofMillis(timeUnit.toMillis(duration)).toString();
         return this;
     }
 

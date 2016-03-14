@@ -63,6 +63,7 @@ public class StartedEventProcessor<E extends Event> {
         completionStrategy = builder.completionStrategy;
         progressListener = new ProgressSequenceProcessorListener<E>(tdl.getSequences());
         sequenceListeners.add(progressListener);
+        sequenceListeners.add(new ProcessorLogger<E>());
         //        statsDataHolder = StatisticsDataHolder.copyOf(builder.statisticsDataHolder);
         //        requestId = builder.requestId == null ? valueOf(nanoTime()) : builder.requestId;
 

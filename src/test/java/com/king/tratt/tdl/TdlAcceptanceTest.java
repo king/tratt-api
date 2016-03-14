@@ -261,7 +261,7 @@ public class TdlAcceptanceTest {
         assertThat(sequence0.getName()).isEqualTo("my-sequence");
         assertThat(sequence0.getMatch()).isEqualTo("");
         assertThat(sequence0.getType()).isEqualTo(Sequence.Type.CONTAINER);
-        assertThat(sequence0.getSequenceMaxTime()).isEqualToIgnoringCase("pt900s");
+        assertThat(sequence0.getSequenceMaxTime()).isEqualToIgnoringCase("pt15M");
         assertThat(sequence0.getCheckPoints()).hasSize(1);
 
         CheckPoint checkPoint0 = sequence0.getCheckPoints().get(0);

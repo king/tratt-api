@@ -49,12 +49,12 @@ final class CheckPointMatcher<E extends Event> {
     }
 
     private List<Matcher<E>> createValidators() {
-        final String match = checkPoint.getValidate();
-        if (match == null || match.isEmpty()) {
+        final String validate = checkPoint.getValidate();
+        if (validate == null || validate.isEmpty()) {
             return Collections.emptyList();
         }
         List<Matcher<E>> validators = new ArrayList<>();
-        Matcher<E> validator = matcherParser.parseMatcher(eventMetaData, match, env);
+        Matcher<E> validator = matcherParser.parseMatcher(eventMetaData, validate, env);
         if (validator != null) {
             validators.add(validator);
         }
@@ -117,8 +117,20 @@ final class CheckPointMatcher<E extends Event> {
         return checkPoint.toString();
     }
 
-    void getDebugString(E event) {
-        validators.
+    public String getDebugString(E event) {
+        if (validators.isEmpty()) {
+            return "";
+        }
+        String INDENT = "      ";
+        Matcher<E> matcher = validators.get(0);
+        String message = matcher.toDebugString(event, context);
+        //
+        // remove "source:", white spaces and brackets, then split on "&&"
+        message = message
+                .replaceAll("source:", "")
+                .replaceAll("\\s*\\(\\s*", "")
+                .replaceAll("\\s*\\)\\s*", "")
+                .replaceAll("\\s*&&\\s*", " &&\n" + INDENT);
+        return INDENT + message;
     }
-
 }

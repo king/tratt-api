@@ -38,7 +38,7 @@ public class SequenceBuilderTest {
         // then
         assertThat(merged.getType()).isEqualTo(FUNNEL);
         assertThat(merged.getMatch()).isEqualTo("fieldB==B");
-        assertThat(merged.getSequenceMaxTime()).isEqualTo("PT60S");
+        assertThat(merged.getSequenceMaxTime()).isEqualTo("PT1M");
         assertThat(merged.getName()).isEqualTo("nameB");
         assertThat(merged.getCheckPoints()).hasSize(2);
     }
@@ -66,7 +66,7 @@ public class SequenceBuilderTest {
         // then
         assertThat(merged.getType()).isEqualTo(FUNNEL);
         assertThat(merged.getMatch()).isEqualTo("fieldB==B");
-        assertThat(merged.getSequenceMaxTime()).isEqualTo("PT60S");
+        assertThat(merged.getSequenceMaxTime()).isEqualTo("PT1M");
         assertThat(merged.getName()).isEqualTo("nameB");
         assertThat(merged.getCheckPoints()).hasSize(2);
     }
@@ -92,7 +92,7 @@ public class SequenceBuilderTest {
         // then
         assertThat(merged.getType()).isEqualTo(FUNNEL);
         assertThat(merged.getMatch()).isEqualTo("fieldB==B");
-        assertThat(merged.getSequenceMaxTime()).isEqualTo("PT60S");
+        assertThat(merged.getSequenceMaxTime()).isEqualTo("PT1M");
         assertThat(merged.getName()).isEqualTo("nameB");
         assertThat(merged.getCheckPoints()).hasSize(2);
     }
@@ -113,7 +113,7 @@ public class SequenceBuilderTest {
         // then
         assertThat(copy.getType()).isEqualTo(CONTAINER);
         assertThat(copy.getMatch()).isEqualTo("fieldA==A");
-        assertThat(copy.getSequenceMaxTime()).isEqualTo("PT120S");
+        assertThat(copy.getSequenceMaxTime()).isEqualTo("PT2M");
         assertThat(copy.getName()).isEqualTo("name");
         assertThat(copy.getCheckPoints()).hasSize(1);
     }
@@ -140,7 +140,7 @@ public class SequenceBuilderTest {
         // then
         assertThat(copy.getType()).isEqualTo(CONTAINER);
         assertThat(copy.getMatch()).isEqualTo("fieldB==B");
-        assertThat(copy.getSequenceMaxTime()).isEqualTo("PT180S");
+        assertThat(copy.getSequenceMaxTime()).isEqualTo("PT3M");
         assertThat(copy.getName()).isEqualTo("new-name");
 
         assertThat(copy.getCheckPoints()).hasSize(2);
