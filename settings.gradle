@@ -16,4 +16,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'tratt-core-api'
+rootProject.name = 'tratt-api'
