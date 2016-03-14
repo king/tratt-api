@@ -10,21 +10,23 @@ import com.king.tratt.metadata.spi.EventMetaData;
 import com.king.tratt.metadata.spi.Value;
 import com.king.tratt.tdl.CheckPoint;
 
-public final class CheckPointMatcher<E extends Event> {
-
-    // private final EventMetaDataFactory<?> metadataFactory;
+final class CheckPointMatcher<E extends Event> {
     private final MatcherParser<E> matcherParser;
     private final Environment<E> env;
     private final EventMetaData eventMetaData;
-    private final CheckPoint checkPoint;
     private final ContextImp context;
     private final List<Matcher<E>> matchers;
     private final List<Matcher<E>> validators;
-    private Map<String, Value<E>> valuesToStore;
+    private final Map<String, Value<E>> valuesToStore;
+    final CheckPoint checkPoint;
+    final int seqIndex;
+    final int cpIndex;
 
     CheckPointMatcher(int seqIndex, int cpIndex, CheckPoint checkPoint, Environment<E> env,
             MatcherParser<E> matcherParser, StartedEventProcessor<E> started, ContextImp context,
             Map<String, Value<E>> valuesToStore) {
+        this.seqIndex = seqIndex;
+        this.cpIndex = cpIndex;
         this.checkPoint = checkPoint;
         this.env = env;
         this.matcherParser = matcherParser;
@@ -109,4 +111,14 @@ public final class CheckPointMatcher<E extends Event> {
             context.set(key, value);
         }
     }
+
+    @Override
+    public String toString() {
+        return checkPoint.toString();
+    }
+
+    void getDebugString(E event) {
+        validators.
+    }
+
 }

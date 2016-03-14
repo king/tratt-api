@@ -6,11 +6,20 @@ public abstract class BooleanValue<E extends Event> extends Value<E> {
 
     @SafeVarargs
     public BooleanValue(SufficientContextAware<E>... values) {
-        super(values);
+        super("", values);
+    }
+
+    @SafeVarargs
+    public BooleanValue(String name, SufficientContextAware<E>... values) {
+        super(name, values);
     }
 
     public BooleanValue(List<? extends SufficientContextAware<E>> awares) {
-        super(awares);
+        super("", awares);
+    }
+
+    public BooleanValue(String name, List<? extends SufficientContextAware<E>> awares) {
+        super(name, awares);
     }
 
     /*

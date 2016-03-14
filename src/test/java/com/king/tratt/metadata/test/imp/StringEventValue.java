@@ -1,4 +1,4 @@
-package com.king.tratt.test.imp;
+package com.king.tratt.metadata.test.imp;
 
 import com.king.tratt.metadata.spi.Context;
 import com.king.tratt.metadata.spi.StringValue;
@@ -21,6 +21,11 @@ public class StringEventValue extends StringValue<TestEvent> {
     @Override
     protected String _get(TestEvent e, Context context) {
         return e.getField(index);
+    }
+
+    @Override
+    public String toString() {
+        return "stringEvent[" + index + "]";
     }
 
 }

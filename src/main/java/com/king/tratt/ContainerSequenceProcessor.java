@@ -50,13 +50,13 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
 
     private final EventState<E> VALID_STATE = memory -> {
         removeCheckPoint(memory);
-        notifyCheckPointSuccess(memory.event);
+        notifyCheckPointSuccess(memory.event, memory.cpMatcher);
         return BREAK_STATE_MACHINE_LOOP;
     };
 
     private final EventState<E> INVALID_STATE = memory -> {
         removeCheckPoint(memory);
-        notifyCheckPointFailure(memory.event);
+        notifyCheckPointFailure(memory.event, memory.cpMatcher);
         return BREAK_STATE_MACHINE_LOOP;
     };
 
@@ -87,8 +87,7 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
             endTimeMillis = memory.event.getTimestampMillis() + maxTimeMillis;
             notifySequenceStart();
         }
-        // memory.cpMatcher.updateContext(memory.event); TODO enable this line!
-        notifyCheckPointMatch();
+        notifyCheckPointMatch(memory.event, memory.cpMatcher);
         return VALID_CHECKER_STATE;
     };
     private boolean isFirstMatchInSequence() {
@@ -127,6 +126,8 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
         endTimeMillis = null;
         eventsToMatchContainer.clear();
         eventsToValidateContainer.clear();
+        // TODO clear context! Maybe expose Context?
+
     }
 
     private static class Memory<E extends Event> {
@@ -141,7 +142,7 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
 
         @Override
         public String toString() {
-            return "event-id :: " + eventId;
+            return event.toString();
         }
     }
 

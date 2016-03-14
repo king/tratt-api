@@ -1,4 +1,4 @@
-package com.king.tratt.test.imp;
+package com.king.tratt.metadata.test.imp;
 
 import static java.lang.String.format;
 

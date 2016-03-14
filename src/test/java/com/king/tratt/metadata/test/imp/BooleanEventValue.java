@@ -1,4 +1,4 @@
-package com.king.tratt.test.imp;
+package com.king.tratt.metadata.test.imp;
 
 import com.king.tratt.metadata.spi.BooleanValue;
 import com.king.tratt.metadata.spi.Context;
@@ -11,13 +11,17 @@ public class BooleanEventValue extends BooleanValue<TestEvent> {
 
     public BooleanEventValue(int index, String name) {
         this.index = index;
-        // TODO Auto-generated constructor stub
         this.name = name;
     }
 
     @Override
     public String toDebugString(TestEvent e, Context context) {
-        return String.format("[[source:event.%s]]%", name, get(e, context));
+        return String.format("[[source:event.%s]]%s", name, get(e, context));
+    }
+
+    @Override
+    public String toString() {
+        return "booleanEvent[" + index + "]";
     }
 
     @Override

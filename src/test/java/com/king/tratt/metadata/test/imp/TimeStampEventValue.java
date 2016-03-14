@@ -1,4 +1,4 @@
-package com.king.tratt.test.imp;
+package com.king.tratt.metadata.test.imp;
 
 import com.king.tratt.metadata.spi.Context;
 import com.king.tratt.metadata.spi.LongValue;
@@ -15,6 +15,11 @@ public class TimeStampEventValue extends LongValue<TestEvent> {
     @Override
     protected Long _get(TestEvent e, Context context) {
         return e.getTimestampMillis();
+    }
+
+    @Override
+    public String toString() {
+        return "timestampEvent";
     }
 
 }

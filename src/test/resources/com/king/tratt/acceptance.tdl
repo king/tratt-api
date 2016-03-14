@@ -10,12 +10,12 @@
             "checkPoints": 
             [{
                     "eventType": "EventA",
-                    "match": "id==$varB && a==123",
+                    "match": "userid==$varB && a==123",
                     "validate": "b=='abc' && c==EB_fieldF",
                     "set": ["EA_localVarA='aaa'", "EA_fieldA=a"]
                 },{
                     "eventType": "EventB",
-                    "match": "id==$varA && a==456",
+                    "match": "userid==$varA && a==456",
                     "validate": "b=='ABC' && c=='EFG' && d==EA_fieldA && e==789 && f==true",
                     "set": ["EB_fieldF=f", "EB_localVarB=5"]
                 }

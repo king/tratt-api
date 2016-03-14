@@ -6,11 +6,20 @@ public abstract class DynamicValue<E extends Event> extends Value<E> {
 
     @SafeVarargs
     public DynamicValue(SufficientContextAware<E>... values) {
-        super(values);
+        super("", values);
+    }
+
+    @SafeVarargs
+    public DynamicValue(String name, SufficientContextAware<E>... values) {
+        super(name, values);
     }
 
     public DynamicValue(List<? extends SufficientContextAware<E>> awares) {
         super(awares);
+    }
+
+    public DynamicValue(String name, List<? extends SufficientContextAware<E>> awares) {
+        super(name, awares);
     }
 
     /*

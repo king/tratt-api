@@ -6,13 +6,13 @@ import java.time.Duration;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.king.tratt.SequenceProcessorListener.OnCheckPointFailure;
+import com.king.tratt.SequenceProcessorListener.OnCheckPointMatch;
+import com.king.tratt.SequenceProcessorListener.OnCheckPointSuccess;
 import com.king.tratt.SequenceProcessorListener.OnCheckPointTimeout;
-import com.king.tratt.SequenceProcessorListener.OnEnd;
-import com.king.tratt.SequenceProcessorListener.OnFailure;
-import com.king.tratt.SequenceProcessorListener.OnMatch;
+import com.king.tratt.SequenceProcessorListener.OnSequenceEnd;
+import com.king.tratt.SequenceProcessorListener.OnSequenceStart;
 import com.king.tratt.SequenceProcessorListener.OnSequenceTimeout;
-import com.king.tratt.SequenceProcessorListener.OnStart;
-import com.king.tratt.SequenceProcessorListener.OnSuccess;
 import com.king.tratt.metadata.spi.Context;
 import com.king.tratt.metadata.spi.Event;
 import com.king.tratt.tdl.Sequence;
@@ -85,31 +85,31 @@ abstract class SequenceProcessor<E extends Event> {
     }
 
     public final void notifySequenceStart() {
-        notify(listener -> listener.onSequenceStart(new OnStart<E>(getName())));
+        notify(listener -> listener.onSequenceStart(new OnSequenceStart<E>(getName())));
     }
 
     public final void notifySequenceEnd() {
-        notify(listener -> listener.onSequenceEnd(new OnEnd<E>(getName())));
-    }
-
-    public final void notifyCheckPointMatch() {
-        notify(listener -> listener.onCheckPointMatch(new OnMatch<E>(getName())));
-    }
-
-    public final void notifyCheckPointFailure(E event) {
-        notify(listener -> listener.onCheckPointFailure(new OnFailure<E>(getName())));
-    }
-
-    public final void notifyCheckPointSuccess(E event) {
-        notify(listener -> listener.onCheckPointSuccess(new OnSuccess<E>(getName())));
-    }
-
-    public final void notifyCheckPointTimeout(CheckPointMatcher<E> cpMatcher) {
-        notify(listener -> listener.onCheckPointTimeout(new OnCheckPointTimeout<E>(getName())));
+        notify(listener -> listener.onSequenceEnd(new OnSequenceEnd<E>(getName())));
     }
 
     public final void notifySequenceTimeout() {
         notify(listener -> listener.onSequenceTimeout(new OnSequenceTimeout<E>(getName())));
+    }
+
+    public final void notifyCheckPointMatch(E event, CheckPointMatcher<E> cpMatcher) {
+        notify(listener -> listener.onCheckPointMatch(new OnCheckPointMatch<E>(getName(), event, cpMatcher)));
+    }
+
+    public final void notifyCheckPointFailure(E event, CheckPointMatcher<E> cpMatcher) {
+        notify(listener -> listener.onCheckPointFailure(new OnCheckPointFailure<E>(getName(), event, cpMatcher)));
+    }
+
+    public final void notifyCheckPointSuccess(E event, CheckPointMatcher<E> cpMatcher) {
+        notify(listener -> listener.onCheckPointSuccess(new OnCheckPointSuccess<E>(getName(), event, cpMatcher)));
+    }
+
+    public final void notifyCheckPointTimeout(CheckPointMatcher<E> cpMatcher) {
+        notify(listener -> listener.onCheckPointTimeout(new OnCheckPointTimeout<E>(getName(), cpMatcher)));
     }
 
     private void notify(Consumer<SequenceProcessorListener<E>> c) {

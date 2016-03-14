@@ -34,7 +34,7 @@ public class Values {
      */
 
     <E extends Event> Value<E> constantString(final String str) {
-        return new StringValue<E>() {
+        return new StringValue<E>("constantString:" + str) {
 
             @Override
             public String toDebugString(E e, Context context) {
@@ -49,7 +49,7 @@ public class Values {
     }
 
     <E extends Event> Value<E> constantLong(long l) {
-        return new LongValue<E>() {
+        return new LongValue<E>("constantLong:" + l) {
 
             @Override
             public String toDebugString(E e, Context context) {
@@ -64,7 +64,7 @@ public class Values {
     }
 
     <E extends Event> Value<E> constantBoolean(boolean b) {
-        return new BooleanValue<E>() {
+        return new BooleanValue<E>("constantBoolean:" + b) {
 
             @Override
             public String toDebugString(E e, Context context) {
@@ -100,7 +100,7 @@ public class Values {
      * Plain values
      */
     <E extends Event> Value<E> plainString(final String str) {
-        return new StringValue<E>() {
+        return new StringValue<E>("plainString:" + str) {
 
             @Override
             public String toDebugString(E e, Context context) {
@@ -115,7 +115,7 @@ public class Values {
     }
 
     <E extends Event> Value<E> plainLong(long l) {
-        return new LongValue<E>() {
+        return new LongValue<E>("plainLong:" + l) {
 
             @Override
             public String toDebugString(E e, Context context) {
@@ -130,7 +130,7 @@ public class Values {
     }
 
     <E extends Event> Value<E> plainBoolean(boolean b) {
-        return new BooleanValue<E>() {
+        return new BooleanValue<E>("plainBoolean:" + b) {
 
             @Override
             public String toDebugString(E e, Context context) {
@@ -155,6 +155,11 @@ public class Values {
             protected Long _get(E e, Context context) {
                 return (long) value.get(e, context) % (long) modulus.get(e, context);
             }
+
+            @Override
+            public String toString() {
+                return value + "%" + modulus;
+            }
         };
     }
 
@@ -169,6 +174,11 @@ public class Values {
             @Override
             protected Long _get(E e, Context context) {
                 return (long) left.get(e, context) + (long) right.get(e, context);
+            }
+            
+            @Override
+            public String toString() {
+                return left + "+" + right;
             }
         };
     }
@@ -185,7 +195,11 @@ public class Values {
             protected Long _get(E e, Context context) {
                 return (long) left.get(e, context) - (long) right.get(e, context);
             }
-
+            
+            @Override
+            public String toString() {
+                return left + "-" + right;
+            }
         };
     }
 
@@ -200,6 +214,11 @@ public class Values {
             @Override
             protected Long _get(E e, Context context) {
                 return (long) left.get(e, context) * (long) right.get(e, context);
+            }
+
+            @Override
+            public String toString() {
+                return left + "*" + right;
             }
         };
     }
@@ -216,11 +235,16 @@ public class Values {
             protected Long _get(E e, Context context) {
                 return (long) left.get(e, context) / (long) right.get(e, context);
             }
+
+            @Override
+            public String toString() {
+                return left + "/" + right;
+            }
         };
     }
 
     <E extends Event> Value<E> context(String name) {
-        return new DynamicValue<E>() {
+        return new DynamicValue<E>("context:" + name) {
 
             @Override
             public String toDebugString(E e, Context context) {
@@ -240,7 +264,7 @@ public class Values {
     }
 
     <E extends Event> Value<E> eventId() {
-        return new LongValue<E>() {
+        return new LongValue<E>("eventId") {
 
             @Override
             public String toDebugString(E e, Context context) {

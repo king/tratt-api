@@ -27,18 +27,18 @@ class ProgressSequenceProcessorListener<E extends Event> implements CompletionSt
     }
 
     @Override
-    public void onSequenceStart(OnStart<E> onStart) {
+    public void onSequenceStart(OnSequenceStart<E> onStart) {
         status(onStart).started = true;
     }
 
     @Override
-    public void onSequenceEnd(OnEnd<E> onEnd) {
+    public void onSequenceEnd(OnSequenceEnd<E> onEnd) {
         status(onEnd).done = true;
         open.getAndDecrement();
     }
 
     @Override
-    public void onCheckPointFailure(OnFailure<E> onFailure) {
+    public void onCheckPointFailure(OnCheckPointFailure<E> onFailure) {
         status(onFailure).invalid = true;
     }
 
@@ -53,7 +53,7 @@ class ProgressSequenceProcessorListener<E extends Event> implements CompletionSt
     }
 
     
-    SequenceStatus status(Base<?> base) {
+    SequenceStatus status(OnBase<?> base) {
         return processorMap.get(base.getSequenceName());
     }
 

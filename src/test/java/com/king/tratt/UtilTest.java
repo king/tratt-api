@@ -1,7 +1,6 @@
 package com.king.tratt;
 
-import static com.king.tratt.Util.format;
-import static com.king.tratt.Util.formatJoin;
+import static com.king.tratt.Tratt.util;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
@@ -13,7 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.king.tratt.metadata.spi.Value;
-import com.king.tratt.test.imp.TestEvent;
+import com.king.tratt.metadata.test.imp.TestEvent;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UtilTest {
@@ -32,13 +31,13 @@ public class UtilTest {
         Mockito.when(v2.toDebugString(e, null)).thenReturn("DDD");
         Mockito.when(v3.get(e, null)).thenReturn("5");
 
-        assertThat(format(e, null, "A ~g ~s ~d ~p END", v1, "C", v2, v3))
+        assertThat(util.format(e, null, "A ~g ~s ~d ~p END", v1, "C", v2, v3))
         .isEqualTo("A B C DDD 5 END");
     }
 
     @Test
     public void canHandleWhenNoConversionCharacterIsPresent() throws Exception {
-        assertThat(format(null, null, "A B C")).isEqualTo("A B C");
+        assertThat(util.format(null, null, "A B C")).isEqualTo("A B C");
     }
 
     @Test
@@ -48,7 +47,7 @@ public class UtilTest {
         Mockito.when(v2.get(e, null)).thenReturn("5");
         Mockito.when(v3.get(e, null)).thenReturn("C");
 
-        assertThat(formatJoin(e, null, ", ", "~p", Arrays.asList(v1, v2, v3)))
+        assertThat(util.formatJoin(e, null, ", ", "~p", Arrays.asList(v1, v2, v3)))
         .isEqualTo("'A', 5, 'C'");
     }
 

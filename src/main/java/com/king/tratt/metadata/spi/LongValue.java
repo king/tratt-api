@@ -6,11 +6,20 @@ public abstract class LongValue<E extends Event> extends Value<E> {
 
     @SafeVarargs
     public LongValue(SufficientContextAware<E>... values) {
-        super(values);
+        super("", values);
+    }
+
+    @SafeVarargs
+    public LongValue(String name, SufficientContextAware<E>... values) {
+        super(name, values);
     }
 
     public LongValue(List<? extends SufficientContextAware<E>> awares) {
-        super(awares);
+        super("", awares);
+    }
+
+    public LongValue(String name, List<? extends SufficientContextAware<E>> awares) {
+        super(name, awares);
     }
 
     /*

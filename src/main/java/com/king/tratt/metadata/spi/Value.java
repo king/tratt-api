@@ -9,16 +9,32 @@ import org.slf4j.LoggerFactory;
 public abstract class Value<E extends Event> implements DebugStringAware<E>, SufficientContextAware<E> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Value.class);
-    private List<? extends SufficientContextAware<E>> awares;
+    private final List<? extends SufficientContextAware<E>> awares;
+    private String name;
 
     /* For package private usage only. */
     @SafeVarargs
     Value(SufficientContextAware<E>... values) {
-        this(Arrays.asList(values));
+        this("", Arrays.asList(values));
+    }
+
+    /* For package private usage only. */
+    @SafeVarargs
+    Value(String name, SufficientContextAware<E>... values) {
+        this(name, Arrays.asList(values));
     }
 
     /* For package private usage only. */
     Value(List<? extends SufficientContextAware<E>> awares) {
+        this("", awares);
+    }
+
+    /* For package private usage only. */
+    Value(String name, List<? extends SufficientContextAware<E>> awares) {
+        if (name == null) {
+            throw new NullPointerException("Argument 'name' is null.");
+        }
+        this.name = name;
         this.awares = awares;
     }
 
@@ -51,5 +67,10 @@ public abstract class Value<E extends Event> implements DebugStringAware<E>, Suf
 
     final public String asString(E e, Context context) {
         return String.valueOf(get(e, context));
+    }
+
+    @Override
+    public String toString() {
+        return name.isEmpty() ? super.toString() : name + (awares.isEmpty() ? "" : awares);
     }
 }

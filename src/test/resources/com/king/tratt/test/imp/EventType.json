@@ -4,7 +4,7 @@
         "name": "EventA",
         "parameters": [
             {
-                "name": "id",
+                "name": "userid",
                 "type": "String"
             },
             {
@@ -26,7 +26,7 @@
         "name": "EventB",
         "parameters": [
             {
-                "name": "id",
+                "name": "userid",
                 "type": "String"
             },
             {
@@ -52,6 +52,10 @@
             {
                 "name": "f",
                 "type": "boolean"
+            },
+            {
+                "name": "g",
+                "type": "String"
             }
         ]
     }
