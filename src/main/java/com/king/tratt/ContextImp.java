@@ -1,11 +1,15 @@
 package com.king.tratt;
 
+import static java.util.Collections.unmodifiableSet;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import com.king.tratt.spi.Context;
 
-public final class ContextImp implements Context{
+final class ContextImp implements Context {
 
     private final Map<String, Object> map = new HashMap<>();
 
@@ -17,12 +21,17 @@ public final class ContextImp implements Context{
         return map.get(name);
     }
 
-    void set(String name, Object value) {
+    public void set(String name, Object value) {
         map.put(name, value);
     }
 
     @Override
     public String toString() {
         return map.toString();
+    }
+
+    @Override
+    public Set<Entry<String, Object>> entrySet() {
+        return unmodifiableSet(map.entrySet());
     }
 }

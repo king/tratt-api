@@ -14,7 +14,7 @@ class CachedProcessor<E extends Event> implements SimpleProcessor<E> {
         blockingQueue.add(e);
     }
 
-    public BlockingQueue<E> getQueue() {
+    BlockingQueue<E> getQueue() {
         return blockingQueue;
     }
 

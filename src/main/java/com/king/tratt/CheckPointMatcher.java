@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.EventMetaData;
 import com.king.tratt.spi.Value;
@@ -14,7 +15,6 @@ final class CheckPointMatcher<E extends Event> {
     private final MatcherParser<E> matcherParser;
     private final Environment<E> env;
     private final EventMetaData eventMetaData;
-    private final ContextImp context;
     private final List<Matcher<E>> matchers;
     private final List<Matcher<E>> validators;
     private final Map<String, Value<E>> valuesToStore;
@@ -23,14 +23,12 @@ final class CheckPointMatcher<E extends Event> {
     final int cpIndex;
 
     CheckPointMatcher(int seqIndex, int cpIndex, CheckPoint checkPoint, Environment<E> env,
-            MatcherParser<E> matcherParser, StartedEventProcessor<E> started, ContextImp context,
-            Map<String, Value<E>> valuesToStore) {
+            MatcherParser<E> matcherParser, StartedEventProcessor<E> started, Map<String, Value<E>> valuesToStore) {
         this.seqIndex = seqIndex;
         this.cpIndex = cpIndex;
         this.checkPoint = checkPoint;
         this.env = env;
         this.matcherParser = matcherParser;
-        this.context = context;
         this.valuesToStore = valuesToStore;
         this.eventMetaData = started.metadataFactory.getEventMetaData(checkPoint.getEventType());
         this.matchers = createMatchers();
@@ -65,21 +63,15 @@ final class CheckPointMatcher<E extends Event> {
         return eventMetaData.getId();
     }
 
-    public boolean matches(E event) {
-        return matches(matchers, event);
-        // for (Matcher<E> m : matchers) {
-        // if (!m.matches(event, context)) {
-        // return false;
-        // }
-        // }
-        // return true;
+    public boolean matches(E event, Context context) {
+        return matches(matchers, event, context);
     }
 
-    public boolean isValid(E event) {
-        return matches(validators, event);
+    public boolean isValid(E event, Context context) {
+        return matches(validators, event, context);
     }
 
-    private boolean matches(List<Matcher<E>> matchers, E event) {
+    private boolean matches(List<Matcher<E>> matchers, E event, Context context) {
         for (Matcher<E> m : matchers) {
             if (!m.matches(event, context)) {
                 return false;
@@ -88,15 +80,15 @@ final class CheckPointMatcher<E extends Event> {
         return true;
     }
 
-    public boolean hasSufficientMatchContext() {
-        return hasSufficentContext(matchers);
+    public boolean hasSufficientMatchContext(Context context) {
+        return hasSufficentContext(matchers, context);
     }
 
-    public boolean hasSufficientValidContext() {
-        return hasSufficentContext(validators);
+    public boolean hasSufficientValidContext(Context context) {
+        return hasSufficentContext(validators, context);
     }
 
-    private boolean hasSufficentContext(List<Matcher<E>> matchers) {
+    private boolean hasSufficentContext(List<Matcher<E>> matchers, Context context) {
         for (Matcher<E> m : matchers) {
             if (!m.hasSufficientContext(context)) {
                 return false;
@@ -105,7 +97,7 @@ final class CheckPointMatcher<E extends Event> {
         return true;
     }
 
-    public void updateContext(E event) {
+    public void updateContext(E event, Context context) {
         for (String key : valuesToStore.keySet()) {
             Object value = valuesToStore.get(key).get(event, context);
             context.set(key, value);
@@ -117,7 +109,7 @@ final class CheckPointMatcher<E extends Event> {
         return checkPoint.toString();
     }
 
-    public String getDebugString(E event) {
+    public String getDebugString(E event, Context context) {
         if (validators.isEmpty()) {
             return "";
         }

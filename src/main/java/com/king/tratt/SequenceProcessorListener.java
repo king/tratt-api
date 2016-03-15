@@ -2,6 +2,7 @@ package com.king.tratt;
 
 import com.king.tratt.OnBase.OnCheckPointBase;
 import com.king.tratt.OnBase.OnCheckPointWithEventBase;
+import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 
 public interface SequenceProcessorListener<E extends Event> {
@@ -28,48 +29,48 @@ public interface SequenceProcessorListener<E extends Event> {
     };
 
     public static final class OnSequenceStart<E extends Event> extends OnBase<E> {
-        OnSequenceStart(String seqName) {
-            super(seqName);
+        OnSequenceStart(String seqName, Context context) {
+            super(seqName, context);
         }
     }
 
     public static final class OnSequenceEnd<E extends Event> extends OnBase<E> {
-        OnSequenceEnd(String seqName) {
-            super(seqName);
+        OnSequenceEnd(String seqName, Context context) {
+            super(seqName, context);
         }
     }
 
     public static final class OnSequenceTimeout<E extends Event> extends OnBase<E> {
-        OnSequenceTimeout(String seqName) {
-            super(seqName);
+        OnSequenceTimeout(String seqName, Context context) {
+            super(seqName, context);
         }
     }
 
     public static final class OnCheckPointMatch<E extends Event> extends OnCheckPointWithEventBase<E> {
-        OnCheckPointMatch(String name, E event, CheckPointMatcher<E> cpMatcher) {
-            super(name, event, cpMatcher);
+        OnCheckPointMatch(String name, E event, CheckPointMatcher<E> cpMatcher, Context context) {
+            super(name, event, cpMatcher, context);
         }
     }
 
     public static final class OnCheckPointSuccess<E extends Event> extends OnCheckPointWithEventBase<E> {
-        OnCheckPointSuccess(String name, E event, CheckPointMatcher<E> cpMatcher) {
-            super(name, event, cpMatcher);
+        OnCheckPointSuccess(String name, E event, CheckPointMatcher<E> cpMatcher, Context context) {
+            super(name, event, cpMatcher, context);
         }
     }
 
     public static final class OnCheckPointFailure<E extends Event> extends OnCheckPointWithEventBase<E> {
-        OnCheckPointFailure(String seqName, E event, CheckPointMatcher<E> cpMatcher) {
-            super(seqName, event, cpMatcher);
+        OnCheckPointFailure(String seqName, E event, CheckPointMatcher<E> cpMatcher, Context context) {
+            super(seqName, event, cpMatcher, context);
         }
 
         public String getFailureString() {
-            return cpMatcher.getDebugString(event);
+            return cpMatcher.getDebugString(event, getContext());
         }
     }
 
     public static final class OnCheckPointTimeout<E extends Event> extends OnCheckPointBase<E> {
-        OnCheckPointTimeout(String seqName, CheckPointMatcher<E> cpMatcher) {
-            super(seqName, cpMatcher);
+        OnCheckPointTimeout(String seqName, CheckPointMatcher<E> cpMatcher, Context context) {
+            super(seqName, cpMatcher, context);
         }
     }
 }

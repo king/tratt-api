@@ -1,5 +1,7 @@
 package com.king.tratt;
 
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,9 +56,13 @@ class ProcessorLogger<E extends Event> implements SequenceProcessorListener<E> {
     @Override
     public void onSequenceEnd(OnSequenceEnd<E> on) {
         LOG.info("[END ] Sequence " + on.getSequenceName() + " ended.");
-        // TODO log Context
+        String delimiter = "\n      ";
+        String prefix = "\nContext=" + delimiter;
+        String logMessage = on.getContext().entrySet().stream()
+                .map(e -> e.toString())
+                .collect(Collectors.joining(delimiter, prefix, ""));
+        LOG.info(logMessage.toString());
     }
-
     @Override
     public void onSequenceTimeout(OnSequenceTimeout<E> on) {
         LOG.info("[TIMEOUT] Sequence " + on.getSequenceName() + " timedout.");

@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 
 class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
     private final List<Memory<E>> eventsToMatchContainer = new CopyOnWriteArrayList<>();
     private final List<Memory<E>> eventsToValidateContainer = new CopyOnWriteArrayList<>();
+    private Context context;
     private Map<Long, List<CheckPointMatcher<E>>> checkPointMatchers;
     private SequenceProcessorHelper<E> helper;
     private long maxTimeMillis;
@@ -34,8 +36,8 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
     };
     EventState<E> matchCheckerState(Memory<E> memory, EventState<E> def) {
         for (CheckPointMatcher<E> cpMatcher : checkPointMatchers.get(memory.eventId)) {
-            if (cpMatcher.hasSufficientMatchContext()) {
-                boolean matches = cpMatcher.matches((E) memory.event);
+            if (cpMatcher.hasSufficientMatchContext(context)) {
+                boolean matches = cpMatcher.matches(memory.event, context);
                 if (matches) {
                     memory.cpMatcher = cpMatcher;
                     return MATCHED_STATE;
@@ -50,13 +52,13 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
 
     private final EventState<E> VALID_STATE = memory -> {
         removeCheckPoint(memory);
-        notifyCheckPointSuccess(memory.event, memory.cpMatcher);
+        helper.notifyCheckPointSuccess(memory.event, memory.cpMatcher, context);
         return BREAK_STATE_MACHINE_LOOP;
     };
 
     private final EventState<E> INVALID_STATE = memory -> {
         removeCheckPoint(memory);
-        notifyCheckPointFailure(memory.event, memory.cpMatcher);
+        helper.notifyCheckPointFailure(memory.event, memory.cpMatcher, context);
         return BREAK_STATE_MACHINE_LOOP;
     };
 
@@ -69,8 +71,8 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
 
     private final EventState<E> VALID_CHECKER_STATE = memory -> {
         CheckPointMatcher<E> cpMatcher = memory.cpMatcher;
-        if (cpMatcher.hasSufficientValidContext()) {
-            if (cpMatcher.isValid(memory.event)) {
+        if (cpMatcher.hasSufficientValidContext(context)) {
+            if (cpMatcher.isValid(memory.event, context)) {
                 return VALID_STATE;
             } else {
                 return INVALID_STATE;
@@ -82,12 +84,12 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
     };
 
     private final EventState<E> MATCHED_STATE = memory -> {
-        memory.cpMatcher.updateContext(memory.event);
+        memory.cpMatcher.updateContext(memory.event, context);
         if (isFirstMatchInSequence()) {
             endTimeMillis = memory.event.getTimestampMillis() + maxTimeMillis;
-            notifySequenceStart();
+            helper.notifySequenceStart(context);
         }
-        notifyCheckPointMatch(memory.event, memory.cpMatcher);
+        helper.notifyCheckPointMatch(memory.event, memory.cpMatcher, context);
         return VALID_CHECKER_STATE;
     };
     private boolean isFirstMatchInSequence() {
@@ -102,32 +104,31 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
         System.out.println("*********** beforeStart: ");
     }
 
+    private void resetSequence() {
+        checkPointMatchers = helper.getCheckPointMatchers().stream().collect(groupingBy(CheckPointMatcher::getEventId));
+        context = helper.newContext();
+        endTimeMillis = null;
+        eventsToMatchContainer.clear();
+        eventsToValidateContainer.clear();
+    }
+
     @Override
     public void _onTimeout() {
         for (Long eventId : checkPointMatchers.keySet()) {
             for (CheckPointMatcher<E> cpMatcher : checkPointMatchers.get(eventId)) {
-                notifyCheckPointTimeout(cpMatcher);
+                helper.notifyCheckPointTimeout(cpMatcher, context);
                 // listenerHandler.fire(of((Event) null, TIMEOUT,
                 // cpMatcher.index, EMPTY_LABEL, context));
             }
         }
-        notifySequenceTimeout();
+        helper.notifySequenceTimeout(context);
         // listenerHandler.fire(of((Event) null, TIMEOUT, FAKE_STATE,
         // EMPTY_LABEL, context));
-        notifySequenceEnd();
+        helper.notifySequenceEnd(context);
         // listenerHandler.fire(of((Event) null, END, FAKE_STATE, EMPTY_LABEL,
         // context));
         resetSequence();
         System.out.println("*********** onTimeout: ");
-    }
-
-    private void resetSequence() {
-        checkPointMatchers = helper.getCheckPointMatchers().stream().collect(groupingBy(CheckPointMatcher::getEventId));
-        endTimeMillis = null;
-        eventsToMatchContainer.clear();
-        eventsToValidateContainer.clear();
-        // TODO clear context! Maybe expose Context?
-
     }
 
     private static class Memory<E extends Event> {
@@ -169,7 +170,7 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
             washContainer(eventsToMatchContainer, MATCH_CHECKER_STATE_THAT_BREAKS_LOOP);
             washContainer(eventsToValidateContainer, VALID_CHECKER_STATE);
             if (isReady()) {
-                notifySequenceEnd();
+                helper.notifySequenceEnd(context);
                 resetSequence();
             }
         } catch (ExitException e) {

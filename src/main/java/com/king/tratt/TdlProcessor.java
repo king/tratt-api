@@ -45,7 +45,6 @@ class TdlProcessor<E extends Event> {
         CopyOnWriteArrayList<SequenceProcessor<E>> processors;
         processors = IntStream.range(0, tdl.getSequences().size()).mapToObj(seqIndex -> {
             Sequence sequence = tdl.getSequences().get(seqIndex);
-            ContextImp context = new ContextImp();
             List<CheckPoint> checkPoints = sequence.getCheckPoints();
             Environment<E> env = new Environment<E>(tdlVariables);
             SetterToValueMapper<E> mapper = new SetterToValueMapper<>(started.valueFactory);
@@ -58,7 +57,7 @@ class TdlProcessor<E extends Event> {
                         Map<String, Value<E>> valuesToStore = mapper.getValues(cp)
                                 .collect(toMap(Entry::getKey, Entry::getValue));
                         return new CheckPointMatcher<E>(seqIndex, cpIndex, cp, env, matcherParser,
-                                started, context, valuesToStore);
+                                started, valuesToStore);
                     })
                     .collect(toList());
             SequenceProcessor<E> processor = new ContainerSequenceProcessor<E>();
@@ -66,7 +65,6 @@ class TdlProcessor<E extends Event> {
             processor.setCheckPointMatchers(cpMatchers);
             processor.setListeners(started.sequenceListeners);
             processor.setSequence(sequence);
-            processor.setContext(context);
             return processor;
         }).collect(Collectors.collectingAndThen(toList(), CopyOnWriteArrayList<SequenceProcessor<E>>::new));
         processors.parallelStream().forEach(processor -> processor.beforeStart());
