@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.spi.Event;
 
 class FunctionFactoryProvider<E extends Event> {
 

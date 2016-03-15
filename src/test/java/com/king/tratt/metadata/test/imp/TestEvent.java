@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
-import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.spi.Event;
 
 public class TestEvent implements Event {
 

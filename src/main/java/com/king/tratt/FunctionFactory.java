@@ -3,8 +3,8 @@ package com.king.tratt;
 
 import java.util.List;
 
-import com.king.tratt.metadata.spi.Event;
-import com.king.tratt.metadata.spi.Value;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.Value;
 
 interface FunctionFactory<E extends Event> {
 

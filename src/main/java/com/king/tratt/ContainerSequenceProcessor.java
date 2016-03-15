@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.spi.Event;
 
 class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
     private final List<Memory<E>> eventsToMatchContainer = new CopyOnWriteArrayList<>();

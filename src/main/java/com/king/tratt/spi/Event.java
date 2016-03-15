@@ -1,4 +1,4 @@
-package com.king.tratt.metadata.spi;
+package com.king.tratt.spi;
 
 
 public interface Event {

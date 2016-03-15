@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.king.tratt.metadata.spi.Event;
-import com.king.tratt.metadata.spi.EventMetaData;
-import com.king.tratt.metadata.spi.Value;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.EventMetaData;
+import com.king.tratt.spi.Value;
 import com.king.tratt.tdl.CheckPoint;
 
 final class CheckPointMatcher<E extends Event> {

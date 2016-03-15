@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.king.tratt.EventIterator;
+import com.king.tratt.spi.EventIterator;
 
 public class TestFromFileEventIterator implements EventIterator<TestEvent> {
     private volatile Iterator<String> iterator;

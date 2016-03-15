@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.spi.Event;
 import com.king.tratt.tdl.Sequence;
 
 class ProgressSequenceProcessorListener<E extends Event> implements CompletionStrategy<E> {
@@ -38,6 +38,11 @@ class ProgressSequenceProcessorListener<E extends Event> implements CompletionSt
     }
 
     @Override
+    public void onSequenceTimeout(OnSequenceTimeout<E> onTimeout) {
+        status(onTimeout).timeout = true;
+    }
+
+    @Override
     public void onCheckPointFailure(OnCheckPointFailure<E> onFailure) {
         status(onFailure).invalid = true;
     }
@@ -47,14 +52,13 @@ class ProgressSequenceProcessorListener<E extends Event> implements CompletionSt
         status(onTimeout).timeout = true;
     }
 
-    @Override
-    public void onSequenceTimeout(OnSequenceTimeout<E> onTimeout) {
-        status(onTimeout).timeout = true;
-    }
-
     
     SequenceStatus status(OnBase<?> base) {
         return processorMap.get(base.getSequenceName());
+    }
+
+    public Collection<SequenceStatus> getStatus() {
+        return processorMap.values();
     }
 
     static class SequenceStatus {
@@ -89,9 +93,4 @@ class ProgressSequenceProcessorListener<E extends Event> implements CompletionSt
             return started;
         }
     }
-
-    public Collection<SequenceStatus> getStatus() {
-        return processorMap.values();
-    }
-
 }

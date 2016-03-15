@@ -3,7 +3,7 @@ package com.king.tratt;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.spi.Event;
 
 class CachedProcessor<E extends Event> implements SimpleProcessor<E> {
 

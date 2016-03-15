@@ -20,8 +20,8 @@ import java.util.stream.IntStream;
 
 import com.king.tratt.ProgressSequenceProcessorListener.SequenceStatus;
 import com.king.tratt.SequenceResult.Cause;
-import com.king.tratt.metadata.spi.Event;
-import com.king.tratt.metadata.spi.Value;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.Value;
 import com.king.tratt.tdl.CheckPoint;
 import com.king.tratt.tdl.Sequence;
 import com.king.tratt.tdl.Tdl;

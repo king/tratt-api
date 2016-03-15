@@ -9,9 +9,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import com.king.tratt.metadata.spi.Event;
-import com.king.tratt.metadata.spi.Value;
-import com.king.tratt.metadata.spi.ValueFactory;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.Value;
+import com.king.tratt.spi.ValueFactory;
 import com.king.tratt.tdl.CheckPoint;
 
 class SetterToValueMapper<E extends Event> {

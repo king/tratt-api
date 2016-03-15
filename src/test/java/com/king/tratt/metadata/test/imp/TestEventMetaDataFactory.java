@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.king.tratt.metadata.spi.EventMetaDataFactory;
+import com.king.tratt.spi.EventMetaDataFactory;
 
 public class TestEventMetaDataFactory implements EventMetaDataFactory<TestEventMetaData> {
 

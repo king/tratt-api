@@ -1,7 +1,7 @@
 package com.king.tratt.metadata.test.imp;
 
-import com.king.tratt.metadata.spi.Context;
-import com.king.tratt.metadata.spi.LongValue;
+import com.king.tratt.spi.Context;
+import com.king.tratt.spi.LongValue;
 
 
 public class IdEventValue extends LongValue<TestEvent> {

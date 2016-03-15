@@ -12,11 +12,11 @@ import java.util.Map.Entry;
 
 import com.google.gson.JsonParseException;
 import com.king.tratt.VariableParser.NameValue;
-import com.king.tratt.metadata.spi.Event;
-import com.king.tratt.metadata.spi.EventMetaData;
-import com.king.tratt.metadata.spi.EventMetaDataFactory;
-import com.king.tratt.metadata.spi.Value;
-import com.king.tratt.metadata.spi.ValueFactory;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.EventMetaData;
+import com.king.tratt.spi.EventMetaDataFactory;
+import com.king.tratt.spi.Value;
+import com.king.tratt.spi.ValueFactory;
 import com.king.tratt.tdl.CheckPoint;
 import com.king.tratt.tdl.Sequence;
 import com.king.tratt.tdl.Tdl;

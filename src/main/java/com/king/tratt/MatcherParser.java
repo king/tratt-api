@@ -14,10 +14,10 @@ import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.king.tratt.metadata.spi.Event;
-import com.king.tratt.metadata.spi.EventMetaData;
-import com.king.tratt.metadata.spi.Value;
-import com.king.tratt.metadata.spi.ValueFactory;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.EventMetaData;
+import com.king.tratt.spi.Value;
+import com.king.tratt.spi.ValueFactory;
 
 class MatcherParser<E extends Event> {
 

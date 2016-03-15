@@ -5,13 +5,13 @@ import static com.king.tratt.Tratt.values;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Long.parseLong;
 
-import com.king.tratt.metadata.spi.BooleanValue;
-import com.king.tratt.metadata.spi.Context;
-import com.king.tratt.metadata.spi.DynamicValue;
-import com.king.tratt.metadata.spi.Event;
-import com.king.tratt.metadata.spi.LongValue;
-import com.king.tratt.metadata.spi.StringValue;
-import com.king.tratt.metadata.spi.Value;
+import com.king.tratt.spi.BooleanValue;
+import com.king.tratt.spi.Context;
+import com.king.tratt.spi.DynamicValue;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.LongValue;
+import com.king.tratt.spi.StringValue;
+import com.king.tratt.spi.Value;
 
 /*
  * Static factory method for various Values:

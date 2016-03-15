@@ -2,7 +2,7 @@ package com.king.tratt;
 
 import com.king.tratt.OnBase.OnCheckPointBase;
 import com.king.tratt.OnBase.OnCheckPointWithEventBase;
-import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.spi.Event;
 
 public interface SequenceProcessorListener<E extends Event> {
 

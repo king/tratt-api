@@ -1,9 +1,6 @@
-package com.king.tratt;
+package com.king.tratt.spi;
 
 import java.util.Iterator;
-
-import com.king.tratt.metadata.spi.Event;
-import com.king.tratt.metadata.spi.Stoppable;
 
 /*
  * Interface that decouples the source of the Events, for

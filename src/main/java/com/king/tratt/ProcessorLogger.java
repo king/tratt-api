@@ -3,7 +3,7 @@ package com.king.tratt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.spi.Event;
 import com.king.tratt.tdl.CheckPoint;
 
 class ProcessorLogger<E extends Event> implements SequenceProcessorListener<E> {

@@ -8,10 +8,10 @@ import java.util.List;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.king.tratt.metadata.spi.Context;
-import com.king.tratt.metadata.spi.DynamicValue;
-import com.king.tratt.metadata.spi.Event;
-import com.king.tratt.metadata.spi.Value;
+import com.king.tratt.spi.Context;
+import com.king.tratt.spi.DynamicValue;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.Value;
 
 class FunctionFactoryJsonField<E extends Event> implements FunctionFactory<E> {
     Value<E> pathValue;

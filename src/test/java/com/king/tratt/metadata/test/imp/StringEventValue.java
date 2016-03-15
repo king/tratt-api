@@ -1,7 +1,7 @@
 package com.king.tratt.metadata.test.imp;
 
-import com.king.tratt.metadata.spi.Context;
-import com.king.tratt.metadata.spi.StringValue;
+import com.king.tratt.spi.Context;
+import com.king.tratt.spi.StringValue;
 
 public class StringEventValue extends StringValue<TestEvent> {
 

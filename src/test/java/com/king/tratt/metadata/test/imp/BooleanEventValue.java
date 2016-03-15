@@ -1,7 +1,7 @@
 package com.king.tratt.metadata.test.imp;
 
-import com.king.tratt.metadata.spi.BooleanValue;
-import com.king.tratt.metadata.spi.Context;
+import com.king.tratt.spi.BooleanValue;
+import com.king.tratt.spi.Context;
 
 
 public class BooleanEventValue extends BooleanValue<TestEvent> {

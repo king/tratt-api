@@ -3,7 +3,7 @@ package com.king.tratt;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.king.tratt.metadata.spi.Context;
+import com.king.tratt.spi.Context;
 
 public final class ContextImp implements Context{
 

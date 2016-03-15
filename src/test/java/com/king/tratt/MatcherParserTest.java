@@ -8,10 +8,10 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.king.tratt.metadata.spi.EventMetaData;
 import com.king.tratt.metadata.test.imp.TestEvent;
 import com.king.tratt.metadata.test.imp.TestEventMetaDataFactory;
 import com.king.tratt.metadata.test.imp.TestValueFactory;
+import com.king.tratt.spi.EventMetaData;
 
 // @RunWith(MockitoJUnitRunner.class)
 public class MatcherParserTest {

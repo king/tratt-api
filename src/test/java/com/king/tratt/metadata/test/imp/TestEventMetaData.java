@@ -6,7 +6,7 @@ import java.util.Map;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.king.tratt.metadata.spi.EventMetaData;
+import com.king.tratt.spi.EventMetaData;
 
 public class TestEventMetaData implements EventMetaData {
 

@@ -3,8 +3,8 @@ package com.king.tratt;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.king.tratt.metadata.spi.Event;
-import com.king.tratt.metadata.spi.Value;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.Value;
 
 class Environment<E extends Event> {
 

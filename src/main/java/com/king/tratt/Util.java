@@ -1,5 +1,6 @@
 package com.king.tratt;
 
+import static com.king.tratt.Tratt.values;
 import static java.lang.ClassLoader.getSystemResource;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.Executors.newCachedThreadPool;
@@ -27,12 +28,13 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.king.tratt.metadata.spi.Context;
-import com.king.tratt.metadata.spi.DebugStringAware;
-import com.king.tratt.metadata.spi.Event;
-import com.king.tratt.metadata.spi.Stoppable;
-import com.king.tratt.metadata.spi.SufficientContextAware;
-import com.king.tratt.metadata.spi.Value;
+import com.king.tratt.spi.Context;
+import com.king.tratt.spi.DebugStringAware;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.EventIterator;
+import com.king.tratt.spi.Stoppable;
+import com.king.tratt.spi.SufficientContextAware;
+import com.king.tratt.spi.Value;
 
 public class Util {
     private static final Logger LOG = LoggerFactory.getLogger(Util.class);
@@ -188,7 +190,7 @@ public class Util {
         case "~s":
             return o.toString();
         case "~p":
-            return Tratt.values.plain(((Value<E>) o).get(e, context)).toDebugString(e, context);
+            return values.plain(((Value<E>) o).get(e, context)).toDebugString(e, context);
         default:
             String message = "Unsupported conversion: '%s'";
             throw new IllegalStateException(String.format(message, action));

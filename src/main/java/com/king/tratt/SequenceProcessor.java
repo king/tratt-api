@@ -13,8 +13,8 @@ import com.king.tratt.SequenceProcessorListener.OnCheckPointTimeout;
 import com.king.tratt.SequenceProcessorListener.OnSequenceEnd;
 import com.king.tratt.SequenceProcessorListener.OnSequenceStart;
 import com.king.tratt.SequenceProcessorListener.OnSequenceTimeout;
-import com.king.tratt.metadata.spi.Context;
-import com.king.tratt.metadata.spi.Event;
+import com.king.tratt.spi.Context;
+import com.king.tratt.spi.Event;
 import com.king.tratt.tdl.Sequence;
 
 abstract class SequenceProcessor<E extends Event> {
