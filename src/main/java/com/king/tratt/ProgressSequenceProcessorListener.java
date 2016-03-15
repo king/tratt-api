@@ -14,10 +14,17 @@ import com.king.tratt.tdl.Sequence;
 class ProgressSequenceProcessorListener<E extends Event> implements CompletionStrategy<E> {
     private final Map<String, SequenceStatus> processorMap;
     private final AtomicInteger open;
+    private Processors processors;
 
-    public ProgressSequenceProcessorListener(List<Sequence> sequences) {
+    ProgressSequenceProcessorListener(List<Sequence> sequences) {
         processorMap = sequences.stream().map(Sequence::getName).collect(toMap(identity(), SequenceStatus::new));
         open = new AtomicInteger(sequences.size());
+    }
+
+    @Override
+    public void beforeStart(Processors processors) {
+        System.out.println("**********beforeStart: ");
+        this.processors = processors;
     }
 
     @Override
@@ -27,29 +34,30 @@ class ProgressSequenceProcessorListener<E extends Event> implements CompletionSt
     }
 
     @Override
-    public void onSequenceStart(OnSequenceStart<E> onStart) {
-        status(onStart).started = true;
+    public void onSequenceStart(OnSequenceStart<E> on) {
+        status(on).started = true;
     }
 
     @Override
-    public void onSequenceEnd(OnSequenceEnd<E> onEnd) {
-        status(onEnd).done = true;
+    public void onSequenceEnd(OnSequenceEnd<E> on) {
+        status(on).done = true;
+        processors.removeProcessor(on.getSequenceName());
         open.getAndDecrement();
     }
 
     @Override
-    public void onSequenceTimeout(OnSequenceTimeout<E> onTimeout) {
-        status(onTimeout).timeout = true;
+    public void onSequenceTimeout(OnSequenceTimeout<E> on) {
+        status(on).timeout = true;
     }
 
     @Override
-    public void onCheckPointFailure(OnCheckPointFailure<E> onFailure) {
-        status(onFailure).invalid = true;
+    public void onCheckPointFailure(OnCheckPointFailure<E> on) {
+        status(on).invalid = true;
     }
 
     @Override
-    public void onCheckPointTimeout(OnCheckPointTimeout<E> onTimeout) {
-        status(onTimeout).timeout = true;
+    public void onCheckPointTimeout(OnCheckPointTimeout<E> on) {
+        status(on).timeout = true;
     }
 
     
