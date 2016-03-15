@@ -646,7 +646,7 @@ public class MatcherParserTest {
         m = matcher("EventB", "substr(1, 'X', b) == 'bcde'");
 
         assertThat(m.toDebugString(e, null)).startsWith(
-                " >> ([[source:substr(1, X, 'abcdefgh')]]'@ERROR on line: com.king.tratt.FunctionFactorySubstr");
+                " >> ([[source:substr(1, X, 'abcdefgh')]]'@ERROR on line: com.king.tratt.FunctionFactoryProvider");
         assertThat(m.toDebugString(e, null)).contains("message: java.lang.String cannot be cast to java.lang.Long");
         assertThat(m.toDebugString(e, null)).endsWith("; context: null' == [[source:constant]]'bcde') << ");
 

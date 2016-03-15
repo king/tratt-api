@@ -16,7 +16,7 @@ public interface EventMetaDataFactory<T extends EventMetaData> {
      *
      * @return null
      */
-    default T unrecognizedEventMetaData() {
+    default T notFound() {
         return null;
     }
 }

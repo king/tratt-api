@@ -33,13 +33,13 @@ class TdlProcessor<E extends Event> {
     private final StartedEventProcessor<E> started;
     private final CompletionStrategy<E> completionStrategy;
 
-    public TdlProcessor(CachedProcessor<E> cachedEvents, StartedEventProcessor<E> started) {
+    TdlProcessor(CachedProcessor<E> cachedEvents, StartedEventProcessor<E> started) {
         this.cachedEvents = cachedEvents;
         this.started = started;
         this.completionStrategy = started.completionStrategy;
     }
 
-    public List<SequenceResult> processTdl(Tdl tdl) {
+    List<SequenceResult> processTdl(Tdl tdl) {
         MatcherParser<E> matcherParser = new MatcherParser<>(started.valueFactory);
         Map<String, String> tdlVariables = VariableParser.parse(VARIABLE_PREFIX, tdl.getVariables());
         CopyOnWriteArrayList<SequenceProcessor<E>> processors;

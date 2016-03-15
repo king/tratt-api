@@ -9,13 +9,10 @@ import java.util.List;
 import com.king.tratt.tdl.TdlInternal.CheckPointInternal;
 
 public final class CheckPointBuilder {
-
     final String eventType;
     String match = "";
     String validate = "";
     List<String> set = new ArrayList<>();
-    boolean optional = false;
-    String label = "";
 
     /**
      * Retrieve a new {@link CheckPointBuilder} for the given EventType.
@@ -49,24 +46,15 @@ public final class CheckPointBuilder {
         match = checkPoint.getMatch();
         validate = checkPoint.getValidate();
         set = new ArrayList<>(checkPoint.getSet());
-        optional = checkPoint.isOptional();
-        label = checkPoint.getLabel();
     }
 
     public CheckPoint build() {
         CheckPointInternal cp = new CheckPointInternal();
         cp.eventType = eventType;
-        cp.label = label;
         cp.match = match;
-        cp.optional = optional;
         cp.set = new ArrayList<>(set);
         cp.validate = validate;
         return new CheckPoint(cp);
-    }
-
-    CheckPointBuilder optional() {
-        optional = true;
-        return this;
     }
 
     public CheckPointBuilder match(String match) {
@@ -93,14 +81,6 @@ public final class CheckPointBuilder {
             throw nullArgumentError("validate");
         }
         this.validate = validate;
-        return this;
-    }
-
-    public CheckPointBuilder label(String label) {
-        if (label == null) {
-            throw nullArgumentError("label");
-        }
-        this.label = label;
         return this;
     }
 

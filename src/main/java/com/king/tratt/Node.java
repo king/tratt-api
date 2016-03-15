@@ -16,19 +16,19 @@ class Node {
     private final Range range;
     private final String literalString;
 
-    public Node(Range range) {
+    Node(Range range) {
         this(null, null, range, null);
     }
 
-    public Node(String literalString) {
+    Node(String literalString) {
         this(null, null, null, literalString);
     }
 
-    public Node(Operator operator, Range range, Node ... subNodes) {
+    Node(Operator operator, Range range, Node... subNodes) {
         this(Arrays.asList(subNodes), operator, range, null);
     }
 
-    public Node(List<Node> subNodes, Operator operator, Range range) {
+    Node(List<Node> subNodes, Operator operator, Range range) {
         this(subNodes, operator, range, null);
     }
 
@@ -39,15 +39,15 @@ class Node {
         this.literalString = literalString;
     }
 
-    public String getExpression() {
+    String getExpression() {
         return literalString == null ? range.getExpression(operator == null || !operator.isCaseSensitive()) : literalString;
     }
 
-    public boolean isLiteralString() {
+    boolean isLiteralString() {
         return literalString != null;
     }
 
-    public boolean isNumberFormatted() {
+    boolean isNumberFormatted() {
         if (literalString != null) {
             return false;
         }
@@ -59,23 +59,23 @@ class Node {
         }
     }
 
-    public Operator.Type getOperatorType() {
+    Operator.Type getOperatorType() {
         return operator==null ? null : operator.getType();
     }
 
-    public String getOperatorSymbol() {
+    String getOperatorSymbol() {
         return operator == null ? null : operator.getSymbol();
     }
 
-    public Node getNode(int index) {
+    Node getNode(int index) {
         return subNodes.get(index);
     }
 
-    public List<Node> getSubNodes() {
+    List<Node> getSubNodes() {
         return subNodes;
     }
 
-    public String getCurrentString() {
+    String getCurrentString() {
         return range.getPreviousExpression()+"@@"+range.getExpression();
     }
 

@@ -1,4 +1,5 @@
 package com.king.tratt.spi;
 
-public interface ErrorAware extends DebugStringAware<Event> {
+// TODO remove?
+interface ErrorAware extends DebugStringAware<Event> {
 }

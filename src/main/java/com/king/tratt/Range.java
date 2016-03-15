@@ -5,7 +5,7 @@ class Range {
     private final int end;
     private final String expression;
 
-    public Range(String expression) {
+    Range(String expression) {
         this(expression, 0 , expression.length());
     }
 
@@ -15,19 +15,19 @@ class Range {
         this.end = end;
     }
 
-    public int getStart() {
+    int getStart() {
         return start;
     }
 
-    public int getEnd() {
+    int getEnd() {
         return end;
     }
 
-    public String getExpression() {
+    String getExpression() {
         return getExpression(false);
     }
 
-    public String getExpression(boolean trim) {
+    String getExpression(boolean trim) {
         final String out = expression.substring(start, end);
         if(trim) {
             return out.trim();
@@ -35,11 +35,11 @@ class Range {
         return out;
     }
 
-    public String getPreviousExpression() {
+    String getPreviousExpression() {
         return expression.substring(0, start);
     }
 
-    public Range getLeftSplit(Match match) {
+    Range getLeftSplit(Match match) {
         return new Range(expression, start, match.getIndex());
     }
 
@@ -48,11 +48,11 @@ class Range {
         return out;
     }
 
-    public Range getRightSplit(Match match) {
+    Range getRightSplit(Match match) {
         return new Range(expression, getEndIndex(match), end);
     }
 
-    public Range getRegion(Match from, Match to) {
+    Range getRegion(Match from, Match to) {
         return new Range(expression, getEndIndex(from), to.getIndex());
     }
 }

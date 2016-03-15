@@ -26,7 +26,7 @@ public abstract class BooleanValue<E extends Event> extends Value<E> {
      * Make method final, as we don't want clients to override it.
      */
     @Override
-    final public Object get(E e, Context context) {
+    public final Object get(E e, Context context) {
         return super.get(e, context);
     }
 

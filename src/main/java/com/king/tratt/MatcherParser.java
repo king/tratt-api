@@ -32,19 +32,8 @@ class MatcherParser<E extends Event> {
         tdlNodeParser.addFunctions(functionProvider.getFunctionNames());
     }
 
-    //    @Override
-    @Deprecated
     Matcher<E> createEventTypeMatcher(EventMetaData eventMetaData) {
-        if (eventMetaData == null) {
-            return null;
-        }
-
-        //        final Value<E> left = new Constant(eventMetaData.getId()); <--- USE THIS! TODO
         final Value<E> left = values.constantLong(eventMetaData.getId());
-        // TODO Is this really needed?
-        // valueFactory.getEventIdValue() ??
-        // final Value<E> right = valueFactory.getValue(eventMetaData.getName(),
-        // "eventTypeId");
         return Matcher.equal(left, values.eventId());
     }
 

@@ -3,6 +3,7 @@ package com.king.tratt;
 import static com.king.tratt.Tratt.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -25,7 +26,7 @@ import com.king.tratt.tdl.Tdl;
 
 public class StartedEventProcessor<E extends Event> {
 
-    private static Logger logger = LoggerFactory.getLogger(StartedEventProcessor.class);
+    private static Logger LOG = LoggerFactory.getLogger(StartedEventProcessor.class);
     private static String ERROR_MESSAGE = "Sequence '%s' is not valid due to: %s \n";
     //    final String requestId;
     private Future<CompletedEventProcessor> tdlProcessorResults;
@@ -69,26 +70,40 @@ public class StartedEventProcessor<E extends Event> {
         //        requestId = builder.requestId == null ? valueOf(nanoTime()) : builder.requestId;
 
         // ...then check invariants
-        // TODO chack metadataFactory, valueFactory, etc!
+        // TODO check mandatory data metadataFactory, valueFactory, etc!
         if (completionStrategy == null) {
             completionStrategy = progressListener;
         }
-        //        checkEventIteratorsNotEmpty(iterators);
+        checkNotNull(metadataFactory, valueFactory);
+        checkEventIteratorsNotEmpty();
         if (tdlValidationEnabled) {
             validateTdl(tdl);
         }
+        if (tdl.getSequences().isEmpty() && simpleProcessors.isEmpty()) {
+            String message = "No Sequences in TDL and There are no simple-processors to run. "
+                    + "Either add a tdl-file or add a simple-processor.";
+            throw new IllegalStateException(message);
+        }
 
-        logger.debug("Actual used TDL:\n" + tdl);
-        logger.debug("Timeout set to: " + timeoutSeconds + " seconds.");
-        // TODO log more stuff here?
-        //        if (tdl.getSequences().isEmpty() && processors.isEmpty()) {
-        //            String message = "No Sequences in TDL and There are no event-processors to run. "
-        //                    + "Either use a tdl-file or enable the console logger.";
-        //            throw new IllegalStateException(message);
-        //        }
+        // Log stuff here TODO log more stuff?
+        LOG.debug("Actual used TDL:\n" + tdl);
+        LOG.debug("Timeout set to: " + timeoutSeconds + " seconds.");
+        LOG.debug("tdlValidationEnabled: " + tdlValidationEnabled);
 
         executor = util.newThreadPool();
         stoppables.add(() -> executor.shutdownNow());
+    }
+
+    private void checkNotNull(Object... objects) {
+        Arrays.stream(objects).filter(o -> o == null).findFirst().ifPresent(o -> {
+            String template = "No %s set.";
+            throw new IllegalStateException(String.format(template, o.getClass().getSimpleName()));
+        });
+        if (metadataFactory == null) {
+            String message = "No %s set.";
+            message = String.format(message, EventMetaDataFactory.class.getSimpleName());
+            throw new IllegalStateException(message);
+        }
     }
 
     StartedEventProcessor<E> start() {
@@ -103,6 +118,13 @@ public class StartedEventProcessor<E extends Event> {
             tdlProcessorResults = newInvalidCompletedFuture();
         }
         return this;
+    }
+
+    void checkEventIteratorsNotEmpty() {
+        if (eventIterators.isEmpty()) {
+            String message = "No EventIterators added!";
+            throw new IllegalStateException(message);
+        }
     }
 
     private void validateTdl(Tdl tdl) {

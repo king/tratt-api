@@ -113,11 +113,9 @@ public class TdlAcceptanceTest {
         assertThat(seq0.getName()).isNull();
 
         assertThat(checkPoint.getEventType()).isNull();
-        assertThat(checkPoint.getLabel()).isEmpty();
         assertThat(checkPoint.getMatch()).isEmpty();
         assertThat(checkPoint.getSet()).isEmpty();
         assertThat(checkPoint.getValidate()).isEmpty();
-        assertThat(checkPoint.isOptional()).isFalse();
     }
 
     @Test
@@ -146,11 +144,9 @@ public class TdlAcceptanceTest {
         assertThat(seq1.getName()).isEqualTo("seq1");
 
         assertThat(checkPoint.getEventType()).isEqualTo("ItemTransaction4");
-        assertThat(checkPoint.getLabel()).isEmpty();
         assertThat(checkPoint.getMatch()).isEmpty();
         assertThat(checkPoint.getSet()).isEmpty();
         assertThat(checkPoint.getValidate()).isEmpty();
-        assertThat(checkPoint.isOptional()).isFalse();
     }
 
     @Test
@@ -169,11 +165,9 @@ public class TdlAcceptanceTest {
         assertThat(seq.getType()).isEqualTo(Sequence.Type.FUNNEL);
 
         assertThat(checkPoint.getEventType()).isEqualToIgnoringCase("EventA");
-        assertThat(checkPoint.getLabel()).isEmpty();
         assertThat(checkPoint.getMatch()).isEmpty();
         assertThat(checkPoint.getSet()).isEmpty();
         assertThat(checkPoint.getValidate()).isEqualTo("field3==$varA");
-        assertThat(checkPoint.isOptional()).isFalse();
     }
 
     @Test
@@ -188,7 +182,7 @@ public class TdlAcceptanceTest {
 
         // when
         tdl = Tdl.newBuilder()
-                .useTdl(tdl15Minutes)
+                .addTdls(tdl15Minutes)
                 .setSequencesMaxTime(10, TimeUnit.SECONDS)
                 .build();
 
@@ -207,7 +201,7 @@ public class TdlAcceptanceTest {
 
         // when
         tdl = Tdl.newBuilder()
-                .useTdl(tdlWithFunnelSequence)
+                .addTdls(tdlWithFunnelSequence)
                 .setSequencesType(CONTAINER)
                 .build();
 
@@ -222,7 +216,7 @@ public class TdlAcceptanceTest {
         String serialized = tdl.toString();
 
         assertThat(serialized).containsIgnoringCase("\"type\": \"FUNNEL\"");
-        assertThat(serialized).containsIgnoringCase("\"validate\": \"field3==$varA\",");
+        assertThat(serialized).containsIgnoringCase("\"validate\": \"field3==$varA\"");
     }
 
     @Test
@@ -238,8 +232,6 @@ public class TdlAcceptanceTest {
                         .maxTime(15, TimeUnit.MINUTES)
                         .name("my-sequence")
                         .withCheckPoint(forEvent("ExternalStoreTransactionBegin")
-                                .optional()
-                                .label("some-label")
                                 .match("coreUserId == $coreUserId")
                                 .validate("fieldA == aValue && fieldB == anotherValue")
                                 .set("name1=value1", "name2=value2")))
@@ -267,8 +259,6 @@ public class TdlAcceptanceTest {
         CheckPoint checkPoint0 = sequence0.getCheckPoints().get(0);
         assertThat(checkPoint0.getMatch()).isEqualTo("coreUserId == $coreUserId");
         assertThat(checkPoint0.getEventType()).isEqualTo("ExternalStoreTransactionBegin");
-        assertThat(checkPoint0.getLabel()).isEqualTo("some-label");
-        assertThat(checkPoint0.isOptional()).isTrue();
         assertThat(checkPoint0.getSet()).containsOnly("name1=value1", "name2=value2");
         assertThat(checkPoint0.getValidate()).isEqualTo("fieldA == aValue && fieldB == anotherValue");
     }
@@ -276,7 +266,7 @@ public class TdlAcceptanceTest {
     @Test
     public void canPrependMatchToExistingTdl() throws Exception {
         tdl = Tdl.newBuilder()
-                .useTdl(fromPath("Good.tdl"))
+                .addTdls(fromPath("Good.tdl"))
                 .addMatch("fieldA==A")
                 .build();
 
@@ -464,7 +454,7 @@ public class TdlAcceptanceTest {
         tdl = Tdl.newBuilder()
                 .addVariable("var1", "AA")
                 .addVariable("var2", "BB")
-                .useTdl(fromPath("DuplicatedVariables.tdl"))
+                .addTdls(fromPath("DuplicatedVariables.tdl"))
                 .build();
 
         assertThat(tdl.getVariables()).containsOnly("var1=AA", "var2=BB");
@@ -475,7 +465,7 @@ public class TdlAcceptanceTest {
         tdl = Tdl.newBuilder()
                 .addVariable("var1", "AA")
                 .addVariable("var2", "BB")
-                .useTdl(fromPath("EmptyVariables.tdl"))
+                .addTdls(fromPath("EmptyVariables.tdl"))
                 .build();
 
         assertThat(tdl.getVariables()).containsOnly("var1=AA", "var2=BB");
@@ -485,7 +475,7 @@ public class TdlAcceptanceTest {
     public void canRetainValuesFromExistingTdl() throws Exception {
 
         tdl = Tdl.newBuilder()
-                .useTdl(fromPath("Good.tdl")).build();
+                .addTdls(fromPath("Good.tdl")).build();
 
         assertThat(tdl.getSequences()).hasSize(1);
         assertThat(tdl.getVariables()).containsOnly("varA=valA");
@@ -500,11 +490,9 @@ public class TdlAcceptanceTest {
 
         CheckPoint checkPoint = sequence.getCheckPoints().get(0);
         assertThat(checkPoint.getEventType()).isEqualTo("EventA");
-        assertThat(checkPoint.getLabel()).isEmpty();
         assertThat(checkPoint.getMatch()).isEmpty();
         assertThat(checkPoint.getSet()).isEmpty();
         assertThat(checkPoint.getValidate()).isEqualTo("field3==$varA");
-        assertThat(checkPoint.isOptional()).isFalse();
     }
 
     @Test
@@ -514,7 +502,7 @@ public class TdlAcceptanceTest {
                 .addVariable("name", "value")
                 .addSequenceInvariants("inv1")
                 .setComment("new-comment")
-                .useTdl(fromPath("Good.tdl"))
+                .addTdls(fromPath("Good.tdl"))
                 .addSequence(ofType(CONTAINER)
                         .name("seq-name")
                         .withCheckPoint(forEvent("ItemTransaction4")))
@@ -644,7 +632,6 @@ public class TdlAcceptanceTest {
 
         CheckPoint checkPoint = tdl.getSequences().get(0).getCheckPoints().get(0);
         assertThat(checkPoint.getEventType()).isEqualTo("EventA");
-        assertThat(checkPoint.getLabel()).isEmpty();
         assertThat(checkPoint.getMatch()).isEmpty();
         assertThat(checkPoint.getSet()).isEmpty();
         assertThat(checkPoint.getValidate()).isEqualTo("field3==$varA");

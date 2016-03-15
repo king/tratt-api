@@ -21,8 +21,6 @@ import com.king.tratt.tdl.TdlBuilder;
  * Let's you configure the behavior of a EventProcessor.
  */
 public final class EventProcessorBuilder<E extends Event> {
-    //public final class EventProcessorBuilder {
-
     final TdlBuilder tdlBuilder = Tdl.newBuilder();
     final List<Stoppable> stoppables = new ArrayList<>();
     final List<SequenceProcessorListener<E>> sequenceListeners = new ArrayList<>();
@@ -38,30 +36,10 @@ public final class EventProcessorBuilder<E extends Event> {
 
 
     EventProcessorBuilder() {
-        //        ServiceLoader<ApiConfiguratorProvider<?>> serviceLoader;
-        // TODO setup ServiceLoader to find ApiConfiguratorProvider
-        //        metadataProvider = new FromClassEventMetaDataProvider();
         /* for package private usage only */
     }
 
-    //    /**
-    //     * inject API configuration.
-    //     *
-    //     * @param provider
-    //     * @return
-    //     */
-    //    public EventProcessorBuilder<E> setApiConfiguratorProvider(ApiConfigurator<E> provider) {
-    //        this.confProvider = provider;
-    //        return this;
-    //    }
-    //
-    //    public EventProcessorBuilder<E> setApiConfiguration(ApiConfigurator<E> provider) {
-    //        this.confProvider = provider;
-    //        return this;
-    //    }
-
     /**
-     * inject API configuration.
      *
      * @param provider
      * @return
@@ -141,9 +119,11 @@ public final class EventProcessorBuilder<E extends Event> {
     }
 
     /**
-     * Prepend the given {@code match} expression on all available {@link CheckPoint} match fields.
+     * Prepend the given {@code match} expression on all available
+     * {@link CheckPoint} match fields.
      *
-     * @param match expression. Example: "coreUserId == $coreUserId"
+     * @param match
+     *            expression. Example: "coreUserId == $coreUserId" //TODO
      * @return this builder
      */
     public EventProcessorBuilder<E> addMatch(String match) {
@@ -170,12 +150,13 @@ public final class EventProcessorBuilder<E extends Event> {
     }
 
     /**
-     * Set a {@link Preprocessor} if such has been used. The {@link Preprocessor} contains
-     * a cache of events. Can for example be used if you want to cache the events that happens
-     * during installation of your app.
+     * Set a {@link Preprocessor} if such has been used. The
+     * {@link Preprocessor} contains a cache of events. Can for example be used
+     * if you want to cache the events that happens during installation of your
+     * app.
      *
      * @param preprocessor
-     * @return this builder
+     * @return this builder TODO Preprocessor
      */
     //    public EventProcessorBuilder setPreprocessor(final Preprocessor preprocessor) {
     /*
@@ -208,7 +189,7 @@ public final class EventProcessorBuilder<E extends Event> {
 		return this;
 	}
 	
-	public EventProcessorBuilder<E> addCompletionStrategy(CompletionStrategy strategy) {
+    public EventProcessorBuilder<E> addCompletionStrategy(CompletionStrategy<E> strategy) {
 		completionStrategy = strategy;
 		return this;
 	}

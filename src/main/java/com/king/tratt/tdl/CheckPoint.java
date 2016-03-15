@@ -28,14 +28,6 @@ public final class CheckPoint {
         return cpInternal.set;
     }
 
-    boolean isOptional() {
-        return cpInternal.optional;
-    }
-
-    public String getLabel() {
-        return cpInternal.label;
-    }
-
     @Override
     public String toString() {
         return cpInternal.toString();

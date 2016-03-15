@@ -24,26 +24,6 @@ class PipelineProducer<E extends Event> implements Runnable {
         this.blockingQueue = blockingQueue;
     }
 
-    //    @Override
-    //    public void start() {
-    //        iterator.start();
-    //        future = executor.submit(new Runnable() {
-    //
-    //            @Override
-    //            public void run() {
-    //                while (iterator.hasNext()) {
-    //                    E e = iterator.next();
-    //                    queueProducerStrategy.apply(blockingQueue, e);
-    //                }
-    //            }
-    //        });
-    //    }
-
-    //    @Override
-    //    public final void stop() {
-    //        iterator.stop(); // this triggers the iterator.hasNext() method to return false.
-    //    }
-
     @Override
     public void run() {
         try {

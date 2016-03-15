@@ -11,13 +11,13 @@ class OperatorMatcher {
     private final Collection<Operator> operators;
     private char literalStringEscapeChar;
 
-    public OperatorMatcher(Collection<Operator> operators, char literalStringEscapeChar) {
+    OperatorMatcher(Collection<Operator> operators, char literalStringEscapeChar) {
         this.operators = operators;
         this.literalStringEscapeChar = literalStringEscapeChar;
     }
 
 
-    public List<Match> matches(String expression) {
+    List<Match> matches(String expression) {
     	List<Match> operators = getOperatorMatches(expression);
         modifyPreOperators(expression, operators);
         return operators;
@@ -65,6 +65,8 @@ class OperatorMatcher {
             case ARRAY_END:
             case STRING_SIGN:
                 return false;
+            default:
+                // ignore
             }
         }
 

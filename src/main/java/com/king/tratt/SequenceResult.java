@@ -21,15 +21,15 @@ public final class SequenceResult {
         this.causes.addAll(causes);
     }
 
-    public boolean isValid() {
+    public final boolean isValid() {
         return isValid;
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public List<Cause> getCauses() {
+    public final List<Cause> getCauses() {
         return new ArrayList<>(causes);
     }
 

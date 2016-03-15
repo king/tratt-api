@@ -21,19 +21,21 @@ class Operator {
     private final Operator closingOperator;
     private final Operator preOperator;
 
-    public Operator(String symbol, int middleStrength, int preStrength) {
+    Operator(String symbol, int middleStrength, int preStrength) {
         this(symbol, Type.MIDDLE, middleStrength, false, false, null, preStrength);
     }
 
-    public Operator(String symbol, Type type, int strength) {
+    Operator(String symbol, Type type, int strength) {
         this(symbol, type, strength, false, false, null, -1);
     }
 
-    public Operator(String symbol, Type type, int strength, boolean spaceSensitive, boolean caseSensitive, Operator closingOperator) {
+    Operator(String symbol, Type type, int strength, boolean spaceSensitive, boolean caseSensitive,
+            Operator closingOperator) {
         this(symbol, type, strength, spaceSensitive, caseSensitive, closingOperator, -1);
     }
 
-    public Operator(String symbol, Type type, int strength, boolean spaceSensitive, boolean caseSensitive, Operator closingOperator, int preAlternativeStrength) {
+    Operator(String symbol, Type type, int strength, boolean spaceSensitive, boolean caseSensitive,
+            Operator closingOperator, int preAlternativeStrength) {
         this.symbol = symbol;
         this.type = type;
         this.strength = strength;
@@ -48,31 +50,31 @@ class Operator {
     }
 
 
-    public String getSymbol() {
+    String getSymbol() {
         return symbol;
     }
 
-    public Type getType() {
+    Type getType() {
         return type;
     }
 
-    public int getStrength() {
+    int getStrength() {
         return strength;
     }
 
-    public boolean isSpaceSensitive() {
+    boolean isSpaceSensitive() {
         return spaceSensitive;
     }
 
-    public boolean isCaseSensitive() {
+    boolean isCaseSensitive() {
         return caseSensitive;
     }
 
-    public Operator getClosingOperator() {
+    Operator getClosingOperator() {
         return closingOperator;
     }
 
-    public Operator getPreOperator() {
+    Operator getPreOperator() {
         return preOperator;
     }
 

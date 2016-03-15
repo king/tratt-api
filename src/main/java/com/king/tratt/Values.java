@@ -16,7 +16,7 @@ import com.king.tratt.spi.Value;
 /*
  * Static factory method for various Values:
  */
-public class Values {
+class Values {
 
     private static final String SOURCE_CONSTANT = "[[source:constant]]%s";
 
@@ -28,10 +28,6 @@ public class Values {
         }
         return constantString(value);
     }
-
-    /*
-     * Constant values
-     */
 
     <E extends Event> Value<E> constantString(final String str) {
         return new StringValue<E>("constantString:" + str) {
@@ -96,9 +92,6 @@ public class Values {
         throw new IllegalStateException(String.format(message, value, value.getClass()));
     }
 
-    /*
-     * Plain values
-     */
     <E extends Event> Value<E> plainString(final String str) {
         return new StringValue<E>("plainString:" + str) {
 
@@ -277,5 +270,4 @@ public class Values {
             }
         };
     }
-
 }

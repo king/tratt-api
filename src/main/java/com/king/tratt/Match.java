@@ -5,25 +5,25 @@ class Match {
     private final int index;
     private final boolean usePreOperator;
 
-    public Match(Operator operator, int index) {
+    Match(Operator operator, int index) {
         this(operator, index, false);
     }
 
-    public Match(Operator operator, int index, boolean usePreOperator) {
+    Match(Operator operator, int index, boolean usePreOperator) {
         this.operator = operator;
         this.index = index;
         this.usePreOperator = usePreOperator;
     }
 
-    public Match getForPreOperator() {
+    Match getForPreOperator() {
         return new Match(operator, index, true);
     }
 
-    public Operator getOperator() {
+    Operator getOperator() {
         return usePreOperator ? operator.getPreOperator() : operator;
     }
 
-    public int getIndex() {
+    int getIndex() {
         return index;
     }
 

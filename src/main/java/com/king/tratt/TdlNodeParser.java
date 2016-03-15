@@ -16,12 +16,12 @@ class TdlNodeParser {
     private final Pattern symbolForbiddenChars = Pattern.compile("[^a-zA-Z0-9_$]");
     private final Pattern functionName = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
 
-    public TdlNodeParser() {
+    TdlNodeParser() {
         operators = setupOperators();
         operatorMatcher = new OperatorMatcher(operators, escapeChar.charAt(0));
     }
 
-    public void addFunctions(Collection<String> names) {
+    void addFunctions(Collection<String> names) {
         for (String name : names) {
             final Operator end = getFunctionEndOperator();
             final int strength = getMaxFunctionStrength() + 1;
@@ -90,7 +90,7 @@ class TdlNodeParser {
         return out;
     }
 
-    public Node parse(String expression) throws MatchExpressionParseException {
+    Node parse(String expression) throws MatchExpressionParseException {
         final List<Match> matches = operatorMatcher.matches(expression);
         final Range range = new Range(expression);
 

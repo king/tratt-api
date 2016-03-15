@@ -28,7 +28,6 @@ public abstract class DynamicValue<E extends Event> extends Value<E> {
     @SuppressWarnings("unchecked")
     @Override
     final public Object get(E e, Context context) {
-        // TODO move this to Value?
         Object o = super.get(e, context);
         while (o instanceof Value) {
             o = ((Value<E>) o).get(e, context);

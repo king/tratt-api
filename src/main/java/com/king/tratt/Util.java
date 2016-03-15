@@ -9,7 +9,6 @@ import static java.util.regex.Matcher.quoteReplacement;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 
 import java.io.File;
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
@@ -19,8 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +33,7 @@ import com.king.tratt.spi.Stoppable;
 import com.king.tratt.spi.SufficientContextAware;
 import com.king.tratt.spi.Value;
 
-public class Util {
+class Util {
     private static final Logger LOG = LoggerFactory.getLogger(Util.class);
     private static final Pattern IS_BOOLEAN = Pattern.compile("true|false", CASE_INSENSITIVE);
     private static final String CLASSPATH_PROTOCOL = "classpath:";
@@ -115,7 +112,7 @@ public class Util {
      * "file:/c:/temp/file.txt"
      * No prefix works as well, and will be used as: new File("path").
      */
-    public Path toPath(String prefixedPath) {
+    Path toPath(String prefixedPath) {
         try {
             URI uri;
             if (prefixedPath.startsWith(CLASSPATH_PROTOCOL)) {
@@ -137,6 +134,7 @@ public class Util {
             List<? extends Object> args) {
         StringBuilder sb = new StringBuilder();
         String separator = "";
+        // TODO use join Java8 feature?
         for (Object o : args) {
             sb.append(separator);
             separator = glue;
@@ -208,28 +206,6 @@ public class Util {
             return thread;
 		});
 	}
-
-    ExecutorService newThreadPool(final String requestId) {
-		return Executors.newCachedThreadPool(new ThreadFactory() {
-
-			private final AtomicInteger counter = new AtomicInteger();
-
-			@Override
-			public Thread newThread(Runnable r) {
-				Thread t = new Thread(r, requestId + "." + counter.incrementAndGet());
-				t.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-
-					@Override
-					public void uncaughtException(Thread t, Throwable e) {
-						String message = "Thread '%s' crashed unexpectedly due to:\n";
-						LOG.error(String.format(message, t), e);
-					}
-				});
-				return t;
-			}
-		});
-    }
-
 
     <E extends Event> CachedProcessor<E> startProcessingEventsAndCreateCach(
             BlockingQueue<E> pipeline, List<EventIterator<E>> eventIterators,

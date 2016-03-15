@@ -15,8 +15,6 @@ public class CheckPointBuilderTest {
                 .match("fieldA==A")
                 .validate("fieldB==B")
                 .set("s=fieldA")
-                .label("some-label")
-                .optional()
                 .build();
 
         // when
@@ -26,16 +24,9 @@ public class CheckPointBuilderTest {
 
         // then
         assertThat(copy.getEventType()).isEqualTo("my-event");
-        assertThat(copy.getLabel()).isEqualTo("some-label");
         assertThat(copy.getMatch()).isEqualTo("fieldB==B");
         assertThat(copy.getSet()).containsOnly("s=fieldA");
         assertThat(copy.getValidate()).isEqualTo("fieldB==B");
-        assertThat(copy.isOptional()).isTrue();
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowWhenCallingMethodWithNullArgument_label() throws Exception {
-        builder.label(null);
     }
 
     @Test(expected = NullPointerException.class)

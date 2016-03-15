@@ -173,9 +173,7 @@ class TdlInternal {
         public String eventType;
         public String match = "";
         public List<String> set = new ArrayList<>();
-        public String label = "";
         public String validate = "";
-        public boolean optional;
 
         @Override
         public String toString() {
@@ -187,9 +185,7 @@ class TdlInternal {
             final int prime = 31;
             int result = 1;
             result = prime * result + ((eventType == null) ? 0 : eventType.hashCode());
-            result = prime * result + ((label == null) ? 0 : label.hashCode());
             result = prime * result + ((match == null) ? 0 : match.hashCode());
-            result = prime * result + (optional ? 1231 : 1237);
             result = prime * result + ((set == null) ? 0 : set.hashCode());
             result = prime * result + ((validate == null) ? 0 : validate.hashCode());
             return result;
@@ -214,21 +210,11 @@ class TdlInternal {
             } else if (!eventType.equals(other.eventType)) {
                 return false;
             }
-            if (label == null) {
-                if (other.label != null) {
-                    return false;
-                }
-            } else if (!label.equals(other.label)) {
-                return false;
-            }
             if (match == null) {
                 if (other.match != null) {
                     return false;
                 }
             } else if (!match.equals(other.match)) {
-                return false;
-            }
-            if (optional != other.optional) {
                 return false;
             }
             if (set == null) {

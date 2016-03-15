@@ -11,5 +11,8 @@ public class TrattException extends RuntimeException {
         super(message);
     }
 
+    TrattException(String message, Throwable t) {
+        super(message, t);
+    }
 
 }

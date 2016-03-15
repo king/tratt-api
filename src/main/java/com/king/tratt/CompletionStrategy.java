@@ -5,6 +5,11 @@ import com.king.tratt.spi.Event;
 @FunctionalInterface
 public interface CompletionStrategy<E extends Event> extends SequenceProcessorListener<E> {
 
+    /**
+     * Optional to implement
+     * 
+     * @param processors
+     */
     default void beforeStart(Processors processors) {
     }
 

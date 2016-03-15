@@ -127,18 +127,6 @@ public final class TdlBuilder {
     }
 
     /**
-     * @deprecated will be removed in release 5.x
-     */
-    @Deprecated
-    public TdlBuilder useTdl(Tdl tdl) {
-        if (tdl == null) {
-            throw nullArgumentError("tdl");
-        }
-        useTdl = tdl;
-        return this;
-    }
-
-    /**
      * Prepend the existing match field on all {@link CheckPoint}'s in this {@link TdlFile} with
      * the given {@code match}.
      *

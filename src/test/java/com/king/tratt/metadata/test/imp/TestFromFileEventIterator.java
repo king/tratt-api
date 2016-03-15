@@ -1,10 +1,14 @@
 package com.king.tratt.metadata.test.imp;
 
-import static com.king.tratt.Tratt.util;
+import static java.lang.ClassLoader.getSystemResource;
 import static java.nio.file.Files.readAllLines;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -12,12 +16,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.king.tratt.spi.EventIterator;
 
 public class TestFromFileEventIterator implements EventIterator<TestEvent> {
+    private static final String CLASSPATH_PROTOCOL = "classpath:";
+    private static final String FILE_PROTOCOL = "file:";
     private volatile Iterator<String> iterator;
     private AtomicBoolean hasNext = new AtomicBoolean(true);
     final Path path;
 
     public TestFromFileEventIterator(String path) {
-        this.path = util.toPath(path);
+        this.path = toPath(path);
     }
 
     @Override
@@ -29,7 +35,6 @@ public class TestFromFileEventIterator implements EventIterator<TestEvent> {
     public TestEvent next() {
         String eventString = iterator.next();
         String[] parameters = eventString.split("\\s+");
-        System.out.println(Arrays.toString(parameters));
         TestEvent e = new TestEvent(parameters[0], parameters[1], Arrays.copyOfRange(parameters, 2, parameters.length));
         return e;
     }
@@ -47,6 +52,24 @@ public class TestFromFileEventIterator implements EventIterator<TestEvent> {
     @Override
     public void stop() {
         hasNext.set(false);
+    }
+
+    Path toPath(String prefixedPath) {
+        try {
+            URI uri;
+            if (prefixedPath.startsWith(CLASSPATH_PROTOCOL)) {
+                String stringPath = prefixedPath.substring(CLASSPATH_PROTOCOL.length());
+                uri = getSystemResource(stringPath).toURI();
+            } else if (prefixedPath.startsWith(FILE_PROTOCOL)) {
+                uri = new URL(prefixedPath).toURI();
+            } else {
+                uri = new File(prefixedPath).toURI();
+            }
+            return Paths.get(uri);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(prefixedPath, e);
+        }
+
     }
 
 }

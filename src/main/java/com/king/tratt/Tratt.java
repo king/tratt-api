@@ -6,8 +6,8 @@ import com.king.tratt.spi.Event;
  * Tratt API entry point.
  */
 public final class Tratt {
-    public static final Util util = new Util();
-    public static final Values values = new Values();
+    static final Util util = new Util();
+    static final Values values = new Values();
 
     private Tratt() {
         throw new AssertionError("Not meant for instantiation!");
@@ -44,6 +44,7 @@ public final class Tratt {
      *
      * @return {@link PreprocessorBuilder}
      */
+    // TODO!
     //    public static PreprocessorBuilder newPreprocessorBuilder() {
     //        return new PreprocessorBuilder();
     //    }

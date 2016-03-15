@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.gson.Gson;
 import com.king.tratt.tdl.Sequence.Type;
 import com.king.tratt.tdl.TdlInternal.SequenceInternal;
@@ -41,7 +38,6 @@ public final class Tdl {
     private static final String CLASSPATH_PROTOCOL = "classpath:";
     private static final String FILE_PROTOCOL = "file:";
     private static final String AND_OPERATOR = " && ";
-    private static Logger logger = LoggerFactory.getLogger(Tdl.class);
     private static final Gson GSON = new Gson();
 
     private final TdlInternal tdlInternal;

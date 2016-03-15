@@ -13,31 +13,31 @@ class OnBase<E extends Event> {
         this.context = context;
     }
 
-    public final String getSequenceName() {
+    final String getSequenceName() {
         return seqName;
     }
 
-    public final Context getContext() {
+    final Context getContext() {
         return context;
     }
 
     static class OnCheckPointBase<E extends Event> extends OnBase<E> {
         final CheckPointMatcher<E> cpMatcher;
 
-        public OnCheckPointBase(String seqName, CheckPointMatcher<E> cpMatcher, Context context) {
+        OnCheckPointBase(String seqName, CheckPointMatcher<E> cpMatcher, Context context) {
             super(seqName, context);
             this.cpMatcher = cpMatcher;
         }
 
-        public int getSequenceIndex() {
+        int getSequenceIndex() {
             return cpMatcher.seqIndex;
         }
 
-        public int getCheckPointIndex() {
+        int getCheckPointIndex() {
             return cpMatcher.cpIndex;
         }
 
-        public CheckPoint getCheckPoint() {
+        CheckPoint getCheckPoint() {
             return cpMatcher.checkPoint;
         }
     }
@@ -45,12 +45,12 @@ class OnBase<E extends Event> {
     static class OnCheckPointWithEventBase<E extends Event> extends OnCheckPointBase<E> {
         final E event;
 
-        public OnCheckPointWithEventBase(String seqName, E event, CheckPointMatcher<E> cpMatcher, Context context) {
+        OnCheckPointWithEventBase(String seqName, E event, CheckPointMatcher<E> cpMatcher, Context context) {
             super(seqName, cpMatcher, context);
             this.event = event;
         }
 
-        public E getEvent() {
+        E getEvent() {
             return event;
         }
     }

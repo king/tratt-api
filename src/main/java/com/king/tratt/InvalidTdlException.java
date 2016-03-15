@@ -3,7 +3,7 @@ package com.king.tratt;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class InvalidTdlException extends RuntimeException {
+public class InvalidTdlException extends TrattException {
 
     private static final long serialVersionUID = 1L;
     private static final Gson PRETTY_WRITER = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();

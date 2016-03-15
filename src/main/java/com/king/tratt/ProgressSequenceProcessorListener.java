@@ -23,13 +23,11 @@ class ProgressSequenceProcessorListener<E extends Event> implements CompletionSt
 
     @Override
     public void beforeStart(Processors processors) {
-        System.out.println("**********beforeStart: ");
         this.processors = processors;
     }
 
     @Override
     public boolean isCompleted() {
-        System.out.println("**********iscompleted: " + open);
         return open.get() <= 0;
     }
 

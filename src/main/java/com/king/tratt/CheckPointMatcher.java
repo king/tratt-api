@@ -40,7 +40,7 @@ final class CheckPointMatcher<E extends Event> {
         Matcher<E> eventMatcher = matcherParser.createEventTypeMatcher(eventMetaData);
         matchers.add(eventMatcher);
         Matcher<E> matcher = matcherParser.parseMatcher(eventMetaData, checkPoint.getMatch(), env);
-        if (matcher != null) {
+        if (matcher != null) { // TODO remove null check?
             matchers.add(matcher);
         }
         return matchers;
@@ -53,7 +53,7 @@ final class CheckPointMatcher<E extends Event> {
         }
         List<Matcher<E>> validators = new ArrayList<>();
         Matcher<E> validator = matcherParser.parseMatcher(eventMetaData, validate, env);
-        if (validator != null) {
+        if (validator != null) { // TODO remove null check?
             validators.add(validator);
         }
         return validators;

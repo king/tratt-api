@@ -1,14 +1,14 @@
 package com.king.tratt;
 
-class MatchExpressionParseException extends RuntimeException {
+class MatchExpressionParseException extends TrattException {
 
     private static final long serialVersionUID = 1L;
 
-    public MatchExpressionParseException(String message) {
+    MatchExpressionParseException(String message) {
         super(message);
     }
 
-    public MatchExpressionParseException(String message, Throwable throwable) {
+    MatchExpressionParseException(String message, Throwable throwable) {
         super(message, throwable);
     }
 

@@ -99,7 +99,7 @@ public class TdlBuilderTest {
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowWhenArgumentIsNull_useTdl() throws Exception {
-        builder.useTdl(null);
+        builder.addTdls(null);
     }
 
     @Test(expected = NullPointerException.class)

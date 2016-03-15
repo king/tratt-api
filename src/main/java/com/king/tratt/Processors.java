@@ -2,8 +2,7 @@ package com.king.tratt;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-// TODO make public class?
-class Processors {
+public final class Processors {
 
     private final CopyOnWriteArrayList<? extends SequenceProcessor<?>> processors;
 
@@ -11,7 +10,7 @@ class Processors {
         this.processors = processors;
     }
 
-    boolean removeProcessor(String name) {
+    public boolean removeProcessor(String name) {
         return processors.removeIf(p -> p.getName().equals(name));
     }
 
