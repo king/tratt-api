@@ -7,7 +7,6 @@ package com.king.tratt.tdl;
 import static com.king.tratt.tdl.Util.asJsonPrettyPrinted;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,7 +14,6 @@ import java.util.Set;
 class TdlInternal {
 
     public String comment = "";
-    private List<String> sequenceInvariants = new ArrayList<>();
     /* Needs to be a LinkedHasSet to guarantee order AND no duplicates */
     public Set<String> variables = new LinkedHashSet<>();
     public List<SequenceInternal> sequences = new ArrayList<>();
@@ -25,24 +23,11 @@ class TdlInternal {
         return asJsonPrettyPrinted(this);
     }
 
-    public List<String> getSequenceInvariants() {
-        return new ArrayList<>(new LinkedHashSet<>(sequenceInvariants));
-    }
-
-    public void addSequenceInvariants(Collection<String> other) {
-        for(String sequenceInvariante : other) {
-            if (!sequenceInvariants.contains(sequenceInvariante)) {
-                sequenceInvariants.add(sequenceInvariante);
-            }
-        }
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((comment == null) ? 0 : comment.hashCode());
-        result = prime * result + ((sequenceInvariants == null) ? 0 : sequenceInvariants.hashCode());
         result = prime * result + ((sequences == null) ? 0 : sequences.hashCode());
         result = prime * result + ((variables == null) ? 0 : variables.hashCode());
         return result;
@@ -65,13 +50,6 @@ class TdlInternal {
                 return false;
             }
         } else if (!comment.equals(other.comment)) {
-            return false;
-        }
-        if (sequenceInvariants == null) {
-            if (other.sequenceInvariants != null) {
-                return false;
-            }
-        } else if (!sequenceInvariants.equals(other.sequenceInvariants)) {
             return false;
         }
         if (sequences == null) {

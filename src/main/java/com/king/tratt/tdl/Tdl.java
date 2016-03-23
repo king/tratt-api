@@ -162,7 +162,6 @@ public final class Tdl {
         if (builder.comment != null) {
             tdlInternal.comment = builder.comment;
         }
-        tdlInternal.addSequenceInvariants(builder.sequenceInvariants);
         tdlInternal.variables = fromMap(variables);
 
         for (SequenceBuilder sequenceBuilder : tempSequenceBuilders.values()) {
@@ -191,7 +190,6 @@ public final class Tdl {
 
     private void extractData(Tdl tdl, Map<String, SequenceBuilder> tempSequenceBuilders) {
         tdlInternal.comment = tdl.getComment();
-        tdlInternal.addSequenceInvariants(tdl.getSequenceInvariants());
         variables.putAll(tdl.variables);
         mergeSequences(tempSequenceBuilders, tdl.getSequences());
     }
@@ -230,10 +228,6 @@ public final class Tdl {
 
     public String getComment() {
         return tdlInternal.comment;
-    }
-
-    public List<String> getSequenceInvariants() {
-        return tdlInternal.getSequenceInvariants();
     }
 
     public List<String> getVariables() {

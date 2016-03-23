@@ -105,7 +105,6 @@ public class TdlAcceptanceTest {
         CheckPoint checkPoint = seq0.getCheckPoints().get(0);
 
         assertThat(tdl.getComment()).isEmpty();
-        assertThat(tdl.getSequenceInvariants()).isEmpty();
         assertThat(tdl.getVariables()).isEmpty();
 
         assertThat(seq0.getMatch()).isEmpty();
@@ -132,7 +131,6 @@ public class TdlAcceptanceTest {
         CheckPoint checkPoint = seq1.getCheckPoints().get(0);
 
         assertThat(tdl.getComment()).isEmpty();
-        assertThat(tdl.getSequenceInvariants()).isEmpty();
         assertThat(tdl.getVariables()).isEmpty();
 
         assertThat(seq0.getMatch()).isEmpty();
@@ -156,7 +154,6 @@ public class TdlAcceptanceTest {
         CheckPoint checkPoint = seq.getCheckPoints().get(0);
 
         assertThat(tdl.getComment()).isEqualTo("Validation of EventA");
-        assertThat(tdl.getSequenceInvariants()).containsOnly("field1", "field2");
         assertThat(tdl.getVariables()).containsOnly("varA=valA");
 
         assertThat(seq.getMatch()).isEmpty();
@@ -243,7 +240,6 @@ public class TdlAcceptanceTest {
                                 .set("name1=value1", "name2=value2")))
                 .build();
 
-        assertThat(tdl.getSequenceInvariants()).containsOnly("inv1", "inv2", "inv3");
         assertThat(tdl.getSequences()).hasSize(2);
         assertThat(tdl.getVariables()).containsOnly("var1=val1", "var2=1", "var3=2");
         assertThat(tdl.areAllVariablesSet()).isTrue();
@@ -479,7 +475,6 @@ public class TdlAcceptanceTest {
 
         assertThat(tdl.getSequences()).hasSize(1);
         assertThat(tdl.getVariables()).containsOnly("varA=valA");
-        assertThat(tdl.getSequenceInvariants()).containsOnly("field1", "field2");
         assertThat(tdl.getComment()).isEqualTo("Validation of EventA");
 
         Sequence sequence = tdl.getSequences().get(0);
@@ -510,7 +505,6 @@ public class TdlAcceptanceTest {
 
         assertThat(tdl.getSequences()).hasSize(2);
         assertThat(tdl.getVariables()).containsOnly("name=value", "varA=valA");
-        assertThat(tdl.getSequenceInvariants()).containsOnly("inv1", "field1", "field2");
         assertThat(tdl.getComment()).isEqualTo("new-comment");
 
         List<Type> seqTypes = new ArrayList<>();
@@ -564,7 +558,6 @@ public class TdlAcceptanceTest {
 
     private void verifyGoodTdl(Tdl tdl) {
         assertThat(tdl.getComment()).isEqualTo("Validation of EventA");
-        assertThat(tdl.getSequenceInvariants()).containsOnly("field1", "field2");
         assertThat(tdl.getVariables()).containsOnly("varA=valA");
         assertThat(tdl.getSequences()).hasSize(1);
 
