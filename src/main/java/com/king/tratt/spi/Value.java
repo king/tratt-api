@@ -1,57 +1,82 @@
 package com.king.tratt.spi;
 
-import java.util.Arrays;
+import static com.king.tratt.spi.Util.requireNonNull;
+import static com.king.tratt.spi.Util.requireNonNullElements;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.concat;
+import static java.util.stream.Stream.empty;
+
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.king.tratt.tdl.CheckPoint;
 
+/**
+ * Instances of this class represents a value in a {@link CheckPoint}'s
+ * {@code match}, or {@code validate} fields.
+ *
+ * @param <E>
+ */
 public abstract class Value<E extends Event> implements DebugStringAware<E>, SufficientContextAware<E> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Value.class);
     private final List<? extends SufficientContextAware<E>> awares;
-    private String name;
 
-    /* For package private usage only. */
+    static List<Class<?>> supportedReturnTypes() {
+        return asList(Boolean.class, Long.class, String.class, Object.class);
+    }
+
     @SafeVarargs
-    Value(SufficientContextAware<E>... values) {
-        this("", Arrays.asList(values));
+    public Value(SufficientContextAware<E>... awares) {
+        this(asList(requireNonNull(awares, "awares")));
     }
 
-    /* For package private usage only. */
-    @SafeVarargs
-    Value(String name, SufficientContextAware<E>... values) {
-        this(name, Arrays.asList(values));
-    }
-
-    /* For package private usage only. */
-    Value(List<? extends SufficientContextAware<E>> awares) {
-        this("", awares);
-    }
-
-    /* For package private usage only. */
-    Value(String name, List<? extends SufficientContextAware<E>> awares) {
-        if (name == null) {
-            throw new NullPointerException("Argument 'name' is null.");
-        }
-        this.name = name;
+    public Value(List<? extends SufficientContextAware<E>> awares) {
+        requireNonNull(awares, "awares");
+        requireNonNullElements(awares, "awares");
+        checkReturnType();
         this.awares = awares;
     }
 
-    protected abstract Object _get(E e, Context context);
+    private void checkReturnType() {
+        List<Method> methodWithUnsupportedReturnTypes = getAllMethods(getClass())
+                .filter(m -> m.getName().equals("getImp"))
+                .filter(m -> m.getParameterTypes().length == 2)
+                .filter(m -> Context.class.isAssignableFrom(m.getParameterTypes()[1]))
+                .filter(m -> Event.class.isAssignableFrom(m.getParameterTypes()[0]))
+                .filter(m -> !supportedReturnTypes().contains(m.getReturnType()))
+                .collect(toList());
+        if (!methodWithUnsupportedReturnTypes.isEmpty()) {
+            String message = "Method 'getImp' has unsupported return type. Supported are: %s\n%s";
+            message = String.format(message, supportedReturnTypes(), methodWithUnsupportedReturnTypes);
+            throw new UnsupportedReturnTypeException(message);
+        }
+    }
 
-    public Object get(E e, Context context) {
+    /*
+     * Recursively walks up the super classes hierarchy to find all declared
+     * methods.
+     */
+    private Stream<Method> getAllMethods(Class<?> cls) {
+        if (cls.equals(Value.class)) {
+            return empty();
+        }
+        return concat(
+                stream(cls.getDeclaredMethods()),
+                getAllMethods(cls.getSuperclass()));
+    }
+
+    protected abstract Object getImp(E e, Context context);
+
+    public final Object get(E event, Context context) {
         try {
-            return _get(e, context);
+            return getImp(event, context);
         } catch (Throwable t) {
-            if (!hasSufficientContext(context)) {
-                return "[Insufficient Context!]";
-            }
-            String message = "@ERROR on line: " + t.getStackTrace()[0] + ". " +
-                    "message: %s\n event: %s; context: %s";
-            message = String.format(message, t.getMessage(), e, context, this);
-            LOG.error(message, t);
-            return message;
+            String message = "Unexpected crash! See underlying exceptions for more info.\n"
+                    + "  value: %s; event: %s; context: %s";
+            message = String.format(message, this, event, context);
+            throw new IllegalStateException(message, t);
         }
     }
 
@@ -67,10 +92,5 @@ public abstract class Value<E extends Event> implements DebugStringAware<E>, Suf
 
     final public String asString(E e, Context context) {
         return String.valueOf(get(e, context));
-    }
-
-    @Override
-    public String toString() {
-        return name.isEmpty() ? super.toString() : name + (awares.isEmpty() ? "" : awares);
     }
 }

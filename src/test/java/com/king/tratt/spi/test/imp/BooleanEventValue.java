@@ -1,10 +1,10 @@
-package com.king.tratt.metadata.test.imp;
+package com.king.tratt.spi.test.imp;
 
-import com.king.tratt.spi.BooleanValue;
 import com.king.tratt.spi.Context;
+import com.king.tratt.spi.Value;
 
 
-public class BooleanEventValue extends BooleanValue<TestEvent> {
+public class BooleanEventValue extends Value<TestEvent> {
 
     private int index;
     private String name;
@@ -25,7 +25,7 @@ public class BooleanEventValue extends BooleanValue<TestEvent> {
     }
 
     @Override
-    protected Boolean _get(TestEvent e, Context context) {
+    protected Boolean getImp(TestEvent e, Context context) {
         return Boolean.valueOf(e.getField(index));
     }
 

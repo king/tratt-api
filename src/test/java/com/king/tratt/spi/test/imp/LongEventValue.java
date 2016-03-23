@@ -1,10 +1,10 @@
-package com.king.tratt.metadata.test.imp;
+package com.king.tratt.spi.test.imp;
 
 import com.king.tratt.spi.Context;
-import com.king.tratt.spi.LongValue;
+import com.king.tratt.spi.Value;
 
 
-public class LongEventValue extends LongValue<TestEvent> {
+public class LongEventValue extends Value<TestEvent> {
 
     private int index;
     private String name;
@@ -20,7 +20,7 @@ public class LongEventValue extends LongValue<TestEvent> {
     }
 
     @Override
-    protected Long _get(TestEvent e, Context context) {
+    protected Long getImp(TestEvent e, Context context) {
         return Long.valueOf(e.getField(index));
     }
 

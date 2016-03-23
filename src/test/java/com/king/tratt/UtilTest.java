@@ -11,8 +11,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.king.tratt.metadata.test.imp.TestEvent;
 import com.king.tratt.spi.Value;
+import com.king.tratt.spi.test.imp.TestEvent;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UtilTest {

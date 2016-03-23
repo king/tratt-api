@@ -157,21 +157,15 @@ class Util {
      */
     private static final Pattern CONVERSION_PATTERN = Pattern.compile("(~[gdsp])");
 
-    <E extends Event> String format(final E e, final Context context, String format, Object... args) {
+    <E extends Event> String format(final E event, final Context context, String format, Object... args) {
         List<Object> replacements = new ArrayList<>(asList(args));
         Matcher m = CONVERSION_PATTERN.matcher(format);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String conversion = m.group();
-            Object arg = null;
-            try {
-                arg = replacements.remove(0);
-                String replacement = doConversion(e, context, conversion, arg);
-                m.appendReplacement(sb, quoteReplacement(replacement));
-            } catch (Exception ex) {
-                String message = "Cannot format '%s' with args '%s' due to underlying exception. conversion: %s, arg: %s ";
-                throw new IllegalStateException(String.format(message, format, asList(args), conversion, arg), ex);
-            }
+            Object arg = replacements.remove(0);
+            String replacement = doConversion(event, context, conversion, arg);
+            m.appendReplacement(sb, quoteReplacement(replacement));
         }
         m.appendTail(sb);
         return sb.toString();
@@ -188,7 +182,7 @@ class Util {
         case "~s":
             return o.toString();
         case "~p":
-            return values.plain(((Value<E>) o).get(e, context)).toDebugString(e, context);
+            return values.quoted(((Value<E>) o).get(e, context));
         default:
             String message = "Unsupported conversion: '%s'";
             throw new IllegalStateException(String.format(message, action));

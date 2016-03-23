@@ -1,6 +1,6 @@
 package com.king.tratt;
 
-import static com.king.tratt.metadata.test.imp.TestEvent.fields;
+import static com.king.tratt.spi.test.imp.TestEvent.fields;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.HashMap;
@@ -8,12 +8,11 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.king.tratt.metadata.test.imp.TestEvent;
-import com.king.tratt.metadata.test.imp.TestEventMetaDataFactory;
-import com.king.tratt.metadata.test.imp.TestValueFactory;
 import com.king.tratt.spi.EventMetaData;
+import com.king.tratt.spi.test.imp.TestEvent;
+import com.king.tratt.spi.test.imp.TestEventMetaDataFactory;
+import com.king.tratt.spi.test.imp.TestValueFactory;
 
-// @RunWith(MockitoJUnitRunner.class)
 public class MatcherParserTest {
     private ContextImp context = new ContextImp();
     private MatcherParser<TestEvent> matcherParser;
@@ -645,10 +644,10 @@ public class MatcherParserTest {
         TestEvent e = fields("userid", "", "abcdefgh");
         m = matcher("EventB", "substr(1, 'X', b) == 'bcde'");
 
-        assertThat(m.toDebugString(e, null)).startsWith(
-                " >> ([[source:substr(1, X, 'abcdefgh')]]'@ERROR on line: com.king.tratt.FunctionFactoryProvider");
-        assertThat(m.toDebugString(e, null)).contains("message: java.lang.String cannot be cast to java.lang.Long");
-        assertThat(m.toDebugString(e, null)).endsWith("; context: null' == [[source:constant]]'bcde') << ");
+        assertThat(m.toDebugString(e, null)).isEqualTo(
+                " >> @CRASH due to 'java.lang.String cannot be cast to java.lang.Long' "
+                        + "in 'substr('[[source:constant]]1', '[[source:constant]]'X'', 'stringEvent[2]')==[[source:constant]]'bcde''. "
+                        + "See console log for more info. << ");
 
         assertThat(m.matches(e, null)).isFalse();
     }
@@ -835,19 +834,38 @@ public class MatcherParserTest {
     @Test
     public void canCheckSufficientContextWhenCalculatingSum() throws Exception {
         TestEvent e = fields("userid", "6");
-        context.set("ctx", "1");
+        context.set("ctx", 1L);
         env.sequenceVariables.put("ctx", null);
         m = matcher("EventB", "ctx + 5 == a");
 
         assertThat(m.hasSufficientContext(new ContextImp())).isFalse();
         assertThat(m.matches(e, new ContextImp())).isFalse();
         assertThat(m.toDebugString(e, new ContextImp())).isEqualTo(
-                " >> (([[source:context.ctx]][Insufficient Context!] + [[source:constant]]5)[Insufficient Context!] == [[source:event.a]]6) << ");
+                " >> @CRASH due to '[Insufficient Context!]' in '[[source:context.ctx]]+[[source:constant]]5==longEvent[1]'. "
+                        + "See console log for more info. << ");
 
         assertThat(m.hasSufficientContext(context)).isTrue();
         assertThat(m.matches(e, context)).isTrue();
         assertThat(m.toDebugString(e, context)).isEqualTo(
                 "(([[source:context.ctx]]1 + [[source:constant]]5)6 == [[source:event.a]]6)");
+    }
+
+    @Test
+    public void canFailWhenCheckingNotEqualsEmptyString() throws Exception {
+        TestEvent e = fields("userid", "4");
+        context.set("ctx", 1L);
+        env.sequenceVariables.put("ctx", null);
+        m = matcher("EventB", "5 - ctx != ''");
+
+        assertThat(m.hasSufficientContext(new ContextImp())).isFalse();
+        assertThat(m.matches(e, new ContextImp())).isFalse();
+        assertThat(m.toDebugString(e, new ContextImp())).isEqualTo(
+                " >> @CRASH due to '[Insufficient Context!]' in '[[source:constant]]5-[[source:context.ctx]]!=[[source:constant]]'''. See console log for more info. << ");
+
+        assertThat(m.hasSufficientContext(context)).isTrue();
+        assertThat(m.matches(e, context)).isTrue();
+        assertThat(m.toDebugString(e, context)).isEqualTo(
+                "(([[source:constant]]5 - [[source:context.ctx]]1)4 != [[source:constant]]'')");
     }
 
     @Test
@@ -860,7 +878,7 @@ public class MatcherParserTest {
         assertThat(m.hasSufficientContext(new ContextImp())).isFalse();
         assertThat(m.matches(e, new ContextImp())).isFalse();
         assertThat(m.toDebugString(e, new ContextImp())).isEqualTo(
-                " >> (([[source:constant]]5 - [[source:context.ctx]][Insufficient Context!])[Insufficient Context!] == [[source:event.a]]4) << ");
+                " >> @CRASH due to '[Insufficient Context!]' in '[[source:constant]]5-[[source:context.ctx]]==longEvent[1]'. See console log for more info. << ");
 
         assertThat(m.hasSufficientContext(context)).isTrue();
         assertThat(m.matches(e, context)).isTrue();
@@ -878,7 +896,8 @@ public class MatcherParserTest {
         assertThat(m.hasSufficientContext(new ContextImp())).isFalse();
         assertThat(m.matches(e, new ContextImp())).isFalse();
         assertThat(m.toDebugString(e, new ContextImp())).isEqualTo(
-                " >> (([[source:constant]]5 / [[source:context.ctx]][Insufficient Context!])[Insufficient Context!] == [[source:event.a]]5) << ");
+                " >> @CRASH due to '[Insufficient Context!]' in '[[source:constant]]5/[[source:context.ctx]]==longEvent[1]'. "
+                        + "See console log for more info. << ");
 
         assertThat(m.hasSufficientContext(context)).isTrue();
         assertThat(m.matches(e, context)).isTrue();
@@ -895,7 +914,7 @@ public class MatcherParserTest {
 
         assertThat(m.hasSufficientContext(new ContextImp())).isFalse();
         assertThat(m.toDebugString(e, new ContextImp())).isEqualTo(
-                " >> (([[source:constant]]5 % [[source:context.ctx]][Insufficient Context!])[Insufficient Context!] == [[source:event.a]]1) << ");
+                " >> @CRASH due to '[Insufficient Context!]' in '[[source:constant]]5%[[source:context.ctx]]==longEvent[1]'. See console log for more info. << ");
         assertThat(m.matches(e, new ContextImp())).isFalse();
 
         assertThat(m.hasSufficientContext(context)).isTrue();
@@ -914,7 +933,8 @@ public class MatcherParserTest {
         assertThat(m.hasSufficientContext(new ContextImp())).isFalse();
         assertThat(m.matches(e, new ContextImp())).isFalse();
         assertThat(m.toDebugString(e, new ContextImp())).isEqualTo(
-                " >> (([[source:constant]]5 * [[source:context.ctx]][Insufficient Context!])[Insufficient Context!] == [[source:event.a]]15) << ");
+                " >> @CRASH due to '[Insufficient Context!]' in '[[source:constant]]5*[[source:context.ctx]]==longEvent[1]'. "
+                        + "See console log for more info. << ");
 
         assertThat(m.hasSufficientContext(context)).isTrue();
         assertThat(m.matches(e, context)).isTrue();

@@ -12,9 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.king.tratt.spi.Context;
-import com.king.tratt.spi.DynamicValue;
 import com.king.tratt.spi.Event;
-import com.king.tratt.spi.StringValue;
 import com.king.tratt.spi.Value;
 
 class FunctionFactoryProvider<E extends Event> {
@@ -63,7 +61,12 @@ class FunctionFactoryProvider<E extends Event> {
                 jsonValue = arguments.get(1);
                 jsonParser = new JsonParser();
 
-                return new DynamicValue<E>() {
+                return new Value<E>() {
+
+                    @Override
+                    public String toString() {
+                        return String.format("jsonfield('%s', '%s')", pathValue, jsonValue);
+                    }
 
                     @Override
                     public String toDebugString(E e, Context context) {
@@ -71,7 +74,7 @@ class FunctionFactoryProvider<E extends Event> {
                     }
 
                     @Override
-                    protected Value<E> _get(E e, Context context) {
+                    protected Object getImp(E e, Context context) {
                         String path = pathValue.asString(e, context);
                         String json = jsonValue.asString(e, context);
 
@@ -82,7 +85,7 @@ class FunctionFactoryProvider<E extends Event> {
                         } catch (Throwable t) {
                             result = "[@ERROR malformed json string]";
                         }
-                        return values.plain(result);
+                        return values.parseSupportedType(result);
                     }
 
                     private String getJsonFieldValue(String path, String json) {
@@ -128,7 +131,12 @@ class FunctionFactoryProvider<E extends Event> {
                 toValue = args.get(1);
                 strValue = args.get(2);
 
-                return new StringValue<E>() {
+                return new Value<E>() {
+
+                    @Override
+                    public String toString() {
+                        return String.format("substr('%s', '%s', '%s')", fromValue, toValue, strValue);
+                    }
 
                     @Override
                     public String toDebugString(E e, Context context) {
@@ -137,7 +145,7 @@ class FunctionFactoryProvider<E extends Event> {
                     }
 
                     @Override
-                    protected String _get(E e, Context context) {
+                    protected String getImp(E e, Context context) {
                         int from = ((Long) fromValue.get(e, context)).intValue();
                         int to = ((Long) toValue.get(e, context)).intValue();
                         String str = (String) strValue.get(e, context);
@@ -170,7 +178,12 @@ class FunctionFactoryProvider<E extends Event> {
                 strValue = arguments.get(0);
                 delimiterValue = arguments.get(1);
                 indexValue = arguments.get(2);
-                return new StringValue<E>() {
+                return new Value<E>() {
+
+                    @Override
+                    public String toString() {
+                        return String.format("split('%s', '%s', '%s')", strValue, delimiterValue, indexValue);
+                    }
 
                     @Override
                     public String toDebugString(E e, Context context) {
@@ -179,7 +192,7 @@ class FunctionFactoryProvider<E extends Event> {
                     }
 
                     @Override
-                    protected String _get(E e, Context context) {
+                    protected String getImp(E e, Context context) {
                         String str = strValue.asString(e, context);
                         String delimiter = delimiterValue.asString(e, context);
                         String[] strs = str.split(delimiter);
@@ -209,7 +222,12 @@ class FunctionFactoryProvider<E extends Event> {
 
             @Override
             public Value<E> create(List<Value<E>> arguments) {
-                return new StringValue<E>() {
+                return new Value<E>() {
+
+                    @Override
+                    public String toString() {
+                        return String.format("concat(%s)", arguments);
+                    }
 
                     @Override
                     public String toDebugString(E e, Context context) {
@@ -218,7 +236,7 @@ class FunctionFactoryProvider<E extends Event> {
                     }
 
                     @Override
-                    protected String _get(E e, Context context) {
+                    protected String getImp(E e, Context context) {
                         StringBuilder s = new StringBuilder();
                         for (Value<E> value : arguments) {
                             s.append(value.asString(e, context));

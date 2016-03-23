@@ -4,10 +4,10 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 import org.junit.Test;
 
-import com.king.tratt.metadata.test.imp.TestEvent;
-import com.king.tratt.metadata.test.imp.TestEventMetaDataFactory;
-import com.king.tratt.metadata.test.imp.TestFromFileEventIterator;
-import com.king.tratt.metadata.test.imp.TestValueFactory;
+import com.king.tratt.spi.test.imp.TestEvent;
+import com.king.tratt.spi.test.imp.TestEventMetaDataFactory;
+import com.king.tratt.spi.test.imp.TestFromFileEventIterator;
+import com.king.tratt.spi.test.imp.TestValueFactory;
 import com.king.tratt.tdl.Tdl;
 
 public class AcceptanceTest {

@@ -1,6 +1,7 @@
 package com.king.tratt;
 
 import static com.king.tratt.Tratt.util;
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
 import java.util.Arrays;
@@ -16,70 +17,63 @@ import com.king.tratt.spi.SufficientContextAware;
 import com.king.tratt.spi.Value;
 
 abstract class Matcher<E extends Event> implements DebugStringAware<E>, SufficientContextAware<E> {
-    private static final Logger LOG = LoggerFactory.getLogger(Matcher.class);
+    private final static Logger LOG = LoggerFactory.getLogger(Matcher.class);
     private final List<? extends SufficientContextAware<E>> awares;
-    private final String name;
 
     private Matcher(SufficientContextAware<E> aware) {
-        this("", Arrays.asList(aware));
-    }
-
-    private Matcher(String name, SufficientContextAware<E> aware) {
-        this(name, Arrays.asList(aware));
+        this(Arrays.asList(aware));
     }
 
     private Matcher(SufficientContextAware<E> aware1, SufficientContextAware<E> aware2) {
-        this("", asList(aware1, aware2));
-    }
-
-    private Matcher(String name, SufficientContextAware<E> aware1, SufficientContextAware<E> aware2) {
-        this(name, asList(aware1, aware2));
+        this(asList(aware1, aware2));
     }
 
     private Matcher(List<? extends SufficientContextAware<E>> awares) {
-        this("", awares);
-    }
-
-    private Matcher(String name, List<? extends SufficientContextAware<E>> awares) {
-        if(name == null){
-            throw util.nullArgumentError("name");
-        }
-        this.name = name;
         this.awares = awares;
     }
 
-    abstract boolean _matches(E e, Context context);
+    abstract boolean matchesImp(E e, Context context);
 
-    abstract String _toDebugString(E e, Context context);
+    abstract String toDebugStringImp(E e, Context context);
 
-    final boolean matches(E e, Context context) {
+    final boolean matches(E event, Context context) {
         try {
-            return _matches(e, context);
+            return matchesImp(event, context);
         } catch (Throwable t) {
-            String message = "Crashed when performing this match:  %s\n"
-                    + "event: %s, context: %s; exception:";
-            LOG.error(String.format(message, _toDebugString(e, context), e, context), t);
+            String message = "Unexpected crash! See underlying exceptions for more info.\n"
+                    + "  matcher: %s; event: %s; context: %s";
+            message = format(message, this, event, context);
+            LOG.error(message, t);
             return false;
         }
     }
-
+    
     @Override
-    public String toDebugString(E e, Context context) {
-        if (matches(e, context)) {
-            return _toDebugString(e, context);
+    public String toDebugString(E event, Context context) {
+        if (matches(event, context)) {
+            return toDebugStringImp(event, context);
         } else {
-            return " >> " + _toDebugString(e, context) + " << ";
+            try {
+                return format(" >> %s << ", toDebugStringImp(event, context));
+            } catch (Exception ex){
+                String message = "Unexpected crash! See underlying exceptions for more info.\n"
+                        + "  matcher: %s; event: %s; context: %s";
+                message = format(message, this, event, context);
+                LOG.error(message, ex);
+                String result = " >> @CRASH due to '%s' in '%s'. See console log for more info. << "; 
+                return format(result, rootCause(ex).getMessage(), this); 
+            }
         }
+    }
+
+    private Throwable rootCause(Throwable e) {
+        Throwable cause = e.getCause();
+        return cause == null ? e : rootCause(cause); 
     }
 
     @Override
     public boolean hasSufficientContext(Context context) {
         return util.hasSufficientContext(context, awares);
-    }
-    
-    @Override
-    public String toString() {
-        return name + awares;
     }
     
     /*
@@ -90,12 +84,12 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
         return new Matcher<E>(left, right) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 return (long) left.get(e, context) < (long) right.get(e, context);
             }
 
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String toDebugStringImp(E e, Context context) {
                 return util.format(e, context, "(~d < ~d)", left, right);
             }
             
@@ -107,16 +101,21 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
     }
 
     static <E extends Event> Matcher<E> intBoolean(Value<E> value) {
-        return new Matcher<E>("intBoolean:", value) {
+        return new Matcher<E>(value) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 return !"0".equals(value.asString(e, context));
             }
 
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String toDebugStringImp(E e, Context context) {
                 return util.format(e, context, "(0 != ~d)", value);
+            }
+            
+            @Override
+            public String toString() {
+                return "0!=" + value;
             }
         };
     }
@@ -125,7 +124,7 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
         return new Matcher<E>(left, right) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 return left.matches(e, context) && right.matches(e, context);
             }
 
@@ -135,11 +134,11 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
              * surrounding the debug string form this matcher.
              */
             public String toDebugString(E e, Context context) {
-                return _toDebugString(e, context);
+                return toDebugStringImp(e, context);
             }
 
             @Override
-            protected String _toDebugString(Event e, Context context) {
+            protected String toDebugStringImp(Event e, Context context) {
                 return util.format(e, context, "(~d && ~d)", left, right);
             }
             
@@ -154,7 +153,7 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
         return new Matcher<E>(left, right) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 return left.matches(e, context) || right.matches(e, context);
             }
 
@@ -164,11 +163,11 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
              * surrounding the debug string form this matcher.
              */
             public String toDebugString(E e, Context context) {
-                return _toDebugString(e, context);
+                return toDebugStringImp(e, context);
             }
 
             @Override
-            protected String _toDebugString(Event e, Context context) {
+            protected String toDebugStringImp(Event e, Context context) {
                 return util.format(e, context, "(~d || ~d)", left, right);
             }
             
@@ -183,14 +182,14 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
         return new Matcher<E>(left, right) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 String l = left.asString(e, context);
                 String r = right.asString(e, context);
                 return l.equals(r);
             }
 
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String toDebugStringImp(E e, Context context) {
                 return util.format(e, context, "(~d == ~d)", left, right);
             }
             
@@ -205,14 +204,14 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
         return new Matcher<E>(left, right) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 String l = left.asString(e, context);
                 String r = right.asString(e, context);
                 return !l.equals(r);
             }
 
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String toDebugStringImp(E e, Context context) {
                 return util.format(e, context, "(~d != ~d)", left, right);
             }
             
@@ -227,12 +226,12 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
         return new Matcher<E>(left, right) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 return (long) left.get(e, context) <= (long) right.get(e, context);
             }
 
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String toDebugStringImp(E e, Context context) {
                 return util.format(e, context, "(~d <= ~d)", left, right);
             }
             
@@ -247,12 +246,12 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
         return new Matcher<E>(left, right) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 return (long) left.get(e, context) > (long) right.get(e, context);
             }
 
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String toDebugStringImp(E e, Context context) {
                 return util.format(e, context, "(~d > ~d)", left, right);
             }
             
@@ -267,12 +266,12 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
         return new Matcher<E>(left, right) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 return (long) left.get(e, context) >= (long) right.get(e, context);
             }
 
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String toDebugStringImp(E e, Context context) {
                 return util.format(e, context, "(~d >= ~d)", left, right);
             }
             
@@ -283,11 +282,12 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
         };
     }
 
+    // TODO remove?
     static <E extends Event> Matcher<E> in(Value<E> value, List<Value<E>> values) {
-        return new Matcher<E>("IN", util.concat(value, values)) {
+        return new Matcher<E>(util.concat(value, values)) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 final String v = value.asString(e, context);
                 for (Value<E> l : values) {
                     if (v.equals(l.asString(e, context))) {
@@ -298,30 +298,39 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
             }
 
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String toDebugStringImp(E e, Context context) {
                 String joinedValues = util.formatJoin(e, context, ", ", "~d", values);
                 return util.format(e, context, "(~d IN [~s])", value, joinedValues);
+            }
+            @Override
+            public String toString() {
+                return value + " IN " + values;
             }
         };
     }
 
     static <E extends Event> Matcher<E> not(Matcher<E> matcher) {
-        return new Matcher<E>("!", matcher) {
+        return new Matcher<E>(matcher) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 return !matcher.matches(e, context);
             }
             
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String toDebugStringImp(E e, Context context) {
                 /*
                  * Do not call "matcher.toDebugString(...) as it will
                  * be surrounded by false error signs ( >> << ).
                  * In this case underlying matcher should fail
                  * for this matcher to pass.
                  */
-                return "!" + matcher._toDebugString(e, context);
+                return "!" + matcher.toDebugStringImp(e, context);
+            }
+            
+            @Override
+            public String toString() {
+                return "!" + matcher;
             }
         };
     }
@@ -330,12 +339,12 @@ abstract class Matcher<E extends Event> implements DebugStringAware<E>, Sufficie
         return new Matcher<E>(function) {
 
             @Override
-            protected boolean _matches(E e, Context context) {
+            protected boolean matchesImp(E e, Context context) {
                 return Boolean.parseBoolean(function.asString(e, context));
             }
 
             @Override
-            protected String _toDebugString(E e, Context context) {
+            protected String toDebugStringImp(E e, Context context) {
                 return function.toDebugString(e, context);
             }
             

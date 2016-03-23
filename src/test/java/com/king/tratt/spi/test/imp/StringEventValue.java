@@ -1,9 +1,9 @@
-package com.king.tratt.metadata.test.imp;
+package com.king.tratt.spi.test.imp;
 
 import com.king.tratt.spi.Context;
-import com.king.tratt.spi.StringValue;
+import com.king.tratt.spi.Value;
 
-public class StringEventValue extends StringValue<TestEvent> {
+public class StringEventValue extends Value<TestEvent> {
 
     private final int index;
     private final String name;
@@ -19,7 +19,7 @@ public class StringEventValue extends StringValue<TestEvent> {
     }
 
     @Override
-    protected String _get(TestEvent e, Context context) {
+    protected String getImp(TestEvent e, Context context) {
         return e.getField(index);
     }
 

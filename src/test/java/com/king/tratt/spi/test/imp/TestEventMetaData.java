@@ -1,4 +1,4 @@
-package com.king.tratt.metadata.test.imp;
+package com.king.tratt.spi.test.imp;
 
 import java.util.HashMap;
 import java.util.Map;
