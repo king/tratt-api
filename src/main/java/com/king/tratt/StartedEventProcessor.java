@@ -41,7 +41,7 @@ public class StartedEventProcessor {
     final long timeoutSeconds;
     //    private final String trackingToolUrl;
     private final ArrayList<SimpleProcessor> simpleProcessors;
-    final EventMetaDataFactory<?> metadataFactory;
+    final EventMetaDataFactory metadataFactory;
     final ValueFactory valueFactory;
     final List<SequenceProcessorListener> sequenceListeners;
     final ProgressSequenceProcessorListener progressListener;

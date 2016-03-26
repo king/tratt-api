@@ -15,7 +15,7 @@ public class TestValueFactory implements ValueFactory {
 
     @Override
     public Value getValue(String eventName, String parameterName) {
-        TestEventMetaData metaData = metaDataFactory.getEventMetaData(eventName);
+        TestEventMetaData metaData = (TestEventMetaData) metaDataFactory.getEventMetaData(eventName);
         if (metaData == null) {
             return notFound();
         }

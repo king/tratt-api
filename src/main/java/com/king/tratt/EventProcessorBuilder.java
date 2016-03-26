@@ -31,7 +31,7 @@ public class EventProcessorBuilder {
     PipelineProducerStrategy producerStrategy = PipelineProducerStrategy.getDefault();
     boolean tdlValidationEnabled = true;
     ValueFactory valueFactory;
-    EventMetaDataFactory<?> metaDataFactory;
+    EventMetaDataFactory metaDataFactory;
     CompletionStrategy completionStrategy;
 
 
@@ -49,7 +49,7 @@ public class EventProcessorBuilder {
         return this;
     }
 
-    public EventProcessorBuilder setEventMetaDataFatory(EventMetaDataFactory<?> mdFactory) {
+    public EventProcessorBuilder setEventMetaDataFatory(EventMetaDataFactory mdFactory) {
         this.metaDataFactory = mdFactory;
         return this;
     }

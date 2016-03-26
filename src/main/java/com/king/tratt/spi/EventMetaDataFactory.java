@@ -1,14 +1,14 @@
 package com.king.tratt.spi;
 
 @FunctionalInterface
-public interface EventMetaDataFactory<T extends EventMetaData> {
+public interface EventMetaDataFactory {
 	
 	/**
 	 * TODO
 	 * @param eventName
 	 * @return
 	 */
-    T getEventMetaData(String eventName);
+    EventMetaData getEventMetaData(String eventName);
 
     /**
      * Should return the special value null, which means this factory does not
@@ -16,7 +16,7 @@ public interface EventMetaDataFactory<T extends EventMetaData> {
      *
      * @return null
      */
-    default T notFound() {
+    default EventMetaData notFound() {
         return null;
     }
 }

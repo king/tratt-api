@@ -11,9 +11,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.king.tratt.spi.EventMetaData;
 import com.king.tratt.spi.EventMetaDataFactory;
 
-public class TestEventMetaDataFactory implements EventMetaDataFactory<TestEventMetaData> {
+public class TestEventMetaDataFactory implements EventMetaDataFactory {
 
     private static Map<String, JsonObject> eventTypes = new HashMap<>();
 
@@ -27,7 +28,7 @@ public class TestEventMetaDataFactory implements EventMetaDataFactory<TestEventM
     }
 
     @Override
-    public TestEventMetaData getEventMetaData(String eventName) {
+    public EventMetaData getEventMetaData(String eventName) {
         if (eventTypes.containsKey(eventName)) {
             return new TestEventMetaData(eventTypes.get(eventName));
         }

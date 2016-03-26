@@ -22,14 +22,14 @@ import com.king.tratt.tdl.Tdl;
 
 class TdlValidator {
 
-    private final EventMetaDataFactory<?> metaDataFactory;
+    private final EventMetaDataFactory metaDataFactory;
     private List<String> errors = new ArrayList<>();
     private MatcherParser matcherParser;
     private int numParseErrors = 0;
     private List<TdlFileFieldErrorDescriptor> fieldErrorDescriptions = new ArrayList<>();
     private ValueFactory valueFactory;
 
-    TdlValidator(ValueFactory valueFactory, EventMetaDataFactory<?> metaDataProvider, final Tdl tdl) {
+    TdlValidator(ValueFactory valueFactory, EventMetaDataFactory metaDataProvider, final Tdl tdl) {
         this.valueFactory = valueFactory;
         this.metaDataFactory = metaDataProvider;
         this.matcherParser = new MatcherParser(valueFactory);
