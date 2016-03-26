@@ -9,37 +9,36 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import com.king.tratt.spi.Event;
 import com.king.tratt.spi.Value;
 import com.king.tratt.spi.ValueFactory;
 import com.king.tratt.tdl.CheckPoint;
 
-class SetterToValueMapper<E extends Event> {
-    private ValueFactory<E> valueFactory;
+class SetterToValueMapper {
+    private ValueFactory valueFactory;
 
-    SetterToValueMapper(ValueFactory<E> valueFactory) {
+    SetterToValueMapper(ValueFactory valueFactory) {
         this.valueFactory = valueFactory;
     }
 
-    Stream<Entry<String, Value<E>>> getValues(CheckPoint cp) {
+    Stream<Entry<String, Value>> getValues(CheckPoint cp) {
         return getValues(cp.getEventType(), cp.getSet());
     }
 
-    private Stream<Entry<String, Value<E>>> getValues(String eventName, List<String> set) {
+    private Stream<Entry<String, Value>> getValues(String eventName, List<String> set) {
         return VariableParser.parse(set).entrySet().stream()
                 .map(entry -> {
-                    Value<E> value = getValue(eventName, entry.getValue());
-                    return new AbstractMap.SimpleEntry<String, Value<E>>(entry.getKey(), value);
+                    Value value = getValue(eventName, entry.getValue());
+                    return new AbstractMap.SimpleEntry<String, Value>(entry.getKey(), value);
                 });
     }
 
-    Value<E> getValue(String eventName, String value) {
+    Value getValue(String eventName, String value) {
         return Optional
                 .ofNullable(valueFactory.getValue(eventName, value))
                 .orElseGet(() -> tryGetConstantValue(value));
     }
 
-    private Value<E> tryGetConstantValue(final String str) {
+    private Value tryGetConstantValue(final String str) {
         String value = null;
         if (util.isLong(str) || util.isBoolean(str)) {
             value = str;

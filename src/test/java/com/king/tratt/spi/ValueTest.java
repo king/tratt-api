@@ -21,15 +21,15 @@ public class ValueTest {
     @Test
     public void canGetBooleanValue() throws Exception {
         // given
-        Value<TestEvent> value = new Value<TestEvent>() {
+        Value value = new Value() {
 
             @Override
-            public String toDebugString(TestEvent e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return "validation-debug-string";
             }
 
             @Override
-            protected Boolean getImp(TestEvent e, Context context) {
+            protected Boolean getImp(Event e, Context context) {
                 return false;
             }
 
@@ -47,7 +47,7 @@ public class ValueTest {
         assertThat(value.toString()).isEqualTo("toString text");
     }
 
-    private static class ValueForTesting extends Value<TestEvent> {
+    private static class ValueForTesting extends Value {
 
         @SafeVarargs
         public ValueForTesting(ValueForTesting... values) {
@@ -59,12 +59,12 @@ public class ValueTest {
         }
 
         @Override
-        public String toDebugString(TestEvent e, Context context) {
+        public String toDebugString(Event e, Context context) {
             return null;
         }
 
         @Override
-        protected Object getImp(TestEvent e, Context context) {
+        protected Object getImp(Event e, Context context) {
             return null;
         }
 
@@ -84,13 +84,13 @@ public class ValueTest {
         new ValueForTesting() {
 
             @Override
-            public String toDebugString(TestEvent e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return "error-text";
             }
 
             @Override
             // With Unsupported return value 'File'
-            protected File getImp(TestEvent e, Context context) {
+            protected File getImp(Event e, Context context) {
                 return null;
             }
         };
@@ -104,9 +104,9 @@ public class ValueTest {
         expected.expectMessage("value: ValueForTesting; event: null; context: null");
         
         // when
-        Value<TestEvent> value = new ValueForTesting() {
+        Value value = new ValueForTesting() {
             @Override
-            protected Object getImp(TestEvent e, Context context) {
+            protected Object getImp(Event e, Context context) {
                 throw new RuntimeException("testing");
             }
         };
@@ -117,7 +117,7 @@ public class ValueTest {
 
     @Test
     public void checkIfAwaresHasSufficiantContext() throws Exception {
-        Value<TestEvent> value = new ValueForTesting(new ValueForTesting(), new ValueForTesting() {
+        Value value = new ValueForTesting(new ValueForTesting(), new ValueForTesting() {
             @Override
             public boolean hasSufficientContext(Context context) {
                 return false;
@@ -128,9 +128,9 @@ public class ValueTest {
 
     @Test
     public void checkAsString() throws Exception {
-        Value<TestEvent> value = new ValueForTesting() {
+        Value value = new ValueForTesting() {
             @Override
-            protected Object getImp(TestEvent e, Context context) {
+            protected Object getImp(Event e, Context context) {
                 return 5L;
             }
         };

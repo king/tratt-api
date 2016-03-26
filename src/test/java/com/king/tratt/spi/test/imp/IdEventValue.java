@@ -1,18 +1,19 @@
 package com.king.tratt.spi.test.imp;
 
 import com.king.tratt.spi.Context;
+import com.king.tratt.spi.Event;
 import com.king.tratt.spi.Value;
 
 
-public class IdEventValue extends Value<TestEvent> {
+public class IdEventValue extends Value {
 
     @Override
-    public String toDebugString(TestEvent e, Context context) {
+    public String toDebugString(Event e, Context context) {
         return String.format("[[source:event.id]]%s", get(e, context));
     }
 
     @Override
-    protected Long getImp(TestEvent e, Context context) {
+    protected Long getImp(Event e, Context context) {
         return e.getId();
     }
 

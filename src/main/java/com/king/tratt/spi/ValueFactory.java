@@ -1,10 +1,10 @@
 package com.king.tratt.spi;
 
-public interface ValueFactory<E extends Event> {
+public interface ValueFactory {
 
-    Value<E> getValue(String eventName, String parameterName);
+    Value getValue(String eventName, String parameterName);
 
-    default Value<E> unrecognizedValue() {
+    default Value notFound() {
         return null;
     }
 

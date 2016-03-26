@@ -1,7 +1,5 @@
 package com.king.tratt;
 
-import com.king.tratt.spi.Event;
-
 /**
  * Tratt API entry point.
  */
@@ -18,8 +16,8 @@ public final class Tratt {
      *
      * @return {@link EventProcessorBuilder}
      */
-    public static <E extends Event> EventProcessorBuilder<E> newEventProcessorBuilder() {
-        return new EventProcessorBuilder<E>();
+    public static EventProcessorBuilder newEventProcessorBuilder() {
+        return new EventProcessorBuilder();
 
     }
 

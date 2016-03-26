@@ -24,7 +24,7 @@ import com.king.tratt.spi.Stoppable;
 import com.king.tratt.spi.ValueFactory;
 import com.king.tratt.tdl.Tdl;
 
-public class StartedEventProcessor<E extends Event> {
+public class StartedEventProcessor {
 
     private static Logger LOG = LoggerFactory.getLogger(StartedEventProcessor.class);
     private static String ERROR_MESSAGE = "Sequence '%s' is not valid due to: %s \n";
@@ -32,23 +32,23 @@ public class StartedEventProcessor<E extends Event> {
     private Future<CompletedEventProcessor> tdlProcessorResults;
     final ExecutorService executor;
     final Tdl tdl;
-    private final List<EventIterator<E>> eventIterators;
+    private final List<EventIterator> eventIterators;
     //    private final StatisticsDataHolder statsDataHolder;
-    private final PipelineProducerStrategy<E> producerStrategy;
+    private final PipelineProducerStrategy producerStrategy;
     private final List<Stoppable> stoppables;
-    private final BlockingQueue<E> pipeline;
+    private final BlockingQueue<Event> pipeline;
     private final boolean tdlValidationEnabled;
     final long timeoutSeconds;
     //    private final String trackingToolUrl;
-    private final ArrayList<SimpleProcessor<E>> simpleProcessors;
+    private final ArrayList<SimpleProcessor> simpleProcessors;
     final EventMetaDataFactory<?> metadataFactory;
-    final ValueFactory<E> valueFactory;
-    final List<SequenceProcessorListener<E>> sequenceListeners;
-    final ProgressSequenceProcessorListener<E> progressListener;
-    CompletionStrategy<E> completionStrategy;
+    final ValueFactory valueFactory;
+    final List<SequenceProcessorListener> sequenceListeners;
+    final ProgressSequenceProcessorListener progressListener;
+    CompletionStrategy completionStrategy;
 
 
-    StartedEventProcessor(EventProcessorBuilder<E> builder) {
+    StartedEventProcessor(EventProcessorBuilder builder) {
         // first copy...
         pipeline = builder.pipeline; // don't copy!
         metadataFactory = builder.metaDataFactory;
@@ -63,9 +63,9 @@ public class StartedEventProcessor<E extends Event> {
         sequenceListeners = new ArrayList<>(builder.sequenceListeners);
         stoppables = new ArrayList<>(builder.stoppables);
         completionStrategy = builder.completionStrategy;
-        progressListener = new ProgressSequenceProcessorListener<E>(tdl.getSequences());
+        progressListener = new ProgressSequenceProcessorListener(tdl.getSequences());
         sequenceListeners.add(progressListener);
-        sequenceListeners.add(new ProcessorLogger<E>());
+        sequenceListeners.add(new ProcessorLogger());
         //        statsDataHolder = StatisticsDataHolder.copyOf(builder.statisticsDataHolder);
         //        requestId = builder.requestId == null ? valueOf(nanoTime()) : builder.requestId;
 
@@ -106,14 +106,13 @@ public class StartedEventProcessor<E extends Event> {
         }
     }
 
-    StartedEventProcessor<E> start() {
-        CachedProcessor<E> cachedEvents = util.startProcessingEventsAndCreateCach(
+    StartedEventProcessor start() {
+        CachedProcessor cachedEvents = util.startProcessingEventsAndCreateCach(
                 pipeline, eventIterators, stoppables, simpleProcessors, producerStrategy, executor);
         if (!tdl.getSequences().isEmpty()) {
-            //            listeners.add(new LoggingProcessListener(tdl));
             //            listeners.add(new StatisticsProcessListener(requestId, statsDataHolder,
             //                    tdl, trackingToolUrl, executor));
-            tdlProcessorResults = newFutureTask(new TdlProcessor<E>(cachedEvents, this));
+            tdlProcessorResults = newFutureTask(new TdlProcessor(cachedEvents, this));
         } else {
             tdlProcessorResults = newInvalidCompletedFuture();
         }
@@ -128,7 +127,7 @@ public class StartedEventProcessor<E extends Event> {
     }
 
     private void validateTdl(Tdl tdl) {
-        TdlValidator<E> validator = new TdlValidator<E>(valueFactory, metadataFactory, tdl);
+        TdlValidator validator = new TdlValidator(valueFactory, metadataFactory, tdl);
         if (validator.getError() != null) {
             TdlValidationResult result = new TdlValidationResult(false, validator.getError(),
                     validator.getFieldErrorDescriptors());
@@ -169,7 +168,7 @@ public class StartedEventProcessor<E extends Event> {
         };
     }
 
-    private synchronized Future<CompletedEventProcessor> newFutureTask(TdlProcessor<E> tdlProcessor) {
+    private synchronized Future<CompletedEventProcessor> newFutureTask(TdlProcessor tdlProcessor) {
         Callable<CompletedEventProcessor> r = () -> {
                 List<SequenceResult> results = tdlProcessor.processTdl(tdl);
                 return new CompletedEventProcessor(results);

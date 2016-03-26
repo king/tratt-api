@@ -17,24 +17,24 @@ class Values {
 
     private static final String SOURCE_CONSTANT = "[[source:constant]]%s";
 
-    <E extends Event> Value<E> constant(String value) {
-        Value<E> result = parseValue(value,
+    Value constant(String value) {
+        Value result = parseValue(value,
                 this::constantLong,
                 this::constantString,
                 this::constantBoolean);
         return result;
     }
 
-    <E extends Event> Value<E> constantString(final String str) {
-        return new Value<E>() {
+    Value constantString(final String str) {
+        return new Value() {
 
             @Override
-            public String toDebugString(E e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return String.format(SOURCE_CONSTANT, "'" + str + "'");
             }
 
             @Override
-            protected String getImp(E e, Context context) {
+            protected String getImp(Event e, Context context) {
                 return str;
             }
 
@@ -45,16 +45,16 @@ class Values {
         };
     }
 
-    <E extends Event> Value<E> constantLong(long l) {
-        return new Value<E>() {
+    Value constantLong(long l) {
+        return new Value() {
 
             @Override
-            public String toDebugString(E e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return String.format(SOURCE_CONSTANT, l);
             }
 
             @Override
-            protected Long getImp(E e, Context context) {
+            protected Long getImp(Event e, Context context) {
                 return l;
             }
 
@@ -65,16 +65,16 @@ class Values {
         };
     }
 
-    <E extends Event> Value<E> constantBoolean(boolean b) {
-        return new Value<E>() {
+    Value constantBoolean(boolean b) {
+        return new Value() {
 
             @Override
-            public String toDebugString(E e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return String.format(SOURCE_CONSTANT, b);
             }
 
             @Override
-            protected Boolean getImp(E e, Context context) {
+            protected Boolean getImp(Event e, Context context) {
                 return b;
             }
 
@@ -115,15 +115,15 @@ class Values {
                 value.getClass(), value));
     }
 
-    <E extends Event> Value<E> modulus(final Value<E> value, final Value<E> modulus) {
-        return new Value<E>(value, modulus) {
+    Value modulus(final Value value, final Value modulus) {
+        return new Value(value, modulus) {
             @Override
-            public String toDebugString(E e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return util.format(e, context, "(~d % ~d)~g", value, modulus, this);
             }
 
             @Override
-            protected Long getImp(E e, Context context) {
+            protected Long getImp(Event e, Context context) {
                 return (long) value.get(e, context) % (long) modulus.get(e, context);
             }
 
@@ -134,16 +134,16 @@ class Values {
         };
     }
 
-    <E extends Event> Value<E> sum(Value<E> left, Value<E> right) {
-        return new Value<E>(left, right) {
+    Value sum(Value left, Value right) {
+        return new Value(left, right) {
 
             @Override
-            public String toDebugString(E e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return util.format(e, context, "(~d + ~d)~g", left, right, this);
             }
 
             @Override
-            protected Long getImp(E e, Context context) {
+            protected Long getImp(Event e, Context context) {
                 return (long) left.get(e, context) + (long) right.get(e, context);
             }
 
@@ -154,16 +154,16 @@ class Values {
         };
     }
 
-    <E extends Event> Value<E> subtract(Value<E> left, Value<E> right) {
-        return new Value<E>(left, right) {
+    Value subtract(Value left, Value right) {
+        return new Value(left, right) {
 
             @Override
-            public String toDebugString(E e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return util.format(e, context, "(~d - ~d)~g", left, right, this);
             }
 
             @Override
-            protected Long getImp(E e, Context context) {
+            protected Long getImp(Event e, Context context) {
                 return (long) left.get(e, context) - (long) right.get(e, context);
             }
 
@@ -174,16 +174,16 @@ class Values {
         };
     }
 
-    <E extends Event> Value<E> multiply(Value<E> left, Value<E> right) {
-        return new Value<E>(left, right) {
+    Value multiply(Value left, Value right) {
+        return new Value(left, right) {
 
             @Override
-            public String toDebugString(E e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return util.format(e, context, "(~d * ~d)~g", left, right, this);
             }
 
             @Override
-            protected Long getImp(E e, Context context) {
+            protected Long getImp(Event e, Context context) {
                 return (long) left.get(e, context) * (long) right.get(e, context);
             }
 
@@ -194,16 +194,16 @@ class Values {
         };
     }
 
-    <E extends Event> Value<E> divide(Value<E> left, Value<E> right) {
-        return new Value<E>(left, right) {
+    Value divide(Value left, Value right) {
+        return new Value(left, right) {
 
             @Override
-            public String toDebugString(E e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return util.format(e, context, "(~d / ~d)~g", left, right, this);
             }
 
             @Override
-            protected Long getImp(E e, Context context) {
+            protected Long getImp(Event e, Context context) {
                 return (long) left.get(e, context) / (long) right.get(e, context);
             }
 
@@ -214,16 +214,16 @@ class Values {
         };
     }
 
-    <E extends Event> Value<E> context(String name) {
-        return new Value<E>() {
+    Value context(String name) {
+        return new Value() {
 
             @Override
-            public String toDebugString(E e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return util.format(e, context, "[[source:context.~s]]~g", name, this);
             }
 
             @Override
-            protected Object getImp(E e, Context context) {
+            protected Object getImp(Event e, Context context) {
                 if (hasSufficientContext(context)) {
                     return context.get(name);
                 }
@@ -243,16 +243,16 @@ class Values {
         };
     }
 
-    <E extends Event> Value<E> eventId() {
-        return new Value<E>() {
+    Value eventId() {
+        return new Value() {
 
             @Override
-            public String toDebugString(E e, Context context) {
+            public String toDebugString(Event e, Context context) {
                 return util.format(e, context, "[[source:event.id]]~g", this);
             }
 
             @Override
-            protected Long getImp(E e, Context context) {
+            protected Long getImp(Event e, Context context) {
                 return e.getId();
             }
 

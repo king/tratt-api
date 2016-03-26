@@ -5,10 +5,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.king.tratt.spi.Event;
 import com.king.tratt.tdl.CheckPoint;
 
-class ProcessorLogger<E extends Event> implements SequenceProcessorListener<E> {
+class ProcessorLogger implements SequenceProcessorListener {
     private static final String LOG_TEMPLATE = "[CHECKPOINT[%s.%s]:%s]  %s";
     private static final String FAILURE_LOG_TEMPLATE = "[CHECKPOINT[%s.%s]:%s]  %s%s";
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorLogger.class);
@@ -17,7 +16,7 @@ class ProcessorLogger<E extends Event> implements SequenceProcessorListener<E> {
     }
 
     @Override
-    public void onCheckPointFailure(OnCheckPointFailure<E> on) {
+    public void onCheckPointFailure(OnCheckPointFailure on) {
         int seqIndex = on.getSequenceIndex();
         int cpIndex = on.getCheckPointIndex();
         String failureString = "\n" + on.getFailureString();
@@ -25,21 +24,21 @@ class ProcessorLogger<E extends Event> implements SequenceProcessorListener<E> {
     }
 
     @Override
-    public void onCheckPointMatch(OnCheckPointMatch<E> on) {
+    public void onCheckPointMatch(OnCheckPointMatch on) {
         int seqIndex = on.getSequenceIndex();
         int cpIndex = on.getCheckPointIndex();
         LOG.info(String.format(LOG_TEMPLATE, seqIndex, cpIndex, "MATCH", on.getEvent()));
     }
 
     @Override
-    public void onCheckPointSuccess(OnCheckPointSuccess<E> on) {
+    public void onCheckPointSuccess(OnCheckPointSuccess on) {
         int seqIndex = on.getSequenceIndex();
         int cpIndex = on.getCheckPointIndex();
         LOG.info(String.format(LOG_TEMPLATE, seqIndex, cpIndex, "SUCCESS", on.getEvent()));
     }
 
     @Override
-    public void onCheckPointTimeout(OnCheckPointTimeout<E> on) {
+    public void onCheckPointTimeout(OnCheckPointTimeout on) {
         int seqIndex = on.getSequenceIndex();
         int cpIndex = on.getCheckPointIndex();
         CheckPoint cp = on.getCheckPoint();
@@ -49,12 +48,12 @@ class ProcessorLogger<E extends Event> implements SequenceProcessorListener<E> {
     }
 
     @Override
-    public void onSequenceStart(OnSequenceStart<E> on) {
+    public void onSequenceStart(OnSequenceStart on) {
         LOG.info("[START] Sequence " + on.getSequenceName() + " started.");
     }
 
     @Override
-    public void onSequenceEnd(OnSequenceEnd<E> on) {
+    public void onSequenceEnd(OnSequenceEnd on) {
         LOG.info("[END ] Sequence " + on.getSequenceName() + " ended.");
         String delimiter = "\n      ";
         String prefix = "\nContext=" + delimiter;
@@ -64,7 +63,7 @@ class ProcessorLogger<E extends Event> implements SequenceProcessorListener<E> {
         LOG.info(logMessage.toString());
     }
     @Override
-    public void onSequenceTimeout(OnSequenceTimeout<E> on) {
+    public void onSequenceTimeout(OnSequenceTimeout on) {
         LOG.info("[TIMEOUT] Sequence " + on.getSequenceName() + " timedout.");
     }
 

@@ -13,12 +13,12 @@ import com.king.tratt.spi.EventIterator;
 class PipelineProducer<E extends Event> implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PipelineProducer.class);
-    private volatile EventIterator<E> iterator;
-    private final BlockingQueue<E> blockingQueue;
-    private final PipelineProducerStrategy<E> queueProducerStrategy;
+    private volatile EventIterator iterator;
+    private final BlockingQueue<Event> blockingQueue;
+    private final PipelineProducerStrategy queueProducerStrategy;
 
-    PipelineProducer(EventIterator<E> iterator, BlockingQueue<E> blockingQueue,
-            PipelineProducerStrategy<E> queueProducerStrategy) {
+    PipelineProducer(EventIterator iterator, BlockingQueue<Event> blockingQueue,
+            PipelineProducerStrategy queueProducerStrategy) {
         this.iterator = iterator;
         this.queueProducerStrategy = queueProducerStrategy;
         this.blockingQueue = blockingQueue;
@@ -28,7 +28,7 @@ class PipelineProducer<E extends Event> implements Runnable {
     public void run() {
         try {
             while (iterator.hasNext() && !currentThread().isInterrupted()) {
-                E e = iterator.next();
+                Event e = iterator.next();
                 queueProducerStrategy.apply(blockingQueue, e);
             }
         } catch (Throwable t) {

@@ -4,7 +4,7 @@ import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 import com.king.tratt.tdl.CheckPoint;
 
-class OnBase<E extends Event> {
+class OnBase {
     private final String seqName;
     private final Context context;
 
@@ -21,10 +21,10 @@ class OnBase<E extends Event> {
         return context;
     }
 
-    static class OnCheckPointBase<E extends Event> extends OnBase<E> {
-        final CheckPointMatcher<E> cpMatcher;
+    static class OnCheckPointBase extends OnBase {
+        final CheckPointMatcher cpMatcher;
 
-        OnCheckPointBase(String seqName, CheckPointMatcher<E> cpMatcher, Context context) {
+        OnCheckPointBase(String seqName, CheckPointMatcher cpMatcher, Context context) {
             super(seqName, context);
             this.cpMatcher = cpMatcher;
         }
@@ -42,15 +42,15 @@ class OnBase<E extends Event> {
         }
     }
 
-    static class OnCheckPointWithEventBase<E extends Event> extends OnCheckPointBase<E> {
-        final E event;
+    static class OnCheckPointWithEventBase extends OnCheckPointBase {
+        final Event event;
 
-        OnCheckPointWithEventBase(String seqName, E event, CheckPointMatcher<E> cpMatcher, Context context) {
+        OnCheckPointWithEventBase(String seqName, Event event, CheckPointMatcher cpMatcher, Context context) {
             super(seqName, cpMatcher, context);
             this.event = event;
         }
 
-        E getEvent() {
+        Event getEvent() {
             return event;
         }
     }

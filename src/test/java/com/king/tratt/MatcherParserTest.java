@@ -15,19 +15,19 @@ import com.king.tratt.spi.test.imp.TestValueFactory;
 
 public class MatcherParserTest {
     private ContextImp context = new ContextImp();
-    private MatcherParser<TestEvent> matcherParser;
-    private Environment<TestEvent> env = new Environment<>(new HashMap<>());
-    private Matcher<TestEvent> m;
+    private MatcherParser matcherParser;
+    private Environment env = new Environment(new HashMap<>());
+    private Matcher m;
     private TestEventMetaDataFactory mdFactory;
 
     @Before
     public void setup() throws Exception {
         mdFactory = new TestEventMetaDataFactory();
         TestValueFactory valueFactory = new TestValueFactory(mdFactory);
-        matcherParser = new MatcherParser<>(valueFactory);
+        matcherParser = new MatcherParser(valueFactory);
     }
 
-    private Matcher<TestEvent> matcher(String eventName, String expression) {
+    private Matcher matcher(String eventName, String expression) {
         EventMetaData eventMetaData = mdFactory.getEventMetaData(eventName);
         return matcherParser.parseMatcher(eventMetaData, expression, env);
     }

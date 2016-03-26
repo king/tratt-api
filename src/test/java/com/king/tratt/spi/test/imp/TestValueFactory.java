@@ -5,7 +5,7 @@ import static java.lang.String.format;
 import com.king.tratt.spi.Value;
 import com.king.tratt.spi.ValueFactory;
 
-public class TestValueFactory implements ValueFactory<TestEvent> {
+public class TestValueFactory implements ValueFactory {
 
     private TestEventMetaDataFactory metaDataFactory;
 
@@ -14,15 +14,15 @@ public class TestValueFactory implements ValueFactory<TestEvent> {
     }
 
     @Override
-    public Value<TestEvent> getValue(String eventName, String parameterName) {
+    public Value getValue(String eventName, String parameterName) {
         TestEventMetaData metaData = metaDataFactory.getEventMetaData(eventName);
         if (metaData == null) {
-            return unrecognizedValue();
+            return notFound();
         }
 
         Field field = metaData.getField(parameterName);
         if (field == null) {
-            return unrecognizedValue();
+            return notFound();
         }
 
         switch (parameterName) {

@@ -26,47 +26,47 @@ import com.king.tratt.tdl.CheckPoint;
 import com.king.tratt.tdl.Sequence;
 import com.king.tratt.tdl.Tdl;
 
-class TdlProcessor<E extends Event> {
+class TdlProcessor {
     private static final String VARIABLE_PREFIX = "$";
 
-    private final CachedProcessor<E> cachedEvents;
-    private final StartedEventProcessor<E> started;
-    private final CompletionStrategy<E> completionStrategy;
+    private final CachedProcessor cachedEvents;
+    private final StartedEventProcessor started;
+    private final CompletionStrategy completionStrategy;
 
-    TdlProcessor(CachedProcessor<E> cachedEvents, StartedEventProcessor<E> started) {
+    TdlProcessor(CachedProcessor cachedEvents, StartedEventProcessor started) {
         this.cachedEvents = cachedEvents;
         this.started = started;
         this.completionStrategy = started.completionStrategy;
     }
 
     List<SequenceResult> processTdl(Tdl tdl) {
-        MatcherParser<E> matcherParser = new MatcherParser<>(started.valueFactory);
+        MatcherParser matcherParser = new MatcherParser(started.valueFactory);
         Map<String, String> tdlVariables = VariableParser.parse(VARIABLE_PREFIX, tdl.getVariables());
-        CopyOnWriteArrayList<SequenceProcessor<E>> processors;
+        CopyOnWriteArrayList<SequenceProcessor> processors;
         processors = IntStream.range(0, tdl.getSequences().size()).mapToObj(seqIndex -> {
             Sequence sequence = tdl.getSequences().get(seqIndex);
             List<CheckPoint> checkPoints = sequence.getCheckPoints();
-            Environment<E> env = new Environment<E>(tdlVariables);
-            SetterToValueMapper<E> mapper = new SetterToValueMapper<>(started.valueFactory);
+            Environment env = new Environment(tdlVariables);
+            SetterToValueMapper mapper = new SetterToValueMapper(started.valueFactory);
             env.sequenceVariables.putAll(
                     checkPoints.stream().flatMap(mapper::getValues)
                     .collect(toMap(Entry::getKey, Entry::getValue)));
-            List<CheckPointMatcher<E>> cpMatchers = IntStream.range(0, checkPoints.size())
+            List<CheckPointMatcher> cpMatchers = IntStream.range(0, checkPoints.size())
                     .mapToObj(cpIndex -> {
                         CheckPoint cp = checkPoints.get(cpIndex);
-                        Map<String, Value<E>> valuesToStore = mapper.getValues(cp)
+                        Map<String, Value> valuesToStore = mapper.getValues(cp)
                                 .collect(toMap(Entry::getKey, Entry::getValue));
-                        return new CheckPointMatcher<E>(seqIndex, cpIndex, cp, env, matcherParser,
+                        return new CheckPointMatcher(seqIndex, cpIndex, cp, env, matcherParser,
                                 started, valuesToStore);
                     })
                     .collect(toList());
-            SequenceProcessor<E> processor = new ContainerSequenceProcessor<E>();
+            SequenceProcessor processor = new ContainerSequenceProcessor();
             // TODO add factory for different SequenceProcessors
             processor.setCheckPointMatchers(cpMatchers);
             processor.setListeners(started.sequenceListeners);
             processor.setSequence(sequence);
             return processor;
-        }).collect(Collectors.collectingAndThen(toList(), CopyOnWriteArrayList<SequenceProcessor<E>>::new));
+        }).collect(Collectors.collectingAndThen(toList(), CopyOnWriteArrayList<SequenceProcessor>::new));
         processors.parallelStream().forEach(processor -> processor.beforeStart());
         try {
             return startProcessing(processors);
@@ -76,7 +76,7 @@ class TdlProcessor<E extends Event> {
         }
     }
 
-    private List<SequenceResult> startProcessing(CopyOnWriteArrayList<SequenceProcessor<E>> processors)
+    private List<SequenceResult> startProcessing(CopyOnWriteArrayList<SequenceProcessor> processors)
             throws InterruptedException {
         TimeoutChecker timeout = new TimeoutChecker(started);
         completionStrategy.beforeStart(new Processors(processors));
@@ -85,7 +85,7 @@ class TdlProcessor<E extends Event> {
                 processors.parallelStream().forEach(p -> p.onTimeout());
                 break;
             }
-            E event = cachedEvents.getQueue().poll(500, MILLISECONDS);
+            Event event = cachedEvents.getQueue().poll(500, MILLISECONDS);
             if (event != null) {
                 processors.parallelStream().forEach(p -> p.process(event));
             }
@@ -93,7 +93,7 @@ class TdlProcessor<E extends Event> {
         return createSequenceResults(started.progressListener);
     }
 
-    private List<SequenceResult> createSequenceResults(ProgressSequenceProcessorListener<E> progressListener) {
+    private List<SequenceResult> createSequenceResults(ProgressSequenceProcessorListener progressListener) {
         final List<SequenceResult> result = new ArrayList<>();
         for (SequenceStatus s : progressListener.getStatus()) {
             String name = s.getName().toString();

@@ -6,7 +6,7 @@ import java.util.Iterator;
  * Interface that decouples the source of the Events, for example: Kafka queue,
  * or a file.
  */
-public interface EventIterator<E extends Event> extends Iterator<E>, Stoppable {
+public interface EventIterator extends Iterator<Event>, Stoppable {
 
     /**
      * This must be a blocking call. Shall only return false after {@link #stop()} method has been
@@ -21,7 +21,7 @@ public interface EventIterator<E extends Event> extends Iterator<E>, Stoppable {
      * @return the next event.
      */
     @Override
-    E next();
+    Event next();
 
     void start();
 

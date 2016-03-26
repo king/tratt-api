@@ -8,10 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.king.tratt.spi.Event;
 import com.king.tratt.tdl.Sequence;
 
-class ProgressSequenceProcessorListener<E extends Event> implements CompletionStrategy<E> {
+class ProgressSequenceProcessorListener implements CompletionStrategy {
     private final Map<String, SequenceStatus> processorMap;
     private final AtomicInteger open;
     private Processors processors;
@@ -32,34 +31,34 @@ class ProgressSequenceProcessorListener<E extends Event> implements CompletionSt
     }
 
     @Override
-    public void onSequenceStart(OnSequenceStart<E> on) {
+    public void onSequenceStart(OnSequenceStart on) {
         status(on).started = true;
     }
 
     @Override
-    public void onSequenceEnd(OnSequenceEnd<E> on) {
+    public void onSequenceEnd(OnSequenceEnd on) {
         status(on).done = true;
         processors.removeProcessor(on.getSequenceName());
         open.getAndDecrement();
     }
 
     @Override
-    public void onSequenceTimeout(OnSequenceTimeout<E> on) {
+    public void onSequenceTimeout(OnSequenceTimeout on) {
         status(on).timeout = true;
     }
 
     @Override
-    public void onCheckPointFailure(OnCheckPointFailure<E> on) {
+    public void onCheckPointFailure(OnCheckPointFailure on) {
         status(on).invalid = true;
     }
 
     @Override
-    public void onCheckPointTimeout(OnCheckPointTimeout<E> on) {
+    public void onCheckPointTimeout(OnCheckPointTimeout on) {
         status(on).timeout = true;
     }
 
     
-    SequenceStatus status(OnBase<?> base) {
+    SequenceStatus status(OnBase base) {
         return processorMap.get(base.getSequenceName());
     }
 

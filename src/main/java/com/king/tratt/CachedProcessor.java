@@ -5,16 +5,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import com.king.tratt.spi.Event;
 
-class CachedProcessor<E extends Event> implements SimpleProcessor<E> {
+class CachedProcessor implements SimpleProcessor {
 
-    final BlockingQueue<E> blockingQueue = new LinkedBlockingQueue<>();
+    final BlockingQueue<Event> blockingQueue = new LinkedBlockingQueue<>();
 
     @Override
-    public void process(E e) {
+    public void process(Event e) {
         blockingQueue.add(e);
     }
 
-    BlockingQueue<E> getQueue() {
+    BlockingQueue<Event> getQueue() {
         return blockingQueue;
     }
 

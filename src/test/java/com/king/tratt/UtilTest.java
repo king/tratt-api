@@ -18,11 +18,11 @@ import com.king.tratt.spi.test.imp.TestEvent;
 public class UtilTest {
 
     @Mock
-    Value<TestEvent> v1;
+    Value v1;
     @Mock
-    Value<TestEvent> v2;
+    Value v2;
     @Mock
-    Value<TestEvent> v3;
+    Value v3;
 
     @Test
     public void canReplaceConversionCharacters() throws Exception {

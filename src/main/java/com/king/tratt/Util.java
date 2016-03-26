@@ -64,8 +64,8 @@ class Util {
     }
 
     <E extends Event> boolean hasSufficientContext(Context context,
-            List<? extends SufficientContextAware<E>> awares) {
-        for (SufficientContextAware<E> aware : awares) {
+            List<? extends SufficientContextAware> awares) {
+        for (SufficientContextAware aware : awares) {
             if (!aware.hasSufficientContext(context)) {
                 return false;
             }
@@ -172,17 +172,16 @@ class Util {
     }
 
     //TODO : change "g" to "v"; v as in value
-    @SuppressWarnings("unchecked")
     private <E extends Event> String doConversion(E e, Context context, String action, Object o) {
         switch (action) {
         case "~g":
-            return ((Value<E>) o).asString(e, context);
+            return ((Value) o).asString(e, context);
         case "~d":
-            return ((DebugStringAware<E>) o).toDebugString(e, context);
+            return ((DebugStringAware) o).toDebugString(e, context);
         case "~s":
             return o.toString();
         case "~p":
-            return values.quoted(((Value<E>) o).get(e, context));
+            return values.quoted(((Value) o).get(e, context));
         default:
             String message = "Unsupported conversion: '%s'";
             throw new IllegalStateException(String.format(message, action));
@@ -201,12 +200,12 @@ class Util {
 		});
 	}
 
-    <E extends Event> CachedProcessor<E> startProcessingEventsAndCreateCach(
-            BlockingQueue<E> pipeline, List<EventIterator<E>> eventIterators,
-            List<Stoppable> stoppables, List<SimpleProcessor<E>> simpleProcessors,
-            PipelineProducerStrategy<E> producerStrategy, ExecutorService executor) {
+    <E extends Event> CachedProcessor startProcessingEventsAndCreateCach(
+            BlockingQueue<Event> pipeline, List<EventIterator> eventIterators,
+            List<Stoppable> stoppables, List<SimpleProcessor> simpleProcessors,
+            PipelineProducerStrategy producerStrategy, ExecutorService executor) {
 
-        for (EventIterator<E> eventIterator : eventIterators) {
+        for (EventIterator eventIterator : eventIterators) {
             // Create Producer and start producing events to the eventPipeline.
             eventIterator.start();
             executor.submit(new PipelineProducer<>(eventIterator, pipeline, producerStrategy));
@@ -214,10 +213,10 @@ class Util {
         }
 
         // Create consumer and add processors to forward events to, then start consuming the pipeline.
-        CachedProcessor<E> cachedEvents = new CachedProcessor<>();
-        PipelineConsumer<E> pipelineConsumer = new PipelineConsumer<>(pipeline);
+        CachedProcessor cachedEvents = new CachedProcessor();
+        PipelineConsumer pipelineConsumer = new PipelineConsumer(pipeline);
         pipelineConsumer.addProcessor(cachedEvents);
-        for (SimpleProcessor<E> processor : simpleProcessors) {
+        for (SimpleProcessor processor : simpleProcessors) {
             pipelineConsumer.addProcessor(processor);
         }
         executor.submit(pipelineConsumer);
@@ -230,7 +229,7 @@ class Util {
     //            PipelineProducerStrategy<Event> producerStrategy, Map<Object, Processor<Event>> eventProcessors,
     //            ExecutorService executor) {
     //
-    //        CachingEventProcessor<E> eventCacher = Processors.eventCacher();
+    // CachingEventProcessor eventCacher = Processors.eventCacher();
     //
     //        PipelineProducer<Event> producer;
     //        for (EventIterator<Event> eventIterator : eventIterators) {

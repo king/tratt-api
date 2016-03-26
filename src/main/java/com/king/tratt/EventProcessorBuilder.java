@@ -20,22 +20,22 @@ import com.king.tratt.tdl.TdlBuilder;
 /**
  * Let's you configure the behavior of a EventProcessor.
  */
-public final class EventProcessorBuilder<E extends Event> {
+public class EventProcessorBuilder {
     final TdlBuilder tdlBuilder = Tdl.newBuilder();
     final List<Stoppable> stoppables = new ArrayList<>();
-    final List<SequenceProcessorListener<E>> sequenceListeners = new ArrayList<>();
-    final BlockingQueue<E> pipeline = new LinkedBlockingQueue<>();
-    final List<EventIterator<E>> eventIterators = new ArrayList<>();
-    final List<SimpleProcessor<E>> simpleProcessors = new ArrayList<>();
+    final List<SequenceProcessorListener> sequenceListeners = new ArrayList<>();
+    final BlockingQueue<Event> pipeline = new LinkedBlockingQueue<>();
+    final List<EventIterator> eventIterators = new ArrayList<>();
+    final List<SimpleProcessor> simpleProcessors = new ArrayList<>();
     long timeoutSeconds = 900;
-    PipelineProducerStrategy<E> producerStrategy = PipelineProducerStrategy.getDefault();
+    PipelineProducerStrategy producerStrategy = PipelineProducerStrategy.getDefault();
     boolean tdlValidationEnabled = true;
-    ValueFactory<E> valueFactory;
+    ValueFactory valueFactory;
     EventMetaDataFactory<?> metaDataFactory;
-    CompletionStrategy<E> completionStrategy;
+    CompletionStrategy completionStrategy;
 
 
-    EventProcessorBuilder() {
+    public EventProcessorBuilder() {
         /* for package private usage only */
     }
 
@@ -44,22 +44,22 @@ public final class EventProcessorBuilder<E extends Event> {
      * @param provider
      * @return
      */
-    public EventProcessorBuilder<E> setValueFactory(ValueFactory<E> valueFactory) {
+    public EventProcessorBuilder setValueFactory(ValueFactory valueFactory) {
         this.valueFactory = valueFactory;
         return this;
     }
 
-    public EventProcessorBuilder<E> setEventMetaDataFatory(EventMetaDataFactory<?> mdFactory) {
+    public EventProcessorBuilder setEventMetaDataFatory(EventMetaDataFactory<?> mdFactory) {
         this.metaDataFactory = mdFactory;
         return this;
     }
 
-    public EventProcessorBuilder<E> addEventIterator(EventIterator<E> eventIterator) {
+    public EventProcessorBuilder addEventIterator(EventIterator eventIterator) {
         eventIterators.add(eventIterator);
         return this;
     }
 
-    public EventProcessorBuilder<E> addSimpleProcessor(SimpleProcessor<E> simpleProcessor) {
+    public EventProcessorBuilder addSimpleProcessor(SimpleProcessor simpleProcessor) {
         simpleProcessors.add(simpleProcessor);
         return this;
     }
@@ -69,8 +69,8 @@ public final class EventProcessorBuilder<E extends Event> {
      *
      * @return
      */
-    public StartedEventProcessor<E> start() {
-        return new StartedEventProcessor<E>(this).start();
+    public StartedEventProcessor start() {
+        return new StartedEventProcessor(this).start();
     }
 
     /**
@@ -83,7 +83,7 @@ public final class EventProcessorBuilder<E extends Event> {
      * @param value of variable.
      * @return this builder
      */
-    public EventProcessorBuilder<E> addVariable(String name, Long value) {
+    public EventProcessorBuilder addVariable(String name, Long value) {
         tdlBuilder.addVariable(name, value);
         return this;
     }
@@ -98,7 +98,7 @@ public final class EventProcessorBuilder<E extends Event> {
      * @param value of variable.
      * @return this builder
      */
-    public EventProcessorBuilder<E> addVariable(String name, Integer value) {
+    public EventProcessorBuilder addVariable(String name, Integer value) {
         tdlBuilder.addVariable(name, value);
         return this;
     }
@@ -113,7 +113,7 @@ public final class EventProcessorBuilder<E extends Event> {
      * @param value of variable.
      * @return this builder
      */
-    public EventProcessorBuilder<E> addVariable(String name, String value) {
+    public EventProcessorBuilder addVariable(String name, String value) {
         tdlBuilder.addVariable(name, value);
         return this;
     }
@@ -126,7 +126,8 @@ public final class EventProcessorBuilder<E extends Event> {
      *            expression. Example: "coreUserId == $coreUserId" //TODO
      * @return this builder
      */
-    public EventProcessorBuilder<E> addMatch(String match) {
+    public EventProcessorBuilder addMatch(String match) {
+        // TODO remove?
         //        tdlBuilder.addMatch(match);
         return this;
     }
@@ -139,12 +140,12 @@ public final class EventProcessorBuilder<E extends Event> {
      * @param rest additional TDL
      * @return
      */
-    public EventProcessorBuilder<E> addTdls(Tdl first, Tdl... rest) {
+    public EventProcessorBuilder addTdls(Tdl first, Tdl... rest) {
         tdlBuilder.addTdls(util.concat(first, rest));
         return this;
     }
 
-    public EventProcessorBuilder<E> addTdls(List<Tdl> tdls) {
+    public EventProcessorBuilder addTdls(List<Tdl> tdls) {
         tdlBuilder.addTdls(tdls);
         return this;
     }
@@ -184,12 +185,12 @@ public final class EventProcessorBuilder<E extends Event> {
 	 * @param listener
 	 * @return this builder
 	 */
-	public EventProcessorBuilder<E> addProcessorListener(SequenceProcessorListener<E> listener) {
+    public EventProcessorBuilder addProcessorListener(SequenceProcessorListener listener) {
 		sequenceListeners.add(listener);
 		return this;
 	}
 	
-    public EventProcessorBuilder<E> addCompletionStrategy(CompletionStrategy<E> strategy) {
+    public EventProcessorBuilder addCompletionStrategy(CompletionStrategy strategy) {
 		completionStrategy = strategy;
 		return this;
 	}
@@ -207,7 +208,7 @@ public final class EventProcessorBuilder<E extends Event> {
      *            of duration
      * @return this builder
      */
-    public EventProcessorBuilder<E> setTimeout(long duration, TimeUnit timeUnit) {
+    public EventProcessorBuilder setTimeout(long duration, TimeUnit timeUnit) {
         if (duration < 0) {
             String message = "Argument 'duration' is negative.";
             throw new IllegalArgumentException(message);
@@ -223,7 +224,7 @@ public final class EventProcessorBuilder<E extends Event> {
      * disables TDL validation when starting the EventProcessor.
      * @return this builder
      */
-    public EventProcessorBuilder<E> disableTdlValidation() {
+    public EventProcessorBuilder disableTdlValidation() {
         tdlValidationEnabled = false;
         return this;
     }
@@ -231,7 +232,7 @@ public final class EventProcessorBuilder<E extends Event> {
     /**
      * Set the value of the TDL comment field.
      */
-    public EventProcessorBuilder<E> setComment(String comment) {
+    public EventProcessorBuilder setComment(String comment) {
         tdlBuilder.setComment(comment);
         return this;
     }

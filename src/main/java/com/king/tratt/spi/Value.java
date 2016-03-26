@@ -18,21 +18,20 @@ import com.king.tratt.tdl.CheckPoint;
  * Instances of this class represents a value in a {@link CheckPoint}'s
  * {@code match}, or {@code validate} fields.
  *
- * @param <E>
  */
-public abstract class Value<E extends Event> implements DebugStringAware<E>, SufficientContextAware<E> {
-    private final List<? extends SufficientContextAware<E>> awares;
+public abstract class Value implements DebugStringAware, SufficientContextAware {
+    private final List<? extends SufficientContextAware> awares;
 
     static List<Class<?>> supportedReturnTypes() {
         return asList(Boolean.class, Long.class, String.class, Object.class);
     }
 
     @SafeVarargs
-    public Value(SufficientContextAware<E>... awares) {
+    public Value(SufficientContextAware... awares) {
         this(asList(requireNonNull(awares, "awares")));
     }
 
-    public Value(List<? extends SufficientContextAware<E>> awares) {
+    public Value(List<? extends SufficientContextAware> awares) {
         requireNonNull(awares, "awares");
         requireNonNullElements(awares, "awares");
         checkReturnType();
@@ -67,9 +66,9 @@ public abstract class Value<E extends Event> implements DebugStringAware<E>, Suf
                 getAllMethods(cls.getSuperclass()));
     }
 
-    protected abstract Object getImp(E e, Context context);
+    protected abstract Object getImp(Event e, Context context);
 
-    public final Object get(E event, Context context) {
+    public final Object get(Event event, Context context) {
         try {
             return getImp(event, context);
         } catch (Throwable t) {
@@ -82,7 +81,7 @@ public abstract class Value<E extends Event> implements DebugStringAware<E>, Suf
 
     @Override
     public boolean hasSufficientContext(Context context) {
-        for (SufficientContextAware<E> aware : awares) {
+        for (SufficientContextAware aware : awares) {
             if (!aware.hasSufficientContext(context)) {
                 return false;
             }
@@ -90,7 +89,7 @@ public abstract class Value<E extends Event> implements DebugStringAware<E>, Suf
         return true;
     };
 
-    final public String asString(E e, Context context) {
+    final public String asString(Event e, Context context) {
         return String.valueOf(get(e, context));
     }
 }

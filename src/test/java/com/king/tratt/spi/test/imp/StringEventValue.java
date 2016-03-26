@@ -1,9 +1,10 @@
 package com.king.tratt.spi.test.imp;
 
 import com.king.tratt.spi.Context;
+import com.king.tratt.spi.Event;
 import com.king.tratt.spi.Value;
 
-public class StringEventValue extends Value<TestEvent> {
+public class StringEventValue extends Value {
 
     private final int index;
     private final String name;
@@ -14,13 +15,13 @@ public class StringEventValue extends Value<TestEvent> {
     }
 
     @Override
-    public String toDebugString(TestEvent e, Context context) {
+    public String toDebugString(Event e, Context context) {
         return String.format("[[source:event.%s]]'%s'", name, get(e, context));
     }
 
     @Override
-    protected String getImp(TestEvent e, Context context) {
-        return e.getField(index);
+    protected String getImp(Event e, Context context) {
+        return ((TestEvent) e).getField(index);
     }
 
     @Override

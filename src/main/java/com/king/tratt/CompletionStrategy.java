@@ -1,9 +1,7 @@
 package com.king.tratt;
 
-import com.king.tratt.spi.Event;
-
 @FunctionalInterface
-public interface CompletionStrategy<E extends Event> extends SequenceProcessorListener<E> {
+public interface CompletionStrategy extends SequenceProcessorListener {
 
     /**
      * Optional to implement

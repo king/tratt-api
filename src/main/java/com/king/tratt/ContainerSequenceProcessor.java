@@ -9,33 +9,34 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 
-class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
-    private final List<Memory<E>> eventsToMatchContainer = new CopyOnWriteArrayList<>();
-    private final List<Memory<E>> eventsToValidateContainer = new CopyOnWriteArrayList<>();
+class ContainerSequenceProcessor extends SequenceProcessor {
+    private final List<Memory> eventsToMatchContainer = new CopyOnWriteArrayList<>();
+    private final List<Memory> eventsToValidateContainer = new CopyOnWriteArrayList<>();
     private Context context;
-    private Map<Long, List<CheckPointMatcher<E>>> checkPointMatchers;
-    private SequenceProcessorHelper<E> helper;
+    private Map<Long, List<CheckPointMatcher>> checkPointMatchers;
+    private SequenceProcessorHelper helper;
     private long maxTimeMillis;
     private Long endTimeMillis;
 
     /*
      * State definition fields
      */
-    private final EventState<E> EXIT_PROCESSING = memory -> {
+    private final EventState EXIT_PROCESSING = memory -> {
         throw new ExitException();
     };
-    private final EventState<E> BREAK_STATE_MACHINE_LOOP = memory -> {
+    private final EventState BREAK_STATE_MACHINE_LOOP = memory -> {
         throw new UnsupportedOperationException();
     };
 
-    private final EventState<E> MATCH_CHECKER_STATE_THAT_BREAKS_LOOP = memory -> {
+    private final EventState MATCH_CHECKER_STATE_THAT_BREAKS_LOOP = memory -> {
         return matchCheckerState(memory, BREAK_STATE_MACHINE_LOOP);
     };
-    private final EventState<E> MATCH_CHECKER_STATE_THAT_THROWS = memory -> {
+    private final EventState MATCH_CHECKER_STATE_THAT_THROWS = memory -> {
         return matchCheckerState(memory, EXIT_PROCESSING);
     };
-    EventState<E> matchCheckerState(Memory<E> memory, EventState<E> def) {
-        for (CheckPointMatcher<E> cpMatcher : checkPointMatchers.get(memory.eventId)) {
+
+    EventState matchCheckerState(Memory memory, EventState def) {
+        for (CheckPointMatcher cpMatcher : checkPointMatchers.get(memory.eventId)) {
             if (cpMatcher.hasSufficientMatchContext(context)) {
                 boolean matches = cpMatcher.matches(memory.event, context);
                 if (matches) {
@@ -50,27 +51,27 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
         return def;
     }
 
-    private final EventState<E> VALID_STATE = memory -> {
+    private final EventState VALID_STATE = memory -> {
         removeCheckPoint(memory);
         helper.notifyCheckPointSuccess(memory.event, memory.cpMatcher, context);
         return BREAK_STATE_MACHINE_LOOP;
     };
 
-    private final EventState<E> INVALID_STATE = memory -> {
+    private final EventState INVALID_STATE = memory -> {
         removeCheckPoint(memory);
         helper.notifyCheckPointFailure(memory.event, memory.cpMatcher, context);
         return BREAK_STATE_MACHINE_LOOP;
     };
 
-    private void removeCheckPoint(Memory<E> memory) {
+    private void removeCheckPoint(Memory memory) {
         checkPointMatchers.get(memory.eventId).remove(memory.cpMatcher);
         if (checkPointMatchers.get(memory.eventId).isEmpty()) {
             checkPointMatchers.remove(memory.eventId);
         }
     }
 
-    private final EventState<E> VALID_CHECKER_STATE = memory -> {
-        CheckPointMatcher<E> cpMatcher = memory.cpMatcher;
+    private final EventState VALID_CHECKER_STATE = memory -> {
+        CheckPointMatcher cpMatcher = memory.cpMatcher;
         if (cpMatcher.hasSufficientValidContext(context)) {
             if (cpMatcher.isValid(memory.event, context)) {
                 return VALID_STATE;
@@ -83,7 +84,7 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
         }
     };
 
-    private final EventState<E> MATCHED_STATE = memory -> {
+    private final EventState MATCHED_STATE = memory -> {
         memory.cpMatcher.updateContext(memory.event, context);
         if (isFirstMatchInSequence()) {
             endTimeMillis = memory.event.getTimestampMillis() + maxTimeMillis;
@@ -97,7 +98,7 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
     }
 
     @Override
-    public void _beforeStart(SequenceProcessorHelper<E> helper) {
+    public void _beforeStart(SequenceProcessorHelper helper) {
         this.helper = helper;
         maxTimeMillis = helper.getMaxTimeMillis();
         resetSequence();
@@ -115,7 +116,7 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
     @Override
     public void _onTimeout() {
         for (Long eventId : checkPointMatchers.keySet()) {
-            for (CheckPointMatcher<E> cpMatcher : checkPointMatchers.get(eventId)) {
+            for (CheckPointMatcher cpMatcher : checkPointMatchers.get(eventId)) {
                 helper.notifyCheckPointTimeout(cpMatcher, context);
                 // listenerHandler.fire(of((Event) null, TIMEOUT,
                 // cpMatcher.index, EMPTY_LABEL, context));
@@ -131,12 +132,12 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
         System.out.println("*********** onTimeout: ");
     }
 
-    private static class Memory<E extends Event> {
-        final E event;
+    private static class Memory {
+        final Event event;
         final long eventId;
-        CheckPointMatcher<E> cpMatcher;
+        CheckPointMatcher cpMatcher;
 
-        Memory(E event) {
+        Memory(Event event) {
             this.event = event;
             eventId = event.getId();
         }
@@ -152,12 +153,12 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
     }
 
     @FunctionalInterface
-    private interface EventState<E extends Event> {
-        EventState<E> next(Memory<E> memory);
+    private interface EventState {
+        EventState next(Memory memory);
     }
 
     @Override
-    public void _process(E event) {
+    public void _process(Event event) {
         System.out.println("*********** processing: " + event);
         try {
             if (hasSequenceMaxtimePassed(event)) {
@@ -166,7 +167,7 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
             if (!checkPointMatchers.containsKey(event.getId())) {
                 return;
             }
-            runStateMachine(MATCH_CHECKER_STATE_THAT_THROWS, new Memory<E>(event));
+            runStateMachine(MATCH_CHECKER_STATE_THAT_THROWS, new Memory(event));
             washContainer(eventsToMatchContainer, MATCH_CHECKER_STATE_THAT_BREAKS_LOOP);
             washContainer(eventsToValidateContainer, VALID_CHECKER_STATE);
             if (isReady()) {
@@ -185,15 +186,15 @@ class ContainerSequenceProcessor<E extends Event> extends SequenceProcessor<E> {
         return event.getTimestampMillis() > endTimeMillis;
     }
 
-    private void runStateMachine(EventState<E> state, final Memory<E> m) {
+    private void runStateMachine(EventState state, final Memory m) {
         if (state == BREAK_STATE_MACHINE_LOOP) {
             return;
         }
         runStateMachine(state.next(m), m);
     }
 
-    private void washContainer(List<Memory<E>> container, EventState<E> eventState) {
-        for (Memory<E> memory : container) {
+    private void washContainer(List<Memory> container, EventState eventState) {
+        for (Memory memory : container) {
             container.remove(memory);
             runStateMachine(eventState, memory);
         }

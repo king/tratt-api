@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.king.tratt.spi.EventIterator;
 
-public class TestFromFileEventIterator implements EventIterator<TestEvent> {
+public class TestFromFileEventIterator implements EventIterator {
     private static final String CLASSPATH_PROTOCOL = "classpath:";
     private static final String FILE_PROTOCOL = "file:";
     private volatile Iterator<String> iterator;

@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 
 import com.google.gson.JsonParseException;
 import com.king.tratt.VariableParser.NameValue;
-import com.king.tratt.spi.Event;
 import com.king.tratt.spi.EventMetaData;
 import com.king.tratt.spi.EventMetaDataFactory;
 import com.king.tratt.spi.Value;
@@ -21,19 +20,19 @@ import com.king.tratt.tdl.CheckPoint;
 import com.king.tratt.tdl.Sequence;
 import com.king.tratt.tdl.Tdl;
 
-class TdlValidator<E extends Event> {
+class TdlValidator {
 
     private final EventMetaDataFactory<?> metaDataFactory;
     private List<String> errors = new ArrayList<>();
-    private MatcherParser<E> matcherParser;
+    private MatcherParser matcherParser;
     private int numParseErrors = 0;
     private List<TdlFileFieldErrorDescriptor> fieldErrorDescriptions = new ArrayList<>();
-    private ValueFactory<E> valueFactory;
+    private ValueFactory valueFactory;
 
-    TdlValidator(ValueFactory<E> valueFactory, EventMetaDataFactory<?> metaDataProvider, final Tdl tdl) {
+    TdlValidator(ValueFactory valueFactory, EventMetaDataFactory<?> metaDataProvider, final Tdl tdl) {
         this.valueFactory = valueFactory;
         this.metaDataFactory = metaDataProvider;
-        this.matcherParser = new MatcherParser<E>(valueFactory);
+        this.matcherParser = new MatcherParser(valueFactory);
         validateTdl(tdl);
     }
 
@@ -53,7 +52,7 @@ class TdlValidator<E extends Event> {
             List<Sequence> sequences = tdl.getSequences();
             for (int i = 0; i < sequences.size(); i++) {
                 Sequence s = sequences.get(i);
-                Environment<E> env = new Environment<>(variablesMap);
+                Environment env = new Environment(variablesMap);
                 validateSequence(env, s, nodePath + "[sequences][" + i + "]");
             }
 
@@ -72,7 +71,7 @@ class TdlValidator<E extends Event> {
         }
     }
 
-    private void validateSequence(Environment<E> env, Sequence sequence, String nodePath) {
+    private void validateSequence(Environment env, Sequence sequence, String nodePath) {
         final List<String> validTypes = Arrays.asList("funnel", "container", "unwanted");
         if (!validTypes.contains(sequence.getType().toString().toLowerCase())) {
             addNodeError("Invalid sequence type \"" + sequence.getType() + "\". Valid types are " + validTypes,
@@ -89,7 +88,7 @@ class TdlValidator<E extends Event> {
         }
 
         List<CheckPoint> checkPoints = sequence.getCheckPoints();
-        SetterToValueMapper<E> mapper = new SetterToValueMapper<>(valueFactory);
+        SetterToValueMapper mapper = new SetterToValueMapper(valueFactory);
         env.sequenceVariables.putAll(
                 checkPoints.stream().flatMap(mapper::getValues)
                         .collect(toMap(Entry::getKey, Entry::getValue)));
@@ -100,7 +99,7 @@ class TdlValidator<E extends Event> {
     }
 
 
-    private void validateCheckPoint(Environment<E> env, CheckPoint checkPoint, String nodePath) {
+    private void validateCheckPoint(Environment env, CheckPoint checkPoint, String nodePath) {
         EventMetaData eventMetaData = metaDataFactory.getEventMetaData(checkPoint.getEventType());
         if (eventMetaData == null) {
             addNodeError(
@@ -134,12 +133,12 @@ class TdlValidator<E extends Event> {
         }
     }
 
-    private void validateSetter(EventMetaData eventMetaData, String setExpression, Environment<E> env,
+    private void validateSetter(EventMetaData eventMetaData, String setExpression, Environment env,
             String nodePath) {
         try {
             NameValue nameValue = VariableParser.parse(setExpression);
-            SetterToValueMapper<E> m = new SetterToValueMapper<>(valueFactory);
-            Value<E> value = m.getValue(eventMetaData.getName(), nameValue.value);
+            SetterToValueMapper m = new SetterToValueMapper(valueFactory);
+            Value value = m.getValue(eventMetaData.getName(), nameValue.value);
             env.sequenceVariables.put(nameValue.name, value);
         } catch (Exception e) {
             addNodeError("Invalid sequence-local variable set expression \"" + setExpression + "\". (" + e.getMessage()

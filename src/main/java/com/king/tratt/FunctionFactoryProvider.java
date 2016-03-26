@@ -15,9 +15,9 @@ import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.Value;
 
-class FunctionFactoryProvider<E extends Event> {
+class FunctionFactoryProvider {
 
-    private Map<String, FunctionFactory<E>> functions = new HashMap<>();
+    private Map<String, FunctionFactory> functions = new HashMap<>();
 
     FunctionFactoryProvider() {
         addFunction(jsonField());
@@ -27,11 +27,11 @@ class FunctionFactoryProvider<E extends Event> {
 
     }
 
-    private void addFunction(FunctionFactory<E> func) {
+    private void addFunction(FunctionFactory func) {
         functions.put(func.getName(), func);
     }
 
-    FunctionFactory<E> get(String name) {
+    FunctionFactory get(String name) {
         return functions.get(name);
     }
 
@@ -39,10 +39,10 @@ class FunctionFactoryProvider<E extends Event> {
         return new ArrayList<>(functions.keySet());
     }
     
-    static <E extends Event> FunctionFactory<E> jsonField() {
-        return new FunctionFactory<E>() {
-            Value<E> pathValue;
-            Value<E> jsonValue;
+    static FunctionFactory jsonField() {
+        return new FunctionFactory() {
+            Value pathValue;
+            Value jsonValue;
             JsonParser jsonParser;
 
             @Override
@@ -56,12 +56,12 @@ class FunctionFactoryProvider<E extends Event> {
             }
 
             @Override
-            public Value<E> create(List<Value<E>> arguments) {
+            public Value create(List<Value> arguments) {
                 pathValue = arguments.get(0);
                 jsonValue = arguments.get(1);
                 jsonParser = new JsonParser();
 
-                return new Value<E>() {
+                return new Value() {
 
                     @Override
                     public String toString() {
@@ -69,12 +69,12 @@ class FunctionFactoryProvider<E extends Event> {
                     }
 
                     @Override
-                    public String toDebugString(E e, Context context) {
+                    public String toDebugString(Event e, Context context) {
                         return util.format(e, context, "[[source:jsonfield('~g', '~g')]]~p", pathValue, jsonValue, this);
                     }
 
                     @Override
-                    protected Object getImp(E e, Context context) {
+                    protected Object getImp(Event e, Context context) {
                         String path = pathValue.asString(e, context);
                         String json = jsonValue.asString(e, context);
 
@@ -108,12 +108,12 @@ class FunctionFactoryProvider<E extends Event> {
         };
     }
 
-    static <E extends Event> FunctionFactory<E> substr() {
-        return new FunctionFactory<E>() {
+    static FunctionFactory substr() {
+        return new FunctionFactory() {
 
-            Value<E> fromValue;
-            Value<E> toValue;
-            Value<E> strValue;
+            Value fromValue;
+            Value toValue;
+            Value strValue;
 
             @Override
             public String getName() {
@@ -126,12 +126,12 @@ class FunctionFactoryProvider<E extends Event> {
             }
 
             @Override
-            public Value<E> create(List<Value<E>> args) {
+            public Value create(List<Value> args) {
                 fromValue = args.get(0);
                 toValue = args.get(1);
                 strValue = args.get(2);
 
-                return new Value<E>() {
+                return new Value() {
 
                     @Override
                     public String toString() {
@@ -139,13 +139,13 @@ class FunctionFactoryProvider<E extends Event> {
                     }
 
                     @Override
-                    public String toDebugString(E e, Context context) {
+                    public String toDebugString(Event e, Context context) {
                         return util.format(e, context, "[[source:substr(~g, ~g, '~g')]]'~g'",
                                 fromValue, toValue, strValue, this);
                     }
 
                     @Override
-                    protected String getImp(E e, Context context) {
+                    protected String getImp(Event e, Context context) {
                         int from = ((Long) fromValue.get(e, context)).intValue();
                         int to = ((Long) toValue.get(e, context)).intValue();
                         String str = (String) strValue.get(e, context);
@@ -156,12 +156,12 @@ class FunctionFactoryProvider<E extends Event> {
         };
     }
 
-    static <E extends Event> FunctionFactory<E> split() {
-        return new FunctionFactory<E>() {
+    static FunctionFactory split() {
+        return new FunctionFactory() {
 
-            private Value<E> strValue;
-            private Value<E> delimiterValue;
-            private Value<E> indexValue;
+            private Value strValue;
+            private Value delimiterValue;
+            private Value indexValue;
 
             @Override
             public String getName() {
@@ -174,11 +174,11 @@ class FunctionFactoryProvider<E extends Event> {
             }
 
             @Override
-            public Value<E> create(List<Value<E>> arguments) {
+            public Value create(List<Value> arguments) {
                 strValue = arguments.get(0);
                 delimiterValue = arguments.get(1);
                 indexValue = arguments.get(2);
-                return new Value<E>() {
+                return new Value() {
 
                     @Override
                     public String toString() {
@@ -186,13 +186,13 @@ class FunctionFactoryProvider<E extends Event> {
                     }
 
                     @Override
-                    public String toDebugString(E e, Context context) {
+                    public String toDebugString(Event e, Context context) {
                         return util.format(e, context, "[[source:split('~g', '~g', ~g)]]'~g'",
                                 strValue, delimiterValue, indexValue, this);
                     }
 
                     @Override
-                    protected String getImp(E e, Context context) {
+                    protected String getImp(Event e, Context context) {
                         String str = strValue.asString(e, context);
                         String delimiter = delimiterValue.asString(e, context);
                         String[] strs = str.split(delimiter);
@@ -208,8 +208,8 @@ class FunctionFactoryProvider<E extends Event> {
         };
     }
 
-    static <E extends Event> FunctionFactory<E> concat() {
-        return new FunctionFactory<E>() {
+    static FunctionFactory concat() {
+        return new FunctionFactory() {
             @Override
             public String getName() {
                 return "concat";
@@ -221,8 +221,8 @@ class FunctionFactoryProvider<E extends Event> {
             }
 
             @Override
-            public Value<E> create(List<Value<E>> arguments) {
-                return new Value<E>() {
+            public Value create(List<Value> arguments) {
+                return new Value() {
 
                     @Override
                     public String toString() {
@@ -230,15 +230,15 @@ class FunctionFactoryProvider<E extends Event> {
                     }
 
                     @Override
-                    public String toDebugString(E e, Context context) {
+                    public String toDebugString(Event e, Context context) {
                         String joinedValues = util.formatJoin(e, context, ", ", "'~g'", arguments);
                         return util.format(e, context, "[[source:concat(~s)]]'~g'", joinedValues, this);
                     }
 
                     @Override
-                    protected String getImp(E e, Context context) {
+                    protected String getImp(Event e, Context context) {
                         StringBuilder s = new StringBuilder();
-                        for (Value<E> value : arguments) {
+                        for (Value value : arguments) {
                             s.append(value.asString(e, context));
                         }
                         return s.toString();

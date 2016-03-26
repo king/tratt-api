@@ -8,17 +8,17 @@ import org.slf4j.LoggerFactory;
 
 import com.king.tratt.spi.Event;
 
-final class PipelineConsumer<E extends Event> implements Runnable {
+final class PipelineConsumer implements Runnable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PipelineConsumer.class);
-    private final BlockingQueue<E> blockingQueue;
-    private final CopyOnWriteArrayList<SimpleProcessor<E>> processors = new CopyOnWriteArrayList<>();
+    private final BlockingQueue<Event> blockingQueue;
+    private final CopyOnWriteArrayList<SimpleProcessor> processors = new CopyOnWriteArrayList<>();
 
-    PipelineConsumer(BlockingQueue<E> blockingQueue) {
+    PipelineConsumer(BlockingQueue<Event> blockingQueue) {
         this.blockingQueue = blockingQueue;
     }
 
-    void addProcessor(SimpleProcessor<E> processor) {
+    void addProcessor(SimpleProcessor processor) {
         processors.add(processor);
     }
 
@@ -26,8 +26,8 @@ final class PipelineConsumer<E extends Event> implements Runnable {
     public void run() {
         try {
             while (!Thread.currentThread().isInterrupted()) {
-                E e = blockingQueue.take();
-                for (SimpleProcessor<E> processor : processors) {
+                Event e = blockingQueue.take();
+                for (SimpleProcessor processor : processors) {
                     processor.process(e);
                 }
             }

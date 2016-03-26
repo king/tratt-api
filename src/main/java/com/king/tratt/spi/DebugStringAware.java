@@ -1,7 +1,7 @@
 package com.king.tratt.spi;
 
-public interface DebugStringAware<E extends Event> {
+public interface DebugStringAware {
 
-    String toDebugString(E e, Context context);
+    String toDebugString(Event e, Context context);
 
 }

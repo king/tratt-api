@@ -4,9 +4,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class Processors {
 
-    private final CopyOnWriteArrayList<? extends SequenceProcessor<?>> processors;
+    private final CopyOnWriteArrayList<SequenceProcessor> processors;
 
-    Processors(CopyOnWriteArrayList<? extends SequenceProcessor<?>> processors) {
+    Processors(CopyOnWriteArrayList<SequenceProcessor> processors) {
         this.processors = processors;
     }
 

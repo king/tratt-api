@@ -3,10 +3,9 @@ package com.king.tratt;
 
 import java.util.List;
 
-import com.king.tratt.spi.Event;
 import com.king.tratt.spi.Value;
 
-interface FunctionFactory<E extends Event> {
+interface FunctionFactory {
 
     static final int VAR_ARG = -1;
 
@@ -14,5 +13,5 @@ interface FunctionFactory<E extends Event> {
 
     int getNumberOfArguments();
 
-    Value<E> create(List<Value<E>> arguments);
+    Value create(List<Value> arguments);
 }

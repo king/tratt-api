@@ -17,35 +17,35 @@ import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 import com.king.tratt.tdl.Sequence;
 
-abstract class SequenceProcessor<E extends Event> {
+abstract class SequenceProcessor {
 
-    private List<SequenceProcessorListener<E>> sequenceListeners;
+    private List<SequenceProcessorListener> sequenceListeners;
     private Sequence sequence;
-    private List<CheckPointMatcher<E>> checkPointMatchers;
+    private List<CheckPointMatcher> checkPointMatchers;
 
-    protected abstract void _beforeStart(SequenceProcessorHelper<E> helper);
+    protected abstract void _beforeStart(SequenceProcessorHelper helper);
 
     protected abstract void _onTimeout();
 
-    protected abstract void _process(E e);
+    protected abstract void _process(Event e);
 
     final void onTimeout() {
         _onTimeout();
     }
 
-    final void process(E e) {
+    final void process(Event e) {
         _process(e);
     }
 
     final void beforeStart() {
-        _beforeStart(new SequenceProcessorHelper<E>(checkPointMatchers, sequence, sequenceListeners));
+        _beforeStart(new SequenceProcessorHelper(checkPointMatchers, sequence, sequenceListeners));
     }
 
-    final void setCheckPointMatchers(List<CheckPointMatcher<E>> cpMatchers) {
+    final void setCheckPointMatchers(List<CheckPointMatcher> cpMatchers) {
         this.checkPointMatchers = unmodifiableList(cpMatchers);
     }
 
-    final void setListeners(List<SequenceProcessorListener<E>> sequenceListeners) {
+    final void setListeners(List<SequenceProcessorListener> sequenceListeners) {
         this.sequenceListeners = sequenceListeners;
     }
 
@@ -57,21 +57,21 @@ abstract class SequenceProcessor<E extends Event> {
         return sequence.getName();
     }
 
-    final static class SequenceProcessorHelper<E extends Event> {
-        private final List<CheckPointMatcher<E>> checkPointMatchers;
+    final static class SequenceProcessorHelper {
+        private final List<CheckPointMatcher> checkPointMatchers;
         private final Sequence sequence;
-        private final List<SequenceProcessorListener<E>> sequenceListeners;
+        private final List<SequenceProcessorListener> sequenceListeners;
         private final String seqName;
 
-        SequenceProcessorHelper(List<CheckPointMatcher<E>> checkPointMatchers,
-                Sequence sequence, List<SequenceProcessorListener<E>> sequenceListeners) {
+        SequenceProcessorHelper(List<CheckPointMatcher> checkPointMatchers,
+                Sequence sequence, List<SequenceProcessorListener> sequenceListeners) {
             this.checkPointMatchers = checkPointMatchers;
             this.sequence = sequence;
             this.sequenceListeners = sequenceListeners;
             this.seqName = sequence.getName();
         }
 
-        List<CheckPointMatcher<E>> getCheckPointMatchers() {
+        List<CheckPointMatcher> getCheckPointMatchers() {
             return checkPointMatchers;
         }
 
@@ -81,40 +81,40 @@ abstract class SequenceProcessor<E extends Event> {
         }
 
         final void notifySequenceStart(Context context) {
-            notify(listener -> listener.onSequenceStart(new OnSequenceStart<E>(seqName, context)));
+            notify(listener -> listener.onSequenceStart(new OnSequenceStart(seqName, context)));
         }
 
         final void notifySequenceEnd(Context context) {
             notify(listener -> listener.onSequenceEnd(
-                    new OnSequenceEnd<E>(seqName, context)));
+                    new OnSequenceEnd(seqName, context)));
         }
 
         final void notifySequenceTimeout(Context context) {
             notify(listener -> listener.onSequenceTimeout(
-                    new OnSequenceTimeout<E>(seqName, context)));
+                    new OnSequenceTimeout(seqName, context)));
         }
 
-        final void notifyCheckPointMatch(E event, CheckPointMatcher<E> cpMatcher, Context context) {
+        final void notifyCheckPointMatch(Event event, CheckPointMatcher cpMatcher, Context context) {
             notify(listener -> listener.onCheckPointMatch(
-                    new OnCheckPointMatch<E>(seqName, event, cpMatcher, context)));
+                    new OnCheckPointMatch(seqName, event, cpMatcher, context)));
         }
 
-        final void notifyCheckPointFailure(E event, CheckPointMatcher<E> cpMatcher, Context context) {
+        final void notifyCheckPointFailure(Event event, CheckPointMatcher cpMatcher, Context context) {
             notify(listener -> listener.onCheckPointFailure(
-                    new OnCheckPointFailure<E>(seqName, event, cpMatcher, context)));
+                    new OnCheckPointFailure(seqName, event, cpMatcher, context)));
         }
 
-        final void notifyCheckPointSuccess(E event, CheckPointMatcher<E> cpMatcher, Context context) {
+        final void notifyCheckPointSuccess(Event event, CheckPointMatcher cpMatcher, Context context) {
             notify(listener -> listener.onCheckPointSuccess(
-                    new OnCheckPointSuccess<E>(seqName, event, cpMatcher, context)));
+                    new OnCheckPointSuccess(seqName, event, cpMatcher, context)));
         }
 
-        final void notifyCheckPointTimeout(CheckPointMatcher<E> cpMatcher, Context context) {
+        final void notifyCheckPointTimeout(CheckPointMatcher cpMatcher, Context context) {
             notify(listener -> listener.onCheckPointTimeout(
-                    new OnCheckPointTimeout<E>(seqName, cpMatcher, context)));
+                    new OnCheckPointTimeout(seqName, cpMatcher, context)));
         }
 
-        private void notify(Consumer<SequenceProcessorListener<E>> c) {
+        private void notify(Consumer<SequenceProcessorListener> c) {
             sequenceListeners.forEach(c);
         }
 
