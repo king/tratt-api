@@ -1,10 +1,8 @@
 package com.king.tratt.tdl;
 
 import static com.king.tratt.tdl.Util.concat;
-import static com.king.tratt.tdl.Util.concatAsSet;
 import static com.king.tratt.tdl.Util.containsEitherNullOrEmptyStringElements;
 import static com.king.tratt.tdl.Util.nullArgumentError;
-import static com.king.tratt.tdl.Util.varArgError;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,14 +10,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.king.tratt.tdl.Sequence.Type;
 
 public final class TdlBuilder {
     String comment;
-    List<String> sequenceInvariants = new ArrayList<>();
     Map<String, String> variables = new HashMap<>();
     Map<String, SequenceBuilder> sequenceBuilders = new LinkedHashMap<>();
 
@@ -45,21 +41,6 @@ public final class TdlBuilder {
             throw nullArgumentError("comment");
         }
         this.comment = comment;
-        return this;
-    }
-
-    public TdlBuilder addSequenceInvariants(String first, String... rest) {
-        if (first == null) {
-            throw nullArgumentError("first");
-        }
-        if (rest == null) {
-            throw nullArgumentError("rest");
-        }
-        Set<String> sequenceInvariants = concatAsSet(first, rest);
-        if (containsEitherNullOrEmptyStringElements(sequenceInvariants)) {
-            throw varArgError(sequenceInvariants);
-        }
-        this.sequenceInvariants.addAll(sequenceInvariants);
         return this;
     }
 
