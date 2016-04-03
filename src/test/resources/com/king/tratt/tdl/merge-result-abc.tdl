@@ -1,6 +1,5 @@
 {
   "comment" : "CommentC",
-  "sequenceInvariants" : [ "sequenceInvA", "sequenceInvB", "sequenceInvC"],
   "variables" : [ "varB=valB", "varA=valC", "varC=valC"],
   "sequences" : [ {
     "type" : "FUNNEL",
@@ -10,18 +9,13 @@
       "eventType" : "EventA",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "b=2",
-      "optional" : false
+      "validate" : "b=2"
     }, {
       "eventType" : "EventB",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "c=3",
-      "optional" : false
-    } ],
-    "match" : ""
+      "validate" : "c=3"
+    } ]
   },
   {
     "type" : "CONTAINER",
@@ -31,31 +25,22 @@
       "eventType" : "EventA",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "b=2",
-      "optional" : false
+      "validate" : "b=2"
     }, {
       "eventType" : "EventB",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "c=3",
-      "optional" : false
+      "validate" : "c=3"
     }, {
       "eventType" : "EventC",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "b=2",
-      "optional" : false
+      "validate" : "b=2"
     }, {
       "eventType" : "EventD",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "c=3",
-      "optional" : false
-    } ],
-    "match" : ""
+      "validate" : "c=3"
+    } ]
   } ]
 }

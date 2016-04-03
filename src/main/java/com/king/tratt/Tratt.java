@@ -1,10 +1,17 @@
 package com.king.tratt;
 
+import static com.king.tratt.internal.Util.concat;
+import static com.king.tratt.internal.Util.requireNonNull;
+import static com.king.tratt.internal.Util.requireNonNullElements;
+import static java.util.Arrays.asList;
+
+import com.king.tratt.internal.Util;
+
 /**
  * Tratt API entry point.
  */
 public final class Tratt {
-    static final Util util = new Util();
+    static final InternalUtil util = new InternalUtil();
     static final Values values = new Values();
 
     private Tratt() {
@@ -19,6 +26,18 @@ public final class Tratt {
     public static EventProcessorBuilder newEventProcessorBuilder() {
         return new EventProcessorBuilder();
 
+    }
+
+    public static PreprocessorBuilder newPreprocessor() {
+        return new PreprocessorBuilder();
+    }
+
+    public static Multicaster newMulticaster(Preprocessor pre, EventProcessorBuilder first,
+            EventProcessorBuilder... rest) {
+        requireNonNull(first, "first");
+        requireNonNull(rest, "rest");
+        requireNonNullElements(asList(rest), "rest");
+        return new Multicaster(pre, concat(first, rest)).start();
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.king.tratt.tdl;
 
-import static com.king.tratt.tdl.Util.nullArgumentError;
+import static com.king.tratt.internal.Util.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,9 +58,7 @@ public final class CheckPointBuilder {
     }
 
     public CheckPointBuilder match(String match) {
-        if (match == null) {
-            throw nullArgumentError("match");
-        }
+        requireNonNull(match, "match");
         this.match = match;
         return this;
     }
@@ -77,9 +75,7 @@ public final class CheckPointBuilder {
     }
 
     public CheckPointBuilder validate(String validate) {
-        if (validate == null) {
-            throw nullArgumentError("validate");
-        }
+        requireNonNull(validate, "validate");
         this.validate = validate;
         return this;
     }

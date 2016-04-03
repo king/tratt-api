@@ -1,9 +1,5 @@
 {
   "comment": "Validation of the AppStart10 event",
-  "sequenceInvariants": [
-    "field1",
-    "field2"
-  ],
   "variables": [
     "var1=",
     "var2 = B"

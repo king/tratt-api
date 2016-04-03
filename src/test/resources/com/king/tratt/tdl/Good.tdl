@@ -1,9 +1,5 @@
 {
   "comment": "Validation of EventA",
-  "sequenceInvariants": [
-    "field1",
-    "field2"
-  ],
   "variables": [
     "varA=valA"
   ],

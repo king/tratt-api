@@ -21,13 +21,11 @@ public class SequenceBuilderTest {
     public void canMergeASequenceBuilderIntoSequenceBuilderInstance() throws Exception {
         // given
         SequenceBuilder sb1 = ofType(CONTAINER)
-                .match("fieldA==A")
                 .maxTime(2, TimeUnit.MINUTES)
                 .name("nameA")
                 .withCheckPoint(forEvent("ExternalStoreTransactionBegin"));
 
         SequenceBuilder sb2 = ofType(FUNNEL)
-                .match("fieldB==B")
                 .maxTime(1, TimeUnit.MINUTES)
                 .name("nameB")
                 .withCheckPoint(forEvent("ItemTransaction4"));
@@ -37,7 +35,6 @@ public class SequenceBuilderTest {
 
         // then
         assertThat(merged.getType()).isEqualTo(FUNNEL);
-        assertThat(merged.getMatch()).isEqualTo("fieldB==B");
         assertThat(merged.getSequenceMaxTime()).isEqualTo("PT1M");
         assertThat(merged.getName()).isEqualTo("nameB");
         assertThat(merged.getCheckPoints()).hasSize(2);
@@ -47,14 +44,12 @@ public class SequenceBuilderTest {
     public void canMergeASequenceIntoSequenceInstance() throws Exception {
         // given
         SequenceBuilder sb1 = ofType(CONTAINER)
-                .match("fieldA==A")
                 .maxTime(2, TimeUnit.MINUTES)
                 .name("nameA")
                 .withCheckPoint(forEvent("ExternalStoreTransactionBegin"));
         Sequence seq1 = sb1.build();
 
         SequenceBuilder sb2 = ofType(FUNNEL)
-                .match("fieldB==B")
                 .maxTime(1, TimeUnit.MINUTES)
                 .name("nameB")
                 .withCheckPoint(forEvent("ItemTransaction4"));
@@ -65,7 +60,6 @@ public class SequenceBuilderTest {
 
         // then
         assertThat(merged.getType()).isEqualTo(FUNNEL);
-        assertThat(merged.getMatch()).isEqualTo("fieldB==B");
         assertThat(merged.getSequenceMaxTime()).isEqualTo("PT1M");
         assertThat(merged.getName()).isEqualTo("nameB");
         assertThat(merged.getCheckPoints()).hasSize(2);
@@ -75,13 +69,11 @@ public class SequenceBuilderTest {
     public void canMergeTwoSequences() throws Exception {
         // given
         SequenceBuilder sb1 = ofType(CONTAINER)
-                .match("fieldA==A")
                 .maxTime(2, TimeUnit.MINUTES)
                 .name("nameA")
                 .withCheckPoint(forEvent("ExternalStoreTransactionBegin"));
 
         SequenceBuilder sb2 = ofType(FUNNEL)
-                .match("fieldB==B")
                 .maxTime(1, TimeUnit.MINUTES)
                 .name("nameB")
                 .withCheckPoint(forEvent("ItemTransaction4"));
@@ -91,7 +83,6 @@ public class SequenceBuilderTest {
 
         // then
         assertThat(merged.getType()).isEqualTo(FUNNEL);
-        assertThat(merged.getMatch()).isEqualTo("fieldB==B");
         assertThat(merged.getSequenceMaxTime()).isEqualTo("PT1M");
         assertThat(merged.getName()).isEqualTo("nameB");
         assertThat(merged.getCheckPoints()).hasSize(2);
@@ -101,7 +92,6 @@ public class SequenceBuilderTest {
     public void canCopyExistingSequence() throws Exception {
         // given
         Sequence sequence = ofType(CONTAINER)
-                .match("fieldA==A")
                 .maxTime(2, TimeUnit.MINUTES)
                 .name("name")
                 .withCheckPoint(forEvent("ExternalStoreTransactionBegin"))
@@ -112,7 +102,6 @@ public class SequenceBuilderTest {
 
         // then
         assertThat(copy.getType()).isEqualTo(CONTAINER);
-        assertThat(copy.getMatch()).isEqualTo("fieldA==A");
         assertThat(copy.getSequenceMaxTime()).isEqualTo("PT2M");
         assertThat(copy.getName()).isEqualTo("name");
         assertThat(copy.getCheckPoints()).hasSize(1);
@@ -122,7 +111,6 @@ public class SequenceBuilderTest {
     public void canCopyExistingSequenceAndOverrideValues() throws Exception {
         // given
         Sequence sequence = ofType(FUNNEL)
-                .match("fieldA==A")
                 .maxTime(2, TimeUnit.MINUTES)
                 .name("name")
                 .withCheckPoint(forEvent("ExternalStoreTransactionBegin"))
@@ -131,7 +119,6 @@ public class SequenceBuilderTest {
         // when
         Sequence copy = copyOf(sequence)
                 .type(CONTAINER)
-                .match("fieldB==B")
                 .maxTime(3, TimeUnit.MINUTES)
                 .name("new-name")
                 .withCheckPoint(forEvent("ItemTransaction4"))
@@ -139,7 +126,6 @@ public class SequenceBuilderTest {
 
         // then
         assertThat(copy.getType()).isEqualTo(CONTAINER);
-        assertThat(copy.getMatch()).isEqualTo("fieldB==B");
         assertThat(copy.getSequenceMaxTime()).isEqualTo("PT3M");
         assertThat(copy.getName()).isEqualTo("new-name");
 
@@ -169,11 +155,6 @@ public class SequenceBuilderTest {
     @Test(expected = NullPointerException.class)
     public void shouldThrowWhenMethodCalledWithNullArgument_withCheckpoint() throws Exception {
         builder.withCheckPoint(null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowWhenMethodCalledWithNullArgument_match() throws Exception {
-        builder.match(null);
     }
 
     @Test(expected = NullPointerException.class)

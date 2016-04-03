@@ -1,13 +1,11 @@
 {
   "comment" : "",
-  "sequenceInvariants" : [ ],
   "variables" : [ ],
   "sequences" : [ {
     "type" : "FUNNEL",
     "name" : "seq-1",
     "sequenceMaxTime" : "pt15m",
-    "checkPoints" : [ ],
-    "match" : ""
+    "checkPoints" : [ ]
   }, {
     "type" : "CONTAINER",
     "name" : "seq-2",
@@ -16,10 +14,7 @@
       "eventType" : "EventA",
       "match" : "",
       "set" : [ ],
-      "label" : "",
-      "validate" : "",
-      "optional" : false
-    } ],
-    "match" : ""
+      "validate" : ""
+    } ]
   } ]
 }

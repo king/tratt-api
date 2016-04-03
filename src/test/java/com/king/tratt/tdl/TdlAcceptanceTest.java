@@ -107,7 +107,6 @@ public class TdlAcceptanceTest {
         assertThat(tdl.getComment()).isEmpty();
         assertThat(tdl.getVariables()).isEmpty();
 
-        assertThat(seq0.getMatch()).isEmpty();
         assertThat(seq0.getSequenceMaxTime()).isEqualToIgnoringCase("PT15M");
         assertThat(seq0.getName()).isNull();
 
@@ -133,11 +132,9 @@ public class TdlAcceptanceTest {
         assertThat(tdl.getComment()).isEmpty();
         assertThat(tdl.getVariables()).isEmpty();
 
-        assertThat(seq0.getMatch()).isEmpty();
         assertThat(seq0.getSequenceMaxTime()).isEqualToIgnoringCase("PT15M");
         assertThat(seq0.getName()).isEqualTo("seq0");
 
-        assertThat(seq1.getMatch()).isEmpty();
         assertThat(seq1.getSequenceMaxTime()).isEqualToIgnoringCase("PT15M");
         assertThat(seq1.getName()).isEqualTo("seq1");
 
@@ -156,7 +153,6 @@ public class TdlAcceptanceTest {
         assertThat(tdl.getComment()).isEqualTo("Validation of EventA");
         assertThat(tdl.getVariables()).containsOnly("varA=valA");
 
-        assertThat(seq.getMatch()).isEmpty();
         assertThat(seq.getName()).isEqualToIgnoringCase("EventA-test");
         assertThat(seq.getSequenceMaxTime()).isEqualToIgnoringCase("pt10s");
         assertThat(seq.getType()).isEqualTo(Sequence.Type.FUNNEL);
@@ -165,46 +161,6 @@ public class TdlAcceptanceTest {
         assertThat(checkPoint.getMatch()).isEmpty();
         assertThat(checkPoint.getSet()).isEmpty();
         assertThat(checkPoint.getValidate()).isEqualTo("field3==$varA");
-    }
-
-    @Test
-    public void canChangeSequenceMaxTimeFrom15MinutesTo10Seconds() throws Exception {
-
-        // "sequenceMaxTime": "pt15m"
-
-        // given
-        Tdl tdl15Minutes = fromPath("Good.tdl");
-        String maxTime = tdl15Minutes.getSequences().get(0).getSequenceMaxTime();
-        assertThat(maxTime).isEqualTo("pt15m");
-
-        // when
-        tdl = Tdl.newBuilder()
-                .addTdls(tdl15Minutes)
-                .setSequencesMaxTime(10, TimeUnit.SECONDS)
-                .build();
-
-        // then
-        String overridenMaxTime = tdl.getSequences().get(0).getSequenceMaxTime();
-        assertThat(overridenMaxTime).isEqualTo("PT10S");
-    }
-
-    @Test
-    public void canChangeSequenceTypeFromFunnelToContainer() throws Exception {
-
-        // given
-        Tdl tdlWithFunnelSequence = fromPath("Good.tdl");
-        Type type = tdlWithFunnelSequence.getSequences().get(0).getType();
-        assertThat(type).isEqualTo(FUNNEL);
-
-        // when
-        tdl = Tdl.newBuilder()
-                .addTdls(tdlWithFunnelSequence)
-                .setSequencesType(CONTAINER)
-                .build();
-
-        // then
-        Type type2 = tdl.getSequences().get(0).getType();
-        assertThat(type2).isEqualTo(CONTAINER);
     }
 
     @Test
@@ -223,8 +179,6 @@ public class TdlAcceptanceTest {
                 .addVariable("var2", 1)
                 .addVariable("var3", 2L)
                 .setComment("my-comment")
-                .addSequenceInvariants("inv1", "inv2")
-                .addSequenceInvariants("inv3")
                 .addSequence(ofType(CONTAINER)
                         .maxTime(15, TimeUnit.MINUTES)
                         .name("my-sequence")
@@ -247,7 +201,6 @@ public class TdlAcceptanceTest {
 
         Sequence sequence0 = tdl.getSequences().get(0);
         assertThat(sequence0.getName()).isEqualTo("my-sequence");
-        assertThat(sequence0.getMatch()).isEqualTo("");
         assertThat(sequence0.getType()).isEqualTo(Sequence.Type.CONTAINER);
         assertThat(sequence0.getSequenceMaxTime()).isEqualToIgnoringCase("pt15M");
         assertThat(sequence0.getCheckPoints()).hasSize(1);
@@ -257,17 +210,6 @@ public class TdlAcceptanceTest {
         assertThat(checkPoint0.getEventType()).isEqualTo("ExternalStoreTransactionBegin");
         assertThat(checkPoint0.getSet()).containsOnly("name1=value1", "name2=value2");
         assertThat(checkPoint0.getValidate()).isEqualTo("fieldA == aValue && fieldB == anotherValue");
-    }
-
-    @Test
-    public void canPrependMatchToExistingTdl() throws Exception {
-        tdl = Tdl.newBuilder()
-                .addTdls(fromPath("Good.tdl"))
-                .addMatch("fieldA==A")
-                .build();
-
-        CheckPoint checkPoint = tdl.getSequences().get(0).getCheckPoints().get(0);
-        assertThat(checkPoint.getMatch()).isEqualTo("fieldA==A");
     }
 
     @Test
@@ -348,97 +290,6 @@ public class TdlAcceptanceTest {
     }
 
     @Test
-    public void canPrependTdlMatchAndMultipleTdlCoreUserIdsWhenCheckPointHasEmptyMatch() throws Exception {
-        // given
-        tdl = Tdl.newBuilder()
-                .addMatch("fieldA==A")
-                .addCoreUserIdFilter(123, 234)
-                .addSequence(ofType(FUNNEL).name("seq-name").withCheckPoint(forEvent("ExternalStoreTransactionDone")))
-                .build();
-
-        CheckPoint checkPoint = tdl.getSequences().get(0).getCheckPoints().get(0);
-        assertThat(checkPoint.getMatch()).isEqualTo("fieldA==A && coreUserId in [123,234]");
-
-    }
-
-    @Test
-    public void canPrependTdlMatchAndTdlCoreUserIdWhenCheckPointHasEmptyMatch() throws Exception {
-        // given
-        tdl = Tdl.newBuilder()
-                .addMatch("fieldA==A")
-                .addCoreUserIdFilter(123)
-                .addSequence(ofType(FUNNEL).name("seq").withCheckPoint(forEvent("ExternalStoreTransactionDone")))
-                .build();
-
-        CheckPoint checkPoint = tdl.getSequences().get(0).getCheckPoints().get(0);
-        assertThat(checkPoint.getMatch()).isEqualTo("fieldA==A && coreUserId==123");
-
-    }
-
-    @Test
-    public void canPrependTdlMatchToCheckPointAndSequenceWhenCheckPointAndSequenceHasEmptyMatch() throws Exception {
-        // given
-        tdl = Tdl.newBuilder()
-                .addMatch("fieldA==A")
-                .addSequence(ofType(FUNNEL).name("seq-name").withCheckPoint(forEvent("ExternalStoreTransactionDone")))
-                .build();
-
-        // when
-        Sequence sequence = tdl.getSequences().get(0);
-        CheckPoint checkPoint = sequence.getCheckPoints().get(0);
-
-        // then
-        assertThat(sequence.getMatch()).isEqualTo("fieldA==A");
-        assertThat(checkPoint.getMatch()).isEqualTo("fieldA==A");
-    }
-
-    @Test
-    public void canPrependTdlMatchToCheckPointAndSequenceWhenCheckPointAndSequenceContainsMatch() throws Exception {
-        // given
-        tdl = Tdl.newBuilder()
-                .addMatch("fieldA==A")
-                .addSequence(ofType(FUNNEL)
-                        .name("seq-name")
-                        .match("fieldB==B")
-                        .withCheckPoint(forEvent("ExternalStoreTransactionDone")
-                                .match("fieldC==C")))
-                .build();
-
-        // when
-        Sequence sequence = tdl.getSequences().get(0);
-        CheckPoint checkPoint = sequence.getCheckPoints().get(0);
-
-        // then
-        assertThat(sequence.getMatch()).isEqualTo("fieldA==A && fieldB==B");
-        assertThat(checkPoint.getMatch()).isEqualTo("fieldA==A && fieldB==B && fieldC==C");
-    }
-
-    @Test
-    public void canPrependSequenceMatchToCheckPointWhenCheckPointContainsMatch() throws Exception {
-        Sequence sequence = ofType(CONTAINER)
-                .name("seq-name")
-                .match("fieldA==A")
-                .withCheckPoint(forEvent("ExternalStoreTransactionBegin")
-                        .match("fieldB==B"))
-                .build();
-
-        CheckPoint checkPoint = sequence.getCheckPoints().get(0);
-        assertThat(checkPoint.getMatch()).isEqualTo("fieldA==A && fieldB==B");
-    }
-
-    @Test
-    public void canPrependSequenceMatchToCheckPointWhenCheckPointHasEmptyMatch() throws Exception {
-        Sequence sequence = ofType(CONTAINER)
-                .match("fieldA==A")
-                .name("seq.-name")
-                .withCheckPoint(forEvent("ExternalStoreTransactionBegin"))
-                .build();
-
-        CheckPoint checkPoint = sequence.getCheckPoints().get(0);
-        assertThat(checkPoint.getMatch()).isEqualTo("fieldA==A");
-    }
-
-    @Test
     public void canDetectWhenAVariableIsNotSet() throws Exception {
         tdl = fromPath("EmptyVariables.tdl");
 
@@ -478,7 +329,6 @@ public class TdlAcceptanceTest {
         assertThat(tdl.getComment()).isEqualTo("Validation of EventA");
 
         Sequence sequence = tdl.getSequences().get(0);
-        assertThat(sequence.getMatch()).isEmpty();
         assertThat(sequence.getName()).isEqualTo("EventA-test");
         assertThat(sequence.getSequenceMaxTime()).isEqualToIgnoringCase("PT15M");
         assertThat(sequence.getType()).isEqualTo(FUNNEL);
@@ -495,7 +345,6 @@ public class TdlAcceptanceTest {
 
         tdl = Tdl.newBuilder()
                 .addVariable("name", "value")
-                .addSequenceInvariants("inv1")
                 .setComment("new-comment")
                 .addTdls(fromPath("Good.tdl"))
                 .addSequence(ofType(CONTAINER)
@@ -612,7 +461,6 @@ public class TdlAcceptanceTest {
 
         Sequence seq = tdl.getSequences().get(0);
         assertThat(seq.getCheckPoints()).hasSize(1);
-        assertThat(seq.getMatch()).isEmpty();
         assertThat(seq.getName()).isEqualTo("EventA-test");
         assertThat(seq.getSequenceMaxTime()).isEqualToIgnoringCase("pt15m");
         assertThat(seq.getType()).isEqualTo(FUNNEL);

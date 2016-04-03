@@ -1,7 +1,3 @@
-/*
- * // (C) king.com Ltd 2014
- */
-
 package com.king.tratt;
 
 import static com.king.tratt.FunctionFactory.VAR_ARG;
@@ -32,7 +28,7 @@ class MatcherParser {
     }
 
     Matcher createEventTypeMatcher(EventMetaData eventMetaData) {
-        final Value left = values.constantLong(eventMetaData.getId());
+        Value left = values.constantLong(eventMetaData.getId());
         return Matcher.equal(left, values.eventId());
     }
 
@@ -44,8 +40,8 @@ class MatcherParser {
             return null;
         }
 
-        final Node node = tdlNodeParser.parse(expression);
-        final Matcher matcher = buildMatcher(eventMetaData, node, env);
+        Node node = tdlNodeParser.parse(expression);
+        Matcher matcher = buildMatcher(eventMetaData, node, env);
 
         return matcher;
     }
@@ -69,12 +65,12 @@ class MatcherParser {
     }
 
     private Matcher buildIntBooleanMatcher(EventMetaData eventMetaData, Node node, Environment env) {
-        final Value value = getValue(eventMetaData, node, env);
+        Value value = getValue(eventMetaData, node, env);
         return Matcher.intBoolean(value);
     }
 
     private Matcher buildFunctionMatcher(EventMetaData eventMetaData, Node node, Environment env) {
-        final List<Value> arguments = new ArrayList<>();
+        List<Value> arguments = new ArrayList<>();
         for (Node n : node.getSubNodes()) {
             arguments.add(getValue(eventMetaData, n, env));
         }
@@ -99,7 +95,7 @@ class MatcherParser {
             return null;
         }
 
-        final Matcher matcher = buildMatcher(eventType, node.getNode(0), env);
+        Matcher matcher = buildMatcher(eventType, node.getNode(0), env);
         if (matcher == null) {
             throw new IllegalArgumentException();
         }
@@ -108,8 +104,8 @@ class MatcherParser {
     }
 
     private Matcher buildAndOrMatcher(EventMetaData eventMetaData, Node node, Environment env) {
-        final Matcher left = buildMatcher(eventMetaData, node.getNode(0), env);
-        final Matcher right = buildMatcher(eventMetaData, node.getNode(1), env);
+        Matcher left = buildMatcher(eventMetaData, node.getNode(0), env);
+        Matcher right = buildMatcher(eventMetaData, node.getNode(1), env);
         if (left == null || right == null) {
             throw new IllegalArgumentException("Bad syntax near: " + node.getCurrentString());
         }
@@ -126,17 +122,17 @@ class MatcherParser {
         if(node.getOperatorType() != null) {
             switch(node.getOperatorSymbol()) {
             case "'":
-                final String nodeValue = node.getNode(0).getExpression();
+                String nodeValue = node.getNode(0).getExpression();
                 // return new Constant(nodeValue);
                 return values.constantString(nodeValue);
             case "%":
-                final Value value = getValue(eventMetaData, node.getNode(0), env);
-                final Value modulus = getValue(eventMetaData, node.getNode(1), env);
+                Value value = getValue(eventMetaData, node.getNode(0), env);
+                Value modulus = getValue(eventMetaData, node.getNode(1), env);
                 // return new Modulus(value, modulus);
                 return values.modulus(value, modulus);
             case "+": {
-                final Value left = getValue(eventMetaData, node.getNode(0), env);
-                final Value right = getValue(eventMetaData, node.getNode(1), env);
+                Value left = getValue(eventMetaData, node.getNode(0), env);
+                Value right = getValue(eventMetaData, node.getNode(1), env);
                 return values.sum(left, right); // new Plus(left, right);
             }
             case "-": {
@@ -162,15 +158,14 @@ class MatcherParser {
             case "/":{
                 Value left = getValue(eventMetaData, node.getNode(0), env);
                 Value right = getValue(eventMetaData, node.getNode(1), env);
-                return values.divide(left, right); // new Divided(left,
-                                                   // right);
+                return values.divide(left, right);
             }
             case "(":{
                 return getValue(eventMetaData, node.getNode(0), env);
             }
             default: {
                 if(node.getOperatorType() == Operator.Type.FUNCTION_START) {
-                    final List<Value> arguments = new ArrayList<>();
+                    List<Value> arguments = new ArrayList<>();
                     for(Node n : node.getSubNodes()) {
                         arguments.add(getValue(eventMetaData, n, env));
                     }
@@ -180,9 +175,9 @@ class MatcherParser {
             }
         }
 
-        final String nodeValue = node.getExpression();
+        String nodeValue = node.getExpression();
         String eventName = eventMetaData.getName();
-        final Value value = valueFactory.getValue(eventName, nodeValue);
+        Value value = valueFactory.getValue(eventName, nodeValue);
         if (value != null) {
             return value;
         } else if (env.sequenceVariables.containsKey(nodeValue)) {
@@ -203,8 +198,8 @@ class MatcherParser {
     }
 
     private Matcher buildCompareMatcher(EventMetaData eventMetaData, Node node, Environment env) {
-        final Value left = getValue(eventMetaData, node.getNode(0), env);
-        final Value right = getValue(eventMetaData, node.getNode(1), env);
+        Value left = getValue(eventMetaData, node.getNode(0), env);
+        Value right = getValue(eventMetaData, node.getNode(1), env);
 
         switch (node.getOperatorSymbol()) {
         case "==":
@@ -235,24 +230,8 @@ class MatcherParser {
         case ">":
         case "!=":
             return buildCompareMatcher(eventType, node, env);
-        case " in ":
-            return buildInMatcher(eventType, node, env);
         }
         return null;
-    }
-
-    private Matcher buildInMatcher(EventMetaData eventMetaData, Node node, Environment env) {
-        final Value value = getValue(eventMetaData, node.getNode(0), env);
-        final List<Value> values = getValueList(eventMetaData, node.getNode(1), env);
-        return Matcher.in(value, values);
-    }
-
-    private List<Value> getValueList(EventMetaData eventMetaData, Node node, Environment env) {
-        final List<Value> list = new ArrayList<>();
-        for (Node n : node.getSubNodes()) {
-            list.add(getValue(eventMetaData, n, env));
-        }
-        return list;
     }
 
 }

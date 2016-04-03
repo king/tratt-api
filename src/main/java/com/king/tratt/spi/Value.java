@@ -1,7 +1,7 @@
 package com.king.tratt.spi;
 
-import static com.king.tratt.spi.Util.requireNonNull;
-import static com.king.tratt.spi.Util.requireNonNullElements;
+import static com.king.tratt.internal.Util.requireNonNull;
+import static com.king.tratt.internal.Util.requireNonNullElements;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;

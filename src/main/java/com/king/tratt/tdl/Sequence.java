@@ -25,10 +25,6 @@ public final class Sequence {
         return Type.valueOf(seqInternal.type.toUpperCase());
     }
 
-    public String getMatch() {
-        return seqInternal.match;
-    }
-
     public String getSequenceMaxTime() {
         return seqInternal.sequenceMaxTime;
     }

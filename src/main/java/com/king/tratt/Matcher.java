@@ -73,13 +73,12 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
 
     @Override
     public boolean hasSufficientContext(Context context) {
-        return util.hasSufficientContext(context, awares);
+        return awares.stream().allMatch(e -> e.hasSufficientContext(context));
     }
     
     /*
      * Anonymous Matchers goes below
      */
-
     static <E extends Event> Matcher lessThan(final Value left, final Value right) {
         return new Matcher(left, right) {
 
@@ -278,33 +277,6 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             @Override
             public String toString() {
                 return left + ">=" + right;
-            }
-        };
-    }
-
-    // TODO remove?
-    static <E extends Event> Matcher in(Value value, List<Value> values) {
-        return new Matcher(util.concat(value, values)) {
-
-            @Override
-            protected boolean matchesImp(Event e, Context context) {
-                final String v = value.asString(e, context);
-                for (Value l : values) {
-                    if (v.equals(l.asString(e, context))) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            @Override
-            protected String toDebugStringImp(Event e, Context context) {
-                String joinedValues = util.formatJoin(e, context, ", ", "~d", values);
-                return util.format(e, context, "(~d IN [~s])", value, joinedValues);
-            }
-            @Override
-            public String toString() {
-                return value + " IN " + values;
             }
         };
     }

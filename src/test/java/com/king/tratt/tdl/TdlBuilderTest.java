@@ -2,7 +2,6 @@ package com.king.tratt.tdl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
@@ -11,21 +10,6 @@ import com.king.tratt.tdl.Sequence.Type;
 public class TdlBuilderTest {
 
     TdlBuilder builder = Tdl.newBuilder();
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowWhenDurationIsNegative() throws Exception {
-        builder.setSequencesMaxTime(-1, TimeUnit.SECONDS);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowWhenTimeUnitIsNull() throws Exception {
-        builder.setSequencesMaxTime(1, null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowWhenArgumentIsNull_setSequncesType() throws Exception {
-        builder.setSequencesType(null);
-    }
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowWhenFirstArgumentIsNull_addVariableString() throws Exception {
@@ -73,31 +57,6 @@ public class TdlBuilderTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void shouldThrowWhenArgumentIsNull_addSequenceInvariants() throws Exception {
-        builder.addSequenceInvariants(null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowWhenNoVarArgIsGiven_addCoreUserIdFilter() throws Exception {
-        builder.addCoreUserIdFilter();
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowWhenArgumentIsNull_addCoreUserIdFilter() throws Exception {
-        builder.addCoreUserIdFilter(null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowWhenOneVarArgIsEmptyString_addSequenceInvariants() throws Exception {
-        builder.addSequenceInvariants("s", "");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowWhenOneVarArgIsNull_addSequenceInvariants() throws Exception {
-        builder.addSequenceInvariants(null, "s");
-    }
-
-    @Test(expected = NullPointerException.class)
     public void shouldThrowWhenArgumentIsNull_useTdl() throws Exception {
         builder.addTdls(null);
     }
@@ -112,7 +71,7 @@ public class TdlBuilderTest {
         builder.addTdls(builder.build(), (Tdl[]) null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void shouldThrowWhenOneOfRestArgsIsNull_addTdls1() throws Exception {
         builder.addTdls(builder.build(), (Tdl) null);
     }
@@ -120,11 +79,6 @@ public class TdlBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowWhenArgumentIsEmpty_useTdl() throws Exception {
         builder.addTdls(new ArrayList<Tdl>());
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowWhenArgumentIsNull_match() throws Exception {
-        builder.addMatch(null);
     }
 
     @Test(expected = NullPointerException.class)

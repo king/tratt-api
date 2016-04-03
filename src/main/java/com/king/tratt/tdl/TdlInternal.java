@@ -4,8 +4,6 @@
 
 package com.king.tratt.tdl;
 
-import static com.king.tratt.tdl.Util.asJsonPrettyPrinted;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,7 +18,7 @@ class TdlInternal {
 
     @Override
     public String toString() {
-        return asJsonPrettyPrinted(this);
+        return Tdl.asJsonPrettyPrinted(this);
     }
 
     @Override
@@ -75,11 +73,10 @@ class TdlInternal {
         public String name;
         public String sequenceMaxTime = "pt15m";
         public List<CheckPointInternal> checkPoints;
-        public String match = "";
 
         @Override
         public String toString() {
-            return asJsonPrettyPrinted(this);
+            return Tdl.asJsonPrettyPrinted(this);
         }
 
         @Override
@@ -87,7 +84,6 @@ class TdlInternal {
             final int prime = 31;
             int result = 1;
             result = prime * result + ((checkPoints == null) ? 0 : checkPoints.hashCode());
-            result = prime * result + ((match == null) ? 0 : match.hashCode());
             result = prime * result + ((name == null) ? 0 : name.hashCode());
             result = prime * result + ((sequenceMaxTime == null) ? 0 : sequenceMaxTime.hashCode());
             result = prime * result + ((type == null) ? 0 : type.hashCode());
@@ -111,13 +107,6 @@ class TdlInternal {
                     return false;
                 }
             } else if (!checkPoints.equals(other.checkPoints)) {
-                return false;
-            }
-            if (match == null) {
-                if (other.match != null) {
-                    return false;
-                }
-            } else if (!match.equals(other.match)) {
                 return false;
             }
             if (name == null) {
@@ -155,7 +144,7 @@ class TdlInternal {
 
         @Override
         public String toString() {
-            return asJsonPrettyPrinted(this);
+            return Tdl.asJsonPrettyPrinted(this);
         }
 
         @Override

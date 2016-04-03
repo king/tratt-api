@@ -1,6 +1,6 @@
 package com.king.tratt;
 
-import static com.king.tratt.Tratt.util;
+import static com.king.tratt.internal.Util.requireNonNull;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toMap;
 
@@ -19,12 +19,8 @@ class VariableParser {
     }
 
     static Map<String, String> parse(String keyPrefix, List<String> nameValues) {
-        if (keyPrefix == null) {
-            throw util.nullArgumentError("keyPrefix");
-        }
-        if (nameValues == null) {
-            throw util.nullArgumentError("nameValues");
-        }
+        requireNonNull(keyPrefix, "keyPrefix");
+        requireNonNull(nameValues, "nameValues");
         if (nameValues.isEmpty()) {
             return Collections.emptyMap();
         }

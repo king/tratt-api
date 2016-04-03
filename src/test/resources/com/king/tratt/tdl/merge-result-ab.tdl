@@ -1,6 +1,5 @@
 {
   "comment" : "CommentB",
-  "sequenceInvariants" : [ "sequenceInvA", "sequenceInvB" ],
   "variables" : [ "varB=valB", "varA=valB" ],
   "sequences" : [ {
     "type" : "FUNNEL",
@@ -10,18 +9,13 @@
       "eventType" : "EventA",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "b=2",
-      "optional" : false
+      "validate" : "b=2"
     }, {
       "eventType" : "EventB",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "c=3",
-      "optional" : false
-    } ],
-    "match" : ""
+      "validate" : "c=3"
+    } ]
   },{
     "type" : "FUNNEL",
     "name" : "seqB",
@@ -30,17 +24,12 @@
       "eventType" : "EventA",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "b=2",
-      "optional" : false
+      "validate" : "b=2"
     }, {
       "eventType" : "EventB",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "c=3",
-      "optional" : false
-    } ],
-    "match" : ""
+      "validate" : "c=3"
+    } ]
   } ]
 }

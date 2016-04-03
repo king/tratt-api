@@ -29,11 +29,11 @@ import com.king.tratt.tdl.Tdl;
 class TdlProcessor {
     private static final String VARIABLE_PREFIX = "$";
 
-    private final CachedProcessor cachedEvents;
+    private final CachingProcessor cachedEvents;
     private final StartedEventProcessor started;
     private final CompletionStrategy completionStrategy;
 
-    TdlProcessor(CachedProcessor cachedEvents, StartedEventProcessor started) {
+    TdlProcessor(CachingProcessor cachedEvents, StartedEventProcessor started) {
         this.cachedEvents = cachedEvents;
         this.started = started;
         this.completionStrategy = started.completionStrategy;
@@ -85,7 +85,7 @@ class TdlProcessor {
                 processors.parallelStream().forEach(p -> p.onTimeout());
                 break;
             }
-            Event event = cachedEvents.getQueue().poll(500, MILLISECONDS);
+            Event event = cachedEvents.poll(500, MILLISECONDS);
             if (event != null) {
                 processors.parallelStream().forEach(p -> p.process(event));
             }

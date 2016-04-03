@@ -1,6 +1,6 @@
 package com.king.tratt.tdl;
 
-import static com.king.tratt.tdl.Util.nullArgumentError;
+import static com.king.tratt.internal.Util.requireNonNull;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -17,7 +17,6 @@ public final class SequenceBuilder {
     List<CheckPoint> checkPoints = new ArrayList<>();
     String name;
     String sequenceMaxTime = "pt15m";
-    String match = "";
 
     public static SequenceBuilder ofType(Type sequenceType) {
         return new SequenceBuilder(sequenceType);
@@ -38,7 +37,6 @@ public final class SequenceBuilder {
 
     private static SequenceBuilder merge(SequenceBuilder sb, Sequence seq) {
         sb.type = seq.getType();
-        sb.match = seq.getMatch();
         sb.name = seq.getName();
         sb.sequenceMaxTime = seq.getSequenceMaxTime();
         for (CheckPoint cp : seq.getCheckPoints()) {
@@ -54,16 +52,12 @@ public final class SequenceBuilder {
     /* For package private usage only */
     Sequence build() {
         SequenceInternal seq = new SequenceInternal();
-        seq.match = match;
         seq.name = name;
         seq.sequenceMaxTime = sequenceMaxTime;
         seq.type = type.toString();
         seq.checkPoints = new ArrayList<>();
 
         for (CheckPointBuilder builder : checkPointBuilders) {
-            if (!match.isEmpty()) {
-                prependMatch(builder);
-            }
             seq.checkPoints.add(builder.build().cpInternal);
         }
         Sequence result = new Sequence(seq);
@@ -73,18 +67,8 @@ public final class SequenceBuilder {
         return result;
     }
 
-    private void prependMatch(CheckPointBuilder builder) {
-        StringBuilder newMatch = new StringBuilder(match);
-        if (!builder.match.isEmpty()) {
-            newMatch.append(" && ").append(builder.match);
-        }
-        builder.match = newMatch.toString();
-    }
-
     public SequenceBuilder name(String name) {
-        if (name == null) {
-            throw nullArgumentError("name");
-        }
+        requireNonNull(name, "name");
         this.name = name;
         return this;
     }
@@ -94,33 +78,19 @@ public final class SequenceBuilder {
             String message = "Argument 'duration' is negative.";
             throw new IllegalArgumentException(message);
         }
-        if (timeUnit == null) {
-            throw nullArgumentError("timeUnit");
-        }
+        requireNonNull(timeUnit, "timeUnit");
         sequenceMaxTime = Duration.ofMillis(timeUnit.toMillis(duration)).toString();
         return this;
     }
 
     public SequenceBuilder withCheckPoint(CheckPointBuilder checkPointBuilder) {
-        if (checkPointBuilder == null) {
-            throw nullArgumentError("builder");
-        }
+        requireNonNull(checkPointBuilder, "checkPointBuilder");
         checkPointBuilders.add(checkPointBuilder);
         return this;
     }
 
-    public SequenceBuilder match(String match) {
-        if (match == null) {
-            throw nullArgumentError("match");
-        }
-        this.match = match;
-        return this;
-    }
-
     public SequenceBuilder type(Type type) {
-        if (type == null) {
-            throw nullArgumentError("type");
-        }
+        requireNonNull(type, "type");
         this.type = type;
         return this;
     }

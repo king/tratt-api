@@ -4,10 +4,9 @@
 
 package com.king.tratt.tdl;
 
-import static com.king.tratt.tdl.Util.concat;
-import static com.king.tratt.tdl.Util.nullArgumentError;
+import static com.king.tratt.internal.Util.concat;
+import static com.king.tratt.internal.Util.requireNonNull;
 import static java.lang.String.format;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gson.Gson;
-import com.king.tratt.tdl.Sequence.Type;
+import com.google.gson.GsonBuilder;
 import com.king.tratt.tdl.TdlInternal.SequenceInternal;
 
 
@@ -33,11 +32,11 @@ import com.king.tratt.tdl.TdlInternal.SequenceInternal;
  * Created by magnus.ramstedt on 29/10/14.
  */
 public final class Tdl {
+    private static final Gson PRETTY_WRITER = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     private static final ClassLoader CLASS_LOADER = ClassLoader.getSystemClassLoader();
     private static final String CLASSPATH_PROTOCOL = "classpath:";
     private static final String FILE_PROTOCOL = "file:";
-    private static final String AND_OPERATOR = " && ";
     private static final Gson GSON = new Gson();
 
     private final TdlInternal tdlInternal;
@@ -49,16 +48,12 @@ public final class Tdl {
     }
 
     public static Tdl fromJson(String json) {
-        if (json == null) {
-            throw nullArgumentError("json");
-        }
+        requireNonNull(json, "json");
         return new Tdl(GSON.fromJson(json, TdlInternal.class));
     }
 
     public static Tdl fromBytes(byte[] bytes) {
-        if (bytes == null) {
-            throw nullArgumentError("bytes");
-        }
+        requireNonNull(bytes, "bytes");
         try {
             return fromJson(new String(bytes, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
@@ -71,9 +66,7 @@ public final class Tdl {
     }
 
     public static Tdl fromPath(String prefixedPath) {
-        if (prefixedPath == null) {
-            throw nullArgumentError("prefixedPath");
-        }
+        requireNonNull(prefixedPath, "prefixedPath");
         URL url;
         try {
             if (prefixedPath.startsWith(CLASSPATH_PROTOCOL)) {
@@ -92,9 +85,7 @@ public final class Tdl {
     }
 
     public static Tdl fromUrl(URL url) {
-        if (url == null) {
-            throw nullArgumentError("url");
-        }
+        requireNonNull(url, "url");
         try {
             return fromReader(new InputStreamReader(url.openStream(), "UTF-8"));
         } catch (IOException e) {
@@ -104,9 +95,7 @@ public final class Tdl {
     }
 
     public static Tdl fromReader(Reader reader) {
-        if (reader == null) {
-            throw nullArgumentError("reader");
-        }
+        requireNonNull(reader, "reader");
         TdlInternal tdl = GSON.fromJson(reader, TdlInternal.class);
         return new Tdl(tdl);
     }
@@ -117,6 +106,14 @@ public final class Tdl {
 
     public static Tdl merge(List<Tdl> tdls) {
         return newBuilder().addTdls(tdls).build();
+    }
+
+    private static String asJson(Object o) {
+        return GSON.toJson(o);
+    }
+
+    static String asJsonPrettyPrinted(Object o) {
+        return PRETTY_WRITER.toJson(o);
     }
 
     private Tdl(TdlInternal tdl) {
@@ -147,9 +144,7 @@ public final class Tdl {
     }
 
     private void prepareData(TdlBuilder builder, Map<String, SequenceBuilder> tempSequenceBuilders) {
-        if (builder.useTdl != null) {
-            extractData(builder.useTdl, tempSequenceBuilders);
-        } else if (!builder.addedTdls.isEmpty()) {
+        if (!builder.addedTdls.isEmpty()) {
             for (Tdl tdl : builder.addedTdls) {
                 extractData(tdl, tempSequenceBuilders);
             }
@@ -165,17 +160,6 @@ public final class Tdl {
         tdlInternal.variables = fromMap(variables);
 
         for (SequenceBuilder sequenceBuilder : tempSequenceBuilders.values()) {
-            if (!builder.matchExpressions.isEmpty()) {
-                prependMatchExpressions(sequenceBuilder, builder.matchExpressions);
-            }
-            Type sequencesTypeCopy = builder.sequencesType;
-            if (sequencesTypeCopy != null) {
-                sequenceBuilder.type(sequencesTypeCopy);
-            }
-            Long sequencesMaxTimeMillisCopy = builder.sequencesMaxTimeMillis;
-            if (sequencesMaxTimeMillisCopy != null) {
-                sequenceBuilder.maxTime(sequencesMaxTimeMillisCopy, MILLISECONDS);
-            }
             tdlInternal.sequences.add(sequenceBuilder.build().seqInternal);
         }
     }
@@ -213,19 +197,6 @@ public final class Tdl {
         }
     }
 
-    private static void prependMatchExpressions(SequenceBuilder builder, List<String> matchExpressions) {
-        StringBuilder newMatch = new StringBuilder();
-        String operator = "";
-        for (String match : matchExpressions) {
-            newMatch.append(operator).append(match);
-            operator = AND_OPERATOR;
-        }
-        if (!builder.match.isEmpty()) {
-            newMatch.append(AND_OPERATOR).append(builder.match);
-        }
-        builder.match = newMatch.toString();
-    }
-
     public String getComment() {
         return tdlInternal.comment;
     }
@@ -239,9 +210,7 @@ public final class Tdl {
      * @return true if {@link Sequence} exists, otherwise false.
      */
     public boolean containsSequence(String name) {
-        if (name == null) {
-            throw nullArgumentError("name");
-        }
+        requireNonNull(name, "name");
         for (Sequence seq : getSequences()) {
             if (name.equals(seq.getName())) {
                 return true;
@@ -255,9 +224,7 @@ public final class Tdl {
      * @return the wanted {@link Sequence}.
      */
     public Sequence getSequence(String name) {
-        if (name == null) {
-            throw nullArgumentError("name");
-        }
+        requireNonNull(name, "name");
         for (Sequence seq : getSequences()) {
             if (name.equals(seq.getName())) {
                 return seq;
@@ -281,11 +248,11 @@ public final class Tdl {
     }
 
     public String asJsonPrettyPrinted() {
-        return Util.asJsonPrettyPrinted(tdlInternal);
+        return asJsonPrettyPrinted(tdlInternal);
     }
 
     public String asJson() {
-        return Util.asJson(tdlInternal);
+        return asJson(tdlInternal);
     }
 
     public boolean areAllVariablesSet() {
@@ -302,10 +269,7 @@ public final class Tdl {
     }
 
     public String getVariable(String name) {
-        if (name == null) {
-            throw nullArgumentError("name");
-        }
-
+        requireNonNull(name, "name");
         if (containsVariable(name)) {
             return variables.get(name);
         }
@@ -314,9 +278,7 @@ public final class Tdl {
     }
 
     public boolean containsVariable(String name) {
-        if (name == null) {
-            throw nullArgumentError("name");
-        }
+        requireNonNull(name, "name");
         return variables.containsKey(name);
     }
 

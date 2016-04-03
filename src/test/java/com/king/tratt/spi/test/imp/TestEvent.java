@@ -11,6 +11,7 @@ public class TestEvent implements Event {
     private static SimpleDateFormat DATE_FORMATER = new SimpleDateFormat("yyyyMMdd'T'HHmmss.SSSZ");
     private String[] values;
     private long eventId;
+    private long time;
     private String timestamp;
 
     public static TestEvent fields(String... values) {
@@ -19,6 +20,7 @@ public class TestEvent implements Event {
 
     public TestEvent(String timestamp, String eventId, String[] values) {
         this.timestamp = timestamp;
+        this.time = toTime(timestamp);
         this.eventId = Long.parseLong(eventId);
         this.values = values;
     }
@@ -30,7 +32,13 @@ public class TestEvent implements Event {
 
     @Override
     public long getTimestampMillis() {
+        return time;
+    }
+
+    private long toTime(String timestamp) {
         try {
+            // Note: SimpleDateFormat is not thread safe. So do this parsing in
+            // constructor.
             return DATE_FORMATER.parse(timestamp).getTime();
         } catch (ParseException e) {
             throw new RuntimeException("Can not parse to time: " + timestamp, e);

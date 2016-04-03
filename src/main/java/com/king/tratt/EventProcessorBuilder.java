@@ -1,6 +1,8 @@
 package com.king.tratt;
 
-import static com.king.tratt.Tratt.util;
+import static com.king.tratt.internal.Util.concat;
+import static com.king.tratt.internal.Util.requireNonNull;
+import static com.king.tratt.internal.Util.requireNoneNegative;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,35 +10,42 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import com.king.tratt.spi.ApiConfigurationProvider;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.EventIterator;
 import com.king.tratt.spi.EventMetaDataFactory;
 import com.king.tratt.spi.Stoppable;
 import com.king.tratt.spi.ValueFactory;
-import com.king.tratt.tdl.CheckPoint;
 import com.king.tratt.tdl.Tdl;
 import com.king.tratt.tdl.TdlBuilder;
 
 /**
  * Let's you configure the behavior of a EventProcessor.
  */
-public class EventProcessorBuilder {
+public final class EventProcessorBuilder {
     final TdlBuilder tdlBuilder = Tdl.newBuilder();
     final List<Stoppable> stoppables = new ArrayList<>();
     final List<SequenceProcessorListener> sequenceListeners = new ArrayList<>();
-    final BlockingQueue<Event> pipeline = new LinkedBlockingQueue<>();
     final List<EventIterator> eventIterators = new ArrayList<>();
     final List<SimpleProcessor> simpleProcessors = new ArrayList<>();
     long timeoutSeconds = 900;
-    PipelineProducerStrategy producerStrategy = PipelineProducerStrategy.getDefault();
     boolean tdlValidationEnabled = true;
+    BlockingQueue<Event> pipeline = new LinkedBlockingQueue<>();
     ValueFactory valueFactory;
     EventMetaDataFactory metaDataFactory;
     CompletionStrategy completionStrategy;
+    boolean isPreprocessorUsed = false;
 
 
-    public EventProcessorBuilder() {
+    EventProcessorBuilder() {
         /* for package private usage only */
+    }
+
+    public EventProcessorBuilder setApiConfigurationProvider(ApiConfigurationProvider provider) {
+        requireNonNull(provider, "provider");
+        setValueFactory(provider.valueFactory());
+        setEventMetaDataFatory(provider.metaDataFactory());
+        return this;
     }
 
     /**
@@ -45,21 +54,25 @@ public class EventProcessorBuilder {
      * @return
      */
     public EventProcessorBuilder setValueFactory(ValueFactory valueFactory) {
+        requireNonNull(valueFactory, "valueFactory");
         this.valueFactory = valueFactory;
         return this;
     }
 
     public EventProcessorBuilder setEventMetaDataFatory(EventMetaDataFactory mdFactory) {
+        requireNonNull(mdFactory, "mdFactory");
         this.metaDataFactory = mdFactory;
         return this;
     }
 
     public EventProcessorBuilder addEventIterator(EventIterator eventIterator) {
+        requireNonNull(eventIterator, "eventIterator");
         eventIterators.add(eventIterator);
         return this;
     }
 
     public EventProcessorBuilder addSimpleProcessor(SimpleProcessor simpleProcessor) {
+        requireNonNull(simpleProcessor, "simpleProcessor");
         simpleProcessors.add(simpleProcessor);
         return this;
     }
@@ -119,20 +132,6 @@ public class EventProcessorBuilder {
     }
 
     /**
-     * Prepend the given {@code match} expression on all available
-     * {@link CheckPoint} match fields.
-     *
-     * @param match
-     *            expression. Example: "coreUserId == $coreUserId" //TODO
-     * @return this builder
-     */
-    public EventProcessorBuilder addMatch(String match) {
-        // TODO remove?
-        //        tdlBuilder.addMatch(match);
-        return this;
-    }
-
-    /**
      * Add any TDL file(s) to use. Multiple added TDL files will be merged into
      * one TDL file, before event processing is started.
      *
@@ -141,8 +140,7 @@ public class EventProcessorBuilder {
      * @return
      */
     public EventProcessorBuilder addTdls(Tdl first, Tdl... rest) {
-        tdlBuilder.addTdls(util.concat(first, rest));
-        return this;
+        return addTdls(concat(first, rest));
     }
 
     public EventProcessorBuilder addTdls(List<Tdl> tdls) {
@@ -186,11 +184,12 @@ public class EventProcessorBuilder {
 	 * @return this builder
 	 */
     public EventProcessorBuilder addProcessorListener(SequenceProcessorListener listener) {
+        requireNonNull(listener, "listener");
 		sequenceListeners.add(listener);
 		return this;
 	}
 	
-    public EventProcessorBuilder addCompletionStrategy(CompletionStrategy strategy) {
+    EventProcessorBuilder addCompletionStrategy(CompletionStrategy strategy) {
 		completionStrategy = strategy;
 		return this;
 	}
@@ -209,13 +208,8 @@ public class EventProcessorBuilder {
      * @return this builder
      */
     public EventProcessorBuilder setTimeout(long duration, TimeUnit timeUnit) {
-        if (duration < 0) {
-            String message = "Argument 'duration' is negative.";
-            throw new IllegalArgumentException(message);
-        }
-        if (timeUnit == null) {
-            throw util.nullArgumentError("timeUnit");
-        }
+        requireNoneNegative(duration, "duration");
+        requireNonNull(timeUnit, "timeUnit");
         timeoutSeconds = timeUnit.toSeconds(duration);
         return this;
     }
@@ -237,4 +231,13 @@ public class EventProcessorBuilder {
         return this;
     }
 
+    public EventProcessorBuilder setPreprocessor(Preprocessor pre) {
+        return setEventCache(pre.eventCache);
+    }
+
+    EventProcessorBuilder setEventCache(CachingProcessor eventCache) {
+        isPreprocessorUsed = true;
+        pipeline = eventCache.blockingQueue;
+        return this;
+    }
 }

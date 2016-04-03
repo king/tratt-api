@@ -1,9 +1,9 @@
 package com.king.tratt;
 
 import static com.king.tratt.Tratt.util;
+import static java.lang.String.format;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -30,11 +30,11 @@ public class StartedEventProcessor {
     private static String ERROR_MESSAGE = "Sequence '%s' is not valid due to: %s \n";
     //    final String requestId;
     private Future<CompletedEventProcessor> tdlProcessorResults;
-    final ExecutorService executor;
+    final ExecutorService executor = util.newThreadPool();
     final Tdl tdl;
     private final List<EventIterator> eventIterators;
     //    private final StatisticsDataHolder statsDataHolder;
-    private final PipelineProducerStrategy producerStrategy;
+    private final boolean isPreprocessorUsed;
     private final List<Stoppable> stoppables;
     private final BlockingQueue<Event> pipeline;
     private final boolean tdlValidationEnabled;
@@ -54,16 +54,17 @@ public class StartedEventProcessor {
         metadataFactory = builder.metaDataFactory;
         valueFactory = builder.valueFactory;
         tdlValidationEnabled = builder.tdlValidationEnabled;
+        isPreprocessorUsed = builder.isPreprocessorUsed;
         //        trackingToolUrl = builder.trackingToolUrl;
         timeoutSeconds = builder.timeoutSeconds;
         eventIterators = new ArrayList<>(builder.eventIterators);
         simpleProcessors = new ArrayList<>(builder.simpleProcessors);
-        producerStrategy = builder.producerStrategy;
         tdl = builder.tdlBuilder.build();
         sequenceListeners = new ArrayList<>(builder.sequenceListeners);
         stoppables = new ArrayList<>(builder.stoppables);
         completionStrategy = builder.completionStrategy;
         progressListener = new ProgressSequenceProcessorListener(tdl.getSequences());
+
         sequenceListeners.add(progressListener);
         sequenceListeners.add(new ProcessorLogger());
         //        statsDataHolder = StatisticsDataHolder.copyOf(builder.statisticsDataHolder);
@@ -74,8 +75,11 @@ public class StartedEventProcessor {
         if (completionStrategy == null) {
             completionStrategy = progressListener;
         }
-        checkNotNull(metadataFactory, valueFactory);
-        checkEventIteratorsNotEmpty();
+        checkNotNull(metadataFactory, EventMetaDataFactory.class);
+        checkNotNull(valueFactory, ValueFactory.class);
+        if (!isPreprocessorUsed) {
+            checkEventIteratorsNotEmpty();
+        }
         if (tdlValidationEnabled) {
             validateTdl(tdl);
         }
@@ -89,34 +93,19 @@ public class StartedEventProcessor {
         LOG.debug("Actual used TDL:\n" + tdl);
         LOG.debug("Timeout set to: " + timeoutSeconds + " seconds.");
         LOG.debug("tdlValidationEnabled: " + tdlValidationEnabled);
+        LOG.debug("isPreprocessorUsed: " + isPreprocessorUsed);
+        LOG.debug("Number of EventIterators: " + eventIterators.size());
+        LOG.debug("Number of SimpleProcessors: " + simpleProcessors.size());
 
-        executor = util.newThreadPool();
         stoppables.add(() -> executor.shutdownNow());
     }
 
-    private void checkNotNull(Object... objects) {
-        Arrays.stream(objects).filter(o -> o == null).findFirst().ifPresent(o -> {
-            String template = "No %s set.";
-            throw new IllegalStateException(String.format(template, o.getClass().getSimpleName()));
-        });
-        if (metadataFactory == null) {
-            String message = "No %s set.";
-            message = String.format(message, EventMetaDataFactory.class.getSimpleName());
+    private void checkNotNull(Object o, Class<?> type) {
+        if (o == null) {
+            String message = String.format("No '%s' implementation found! Set one by calling method on %s",
+                    type.getSimpleName(), EventProcessorBuilder.class.getSimpleName());
             throw new IllegalStateException(message);
         }
-    }
-
-    StartedEventProcessor start() {
-        CachedProcessor cachedEvents = util.startProcessingEventsAndCreateCach(
-                pipeline, eventIterators, stoppables, simpleProcessors, producerStrategy, executor);
-        if (!tdl.getSequences().isEmpty()) {
-            //            listeners.add(new StatisticsProcessListener(requestId, statsDataHolder,
-            //                    tdl, trackingToolUrl, executor));
-            tdlProcessorResults = newFutureTask(new TdlProcessor(cachedEvents, this));
-        } else {
-            tdlProcessorResults = newInvalidCompletedFuture();
-        }
-        return this;
     }
 
     void checkEventIteratorsNotEmpty() {
@@ -133,6 +122,19 @@ public class StartedEventProcessor {
                     validator.getFieldErrorDescriptors());
             throw new InvalidTdlException(result);
         }
+    }
+
+    StartedEventProcessor start() {
+        CachingProcessor cachedEvents = util.startProcessingEventsAndCreateCache(
+                pipeline, eventIterators, stoppables, simpleProcessors, executor);
+        if (!tdl.getSequences().isEmpty()) {
+            //            listeners.add(new StatisticsProcessListener(requestId, statsDataHolder,
+            //                    tdl, trackingToolUrl, executor));
+            tdlProcessorResults = newFutureTask(new TdlProcessor(cachedEvents, this));
+        } else {
+            tdlProcessorResults = newInvalidCompletedFuture();
+        }
+        return this;
     }
 
     private Future<CompletedEventProcessor> newInvalidCompletedFuture() {
@@ -197,7 +199,7 @@ public class StartedEventProcessor {
         StringBuilder errorMessage = new StringBuilder();
         for (SequenceResult result : completed.getSequenceResults()) {
             if (!result.isValid()) {
-                errorMessage.append(String.format(ERROR_MESSAGE, result.getName(), result.getCauses()));
+                errorMessage.append(format(ERROR_MESSAGE, result.getName(), result.getCauses()));
             }
         }
         throw new TdlFailureException(errorMessage.toString());

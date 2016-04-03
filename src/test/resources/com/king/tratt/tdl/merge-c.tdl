@@ -1,6 +1,5 @@
 {
   "comment" : "CommentC",
-  "sequenceInvariants" : [ "sequenceInvA", "sequenceInvC" ],
   "variables" : [ "varC=valC", "varA=valC" ],
   "sequences" : [ {
     "type" : "CONTAINER",
@@ -10,17 +9,12 @@
       "eventType" : "EventC",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "b=2",
-      "optional" : false
+      "validate" : "b=2"
     }, {
       "eventType" : "EventD",
       "match" : "a=$a",
       "set" : [ ],
-      "label" : "",
-      "validate" : "c=3",
-      "optional" : false
-    } ],
-    "match" : ""
+      "validate" : "c=3"
+    } ]
   } ]
 }
