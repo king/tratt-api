@@ -15,7 +15,7 @@ public class TestEvent implements Event {
     private String timestamp;
 
     public static TestEvent fields(String... values) {
-        return new TestEvent("-9999", "1", values);
+        return new TestEvent("20151126T144726.849+0100", "1", values);
     }
 
     public TestEvent(String timestamp, String eventId, String[] values) {
@@ -35,10 +35,9 @@ public class TestEvent implements Event {
         return time;
     }
 
-    private long toTime(String timestamp) {
+    synchronized private static long toTime(String timestamp) {
         try {
-            // Note: SimpleDateFormat is not thread safe. So do this parsing in
-            // constructor.
+            // Note: SimpleDateFormat is not thread safe. 
             return DATE_FORMATER.parse(timestamp).getTime();
         } catch (ParseException e) {
             throw new RuntimeException("Can not parse to time: " + timestamp, e);

@@ -5,6 +5,7 @@ import static java.lang.String.format;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.king.tratt.spi.ApiConfigurationProvider;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.EventIterator;
 import com.king.tratt.spi.EventMetaDataFactory;
@@ -41,8 +43,8 @@ public class StartedEventProcessor {
     final long timeoutSeconds;
     //    private final String trackingToolUrl;
     private final ArrayList<SimpleProcessor> simpleProcessors;
-    final EventMetaDataFactory metadataFactory;
-    final ValueFactory valueFactory;
+    EventMetaDataFactory metadataFactory;
+    ValueFactory valueFactory;
     final List<SequenceProcessorListener> sequenceListeners;
     final ProgressSequenceProcessorListener progressListener;
     CompletionStrategy completionStrategy;
@@ -71,10 +73,10 @@ public class StartedEventProcessor {
         //        requestId = builder.requestId == null ? valueOf(nanoTime()) : builder.requestId;
 
         // ...then check invariants
-        // TODO check mandatory data metadataFactory, valueFactory, etc!
         if (completionStrategy == null) {
             completionStrategy = progressListener;
         }
+        setApiConfigurationIfAvailableFromServiceLoader();
         checkNotNull(metadataFactory, EventMetaDataFactory.class);
         checkNotNull(valueFactory, ValueFactory.class);
         if (!isPreprocessorUsed) {
@@ -98,6 +100,24 @@ public class StartedEventProcessor {
         LOG.debug("Number of SimpleProcessors: " + simpleProcessors.size());
 
         stoppables.add(() -> executor.shutdownNow());
+    }
+
+    private void setApiConfigurationIfAvailableFromServiceLoader() {
+        ServiceLoader<ApiConfigurationProvider> serviceLoader = ServiceLoader.load(ApiConfigurationProvider.class);
+        serviceLoader.forEach(apiConf -> {
+            if (metadataFactory == null) {
+                EventMetaDataFactory mdFactory = apiConf.metaDataFactory();
+                if (mdFactory != null) {
+                    metadataFactory = mdFactory;
+                }
+            }
+            if (valueFactory == null) {
+                ValueFactory vFactory = apiConf.valueFactory();
+                if (vFactory != null) {
+                    valueFactory = vFactory;
+                }
+            }
+        });
     }
 
     private void checkNotNull(Object o, Class<?> type) {

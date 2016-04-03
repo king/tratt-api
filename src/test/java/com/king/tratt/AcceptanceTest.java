@@ -5,18 +5,28 @@ import static java.lang.Thread.getAllStackTraces;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.ServiceLoader;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 
 import com.king.tratt.spi.ApiConfigurationProvider;
-import com.king.tratt.spi.EventMetaDataFactory;
-import com.king.tratt.spi.ValueFactory;
+import com.king.tratt.spi.test.imp.TestApiConfigurationProvider;
+import com.king.tratt.spi.test.imp.TestEvent;
 import com.king.tratt.spi.test.imp.TestEventMetaDataFactory;
 import com.king.tratt.spi.test.imp.TestFromFileEventIterator;
 import com.king.tratt.spi.test.imp.TestValueFactory;
 import com.king.tratt.tdl.Tdl;
 
+import mockit.Mock;
+import mockit.MockUp;
+import mockit.integration.junit4.JMockit;
+
+@RunWith(JMockit.class)
 public class AcceptanceTest {
     TestEventMetaDataFactory mdFactory = new TestEventMetaDataFactory();
     TestValueFactory valueFactory = new TestValueFactory(mdFactory);
@@ -98,28 +108,28 @@ public class AcceptanceTest {
 
     @Test
     public void canSetApiConfigurationProviderExplicitly() throws Exception {
-        ApiConfigurationProvider provider = new ApiConfigurationProvider() {
+        StartedEventProcessor started = Tratt.newEventProcessorBuilder()
+                .setTimeout(5, SECONDS)
+                .setApiConfigurationProvider(new TestApiConfigurationProvider())
+                .addEventIterator(eventsFromFile)
+                .addTdls(Tdl.fromPath("classpath:com/king/tratt/acceptance.tdl"))
+                .start();
+        started.awaitSuccess();
+    }
 
-            @Override
-            public ValueFactory valueFactory() {
-                return (eventName, parameterName) -> {
-                    throw new TrattException("valueFactory");
-                };
-            }
+    @Test
+    public void canUseApiConfigurationProviderFromServiceLoader() throws Exception {
 
-            @Override
-            public EventMetaDataFactory metaDataFactory() {
-                return eventName -> {
-                    throw new TrattException("metaDataFactory");
-                };
+        TestEvent.fields();
+        new MockUp<ServiceLoader<ApiConfigurationProvider>>() {
+            @Mock
+            public Iterator<? extends ApiConfigurationProvider> iterator() {
+                return Arrays.asList(new TestApiConfigurationProvider()).iterator();
             }
         };
-        expected.expect(TrattException.class);
-        expected.expectMessage("metYYY");
 
         StartedEventProcessor started = Tratt.newEventProcessorBuilder()
                 .setTimeout(5, SECONDS)
-                .setApiConfigurationProvider(provider)
                 .addEventIterator(eventsFromFile)
                 .addTdls(Tdl.fromPath("classpath:com/king/tratt/acceptance.tdl"))
                 .start();

@@ -41,9 +41,9 @@ public final class Util {
     }
 
     public static void requireNonEmptyString(String str, String argName) {
-        if (!str.trim().isEmpty()) {
+        if (str.trim().isEmpty()) {
             String message = "'%s' must not be empty string!";
-            throw new NullPointerException(format(message, argName));
+            throw new IllegalArgumentException(format(message, argName));
         }
     }
 

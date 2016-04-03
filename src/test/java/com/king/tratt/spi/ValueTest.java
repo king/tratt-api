@@ -155,7 +155,7 @@ public class ValueTest {
     @Test
     public void shouldThrowWhenConstructorIsFedWithAtleastOneNullElements() throws Exception {
         expected.expect(NullPointerException.class);
-        expected.expectMessage("'awares' must not contain any null objects!");
+        expected.expectMessage("'awares' must not contain any null elements!");
         List<ValueForTesting> list = Arrays.asList(new ValueForTesting(), null);
         new ValueForTesting(list);
     }

@@ -17,14 +17,14 @@ public class VariableParserTest {
     public void shouldThrowWhenNameValuesIsNull() throws Exception {
         assertThatExceptionOfType(NullPointerException.class)
         .isThrownBy(() -> parse(PREFIX, (List<String>) null))
-        .withMessage("Argument 'nameValues' is null.");
+                .withMessage("'nameValues' must not be null!");
     }
 
     @Test
     public void shouldThrowWhenKeyPrefixIsNull() throws Exception {
         assertThatExceptionOfType(NullPointerException.class)
         .isThrownBy(() -> parse(null, asList()))
-        .withMessage("Argument 'keyPrefix' is null.");
+                .withMessage("'keyPrefix' must not be null!");
     }
 
     @Test

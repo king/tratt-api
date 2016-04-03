@@ -5,8 +5,6 @@ import static com.king.tratt.internal.Util.requireNonNull;
 import static com.king.tratt.internal.Util.requireNonNullElements;
 import static java.util.Arrays.asList;
 
-import com.king.tratt.internal.Util;
-
 /**
  * Tratt API entry point.
  */

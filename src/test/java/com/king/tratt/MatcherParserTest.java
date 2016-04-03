@@ -425,42 +425,6 @@ public class MatcherParserTest {
     }
 
     @Test
-    public void testMatchIn() throws Exception {
-        m = matcher("EventB", "b in [1,c,'three',5]");
-
-        TestEvent e0 = fields("userid", "", "0", "2");
-        TestEvent e1 = fields("userid", "", "1", "2");
-        TestEvent e2 = fields("userid", "", "2", "2");
-        TestEvent e3 = fields("userid", "", "three", "2");
-        TestEvent e4 = fields("userid", "", "4", "2");
-        TestEvent e5 = fields("userid", "", "5", "2");
-        TestEvent e6 = fields("userid", "", "6", "2");
-
-        assertThat(m.toDebugString(e0, null)).isEqualTo(
-                " >> ([[source:event.b]]'0' IN [[[source:constant]]1, [[source:event.c]]'2', [[source:constant]]'three', [[source:constant]]5]) << ");
-        assertThat(m.toDebugString(e1, null)).isEqualTo(
-                "([[source:event.b]]'1' IN [[[source:constant]]1, [[source:event.c]]'2', [[source:constant]]'three', [[source:constant]]5])");
-        assertThat(m.toDebugString(e2, null)).isEqualTo(
-                "([[source:event.b]]'2' IN [[[source:constant]]1, [[source:event.c]]'2', [[source:constant]]'three', [[source:constant]]5])");
-        assertThat(m.toDebugString(e3, null)).isEqualTo(
-                "([[source:event.b]]'three' IN [[[source:constant]]1, [[source:event.c]]'2', [[source:constant]]'three', [[source:constant]]5])");
-        assertThat(m.toDebugString(e4, null)).isEqualTo(
-                " >> ([[source:event.b]]'4' IN [[[source:constant]]1, [[source:event.c]]'2', [[source:constant]]'three', [[source:constant]]5]) << ");
-        assertThat(m.toDebugString(e5, null)).isEqualTo(
-                "([[source:event.b]]'5' IN [[[source:constant]]1, [[source:event.c]]'2', [[source:constant]]'three', [[source:constant]]5])");
-        assertThat(m.toDebugString(e6, null)).isEqualTo(
-                " >> ([[source:event.b]]'6' IN [[[source:constant]]1, [[source:event.c]]'2', [[source:constant]]'three', [[source:constant]]5]) << ");
-
-        assertThat(m.matches(e0, null)).isFalse();
-        assertThat(m.matches(e1, null)).isTrue();
-        assertThat(m.matches(e2, null)).isTrue();
-        assertThat(m.matches(e3, null)).isTrue();
-        assertThat(m.matches(e4, null)).isFalse();
-        assertThat(m.matches(e5, null)).isTrue();
-        assertThat(m.matches(e6, null)).isFalse();
-    }
-
-    @Test
     public void testMatchingExpressionWithPlus() throws Exception {
         m = matcher("EventB", "a+1 == d");
 
