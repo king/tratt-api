@@ -10,7 +10,7 @@ public class TestEvent implements Event {
 
     private static SimpleDateFormat DATE_FORMATER = new SimpleDateFormat("yyyyMMdd'T'HHmmss.SSSZ");
     private String[] values;
-    private long eventId;
+    private String eventId;
     private long time;
     private String timestamp;
 
@@ -21,12 +21,12 @@ public class TestEvent implements Event {
     public TestEvent(String timestamp, String eventId, String[] values) {
         this.timestamp = timestamp;
         this.time = toTime(timestamp);
-        this.eventId = Long.parseLong(eventId);
+        this.eventId = eventId;
         this.values = values;
     }
 
     @Override
-    public long getId() {
+    public String getId() {
         return eventId;
     }
 

@@ -13,7 +13,7 @@ public class IdEventValue extends Value {
     }
 
     @Override
-    protected Long getImp(Event e, Context context) {
+    protected String getImp(Event e, Context context) {
         return e.getId();
     }
 

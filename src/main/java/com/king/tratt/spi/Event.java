@@ -5,6 +5,6 @@ package com.king.tratt.spi;
  *
  */
 public interface Event {
-    long getId();
+    String getId();
     long getTimestampMillis();
 }

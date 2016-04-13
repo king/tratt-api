@@ -252,7 +252,7 @@ class Values {
             }
 
             @Override
-            protected Long getImp(Event e, Context context) {
+            protected String getImp(Event e, Context context) {
                 return e.getId();
             }
 

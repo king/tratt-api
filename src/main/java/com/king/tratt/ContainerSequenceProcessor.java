@@ -134,7 +134,7 @@ class ContainerSequenceProcessor extends SequenceProcessor {
 
     private static class Memory {
         final Event event;
-        final long eventId;
+        final String eventId;
         CheckPointMatcher cpMatcher;
 
         Memory(Event event) {
