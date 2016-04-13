@@ -1,19 +1,19 @@
 package com.king.tratt;
 
-import static java.util.stream.Collectors.groupingBy;
+import com.king.tratt.spi.Context;
+import com.king.tratt.spi.Event;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.king.tratt.spi.Context;
-import com.king.tratt.spi.Event;
+import static java.util.stream.Collectors.groupingBy;
 
 class ContainerSequenceProcessor extends SequenceProcessor {
     private final List<Memory> eventsToMatchContainer = new CopyOnWriteArrayList<>();
     private final List<Memory> eventsToValidateContainer = new CopyOnWriteArrayList<>();
     private Context context;
-    private Map<Long, List<CheckPointMatcher>> checkPointMatchers;
+    private Map<String, List<CheckPointMatcher>> checkPointMatchers;
     private SequenceProcessorHelper helper;
     private long maxTimeMillis;
     private Long endTimeMillis;
@@ -115,7 +115,7 @@ class ContainerSequenceProcessor extends SequenceProcessor {
 
     @Override
     public void _onTimeout() {
-        for (Long eventId : checkPointMatchers.keySet()) {
+        for (String eventId : checkPointMatchers.keySet()) {
             for (CheckPointMatcher cpMatcher : checkPointMatchers.get(eventId)) {
                 helper.notifyCheckPointTimeout(cpMatcher, context);
                 // listenerHandler.fire(of((Event) null, TIMEOUT,

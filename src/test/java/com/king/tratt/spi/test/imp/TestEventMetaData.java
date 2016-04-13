@@ -1,12 +1,12 @@
 package com.king.tratt.spi.test.imp;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.king.tratt.spi.EventMetaData;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestEventMetaData implements EventMetaData {
 
@@ -30,8 +30,8 @@ public class TestEventMetaData implements EventMetaData {
     }
 
     @Override
-    public long getId() {
-        return Long.parseLong(jsonObject.get("id").getAsString());
+    public String getId() {
+        return jsonObject.get("id").getAsString();
     }
 
     @Override

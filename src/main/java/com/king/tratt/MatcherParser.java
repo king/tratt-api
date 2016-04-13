@@ -1,18 +1,18 @@
 package com.king.tratt;
 
+import com.king.tratt.spi.EventMetaData;
+import com.king.tratt.spi.Value;
+import com.king.tratt.spi.ValueFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.king.tratt.FunctionFactory.VAR_ARG;
 import static com.king.tratt.Tratt.util;
 import static com.king.tratt.Tratt.values;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Long.parseLong;
 import static java.lang.String.format;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.king.tratt.spi.EventMetaData;
-import com.king.tratt.spi.Value;
-import com.king.tratt.spi.ValueFactory;
 
 class MatcherParser {
 
@@ -28,7 +28,7 @@ class MatcherParser {
     }
 
     Matcher createEventTypeMatcher(EventMetaData eventMetaData) {
-        Value left = values.constantLong(eventMetaData.getId());
+        Value left = values.constantString(eventMetaData.getId());
         return Matcher.equal(left, values.eventId());
     }
 

@@ -1,14 +1,14 @@
 package com.king.tratt;
 
-import static com.king.tratt.Tratt.util;
-import static java.lang.Boolean.parseBoolean;
-import static java.lang.Long.parseLong;
-
-import java.util.function.Function;
-
 import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.Value;
+
+import java.util.function.Function;
+
+import static com.king.tratt.Tratt.util;
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.Long.parseLong;
 
 /*
  * Static factory method for various Values:
@@ -17,7 +17,7 @@ class Values {
 
     private static final String SOURCE_CONSTANT = "[[source:constant]]%s";
 
-    Value constant(String value) {
+    Value constant(Object value) {
         Value result = parseValue(value,
                 this::constantLong,
                 this::constantString,

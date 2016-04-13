@@ -1,15 +1,15 @@
 package com.king.tratt;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.EventMetaData;
 import com.king.tratt.spi.Value;
 import com.king.tratt.tdl.CheckPoint;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 final class CheckPointMatcher {
     private final MatcherParser matcherParser;
@@ -59,7 +59,7 @@ final class CheckPointMatcher {
         return validators;
     }
 
-    public long getEventId() {
+    public String getEventId() {
         return eventMetaData.getId();
     }
 
