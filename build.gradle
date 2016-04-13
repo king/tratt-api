@@ -1,9 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = 1.8
 group = 'com.king.tracking'
-version = '0.1.0-SNAPSHOT'
+version = '0.1.0'
 
 task wrapper(type: Wrapper) {
    gradleVersion = '2.10' //version required
@@ -12,6 +13,23 @@ task wrapper(type: Wrapper) {
 repositories {
     maven { url "http://artifactory.int.midasplayer.com:8081/artifactory/proper-repo" }
     jcenter()
+}
+
+publishing {
+    repositories {
+      maven {
+        credentials {
+            username '*******'
+            password '*******'
+        }
+        url '*******'
+      }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
 }
 
 dependencies {
