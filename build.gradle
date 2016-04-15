@@ -11,25 +11,7 @@ task wrapper(type: Wrapper) {
 }
 
 repositories {
-    maven { url "http://artifactory.int.midasplayer.com:8081/artifactory/proper-repo" }
     jcenter()
-}
-
-publishing {
-    repositories {
-      maven {
-        credentials {
-            username '*******'
-            password '*******'
-        }
-        url '*******'
-      }
-    }
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
 }
 
 dependencies {
