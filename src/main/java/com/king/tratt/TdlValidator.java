@@ -20,7 +20,7 @@ import com.king.tratt.tdl.CheckPoint;
 import com.king.tratt.tdl.Sequence;
 import com.king.tratt.tdl.Tdl;
 
-class TdlValidator {
+public class TdlValidator {
 
     private final EventMetaDataFactory metaDataFactory;
     private List<String> errors = new ArrayList<>();
@@ -29,7 +29,7 @@ class TdlValidator {
     private List<TdlFileFieldErrorDescriptor> fieldErrorDescriptions = new ArrayList<>();
     private ValueFactory valueFactory;
 
-    TdlValidator(ValueFactory valueFactory, EventMetaDataFactory metaDataProvider, final Tdl tdl) {
+    public TdlValidator(ValueFactory valueFactory, EventMetaDataFactory metaDataProvider, final Tdl tdl) {
         this.valueFactory = valueFactory;
         this.metaDataFactory = metaDataProvider;
         this.matcherParser = new MatcherParser(valueFactory);
@@ -101,7 +101,7 @@ class TdlValidator {
 
     private void validateCheckPoint(Environment env, CheckPoint checkPoint, String nodePath) {
         EventMetaData eventMetaData = metaDataFactory.getEventMetaData(checkPoint.getEventType());
-        if (eventMetaData == null) {
+        if (eventMetaData == null) { 	
             addNodeError(
                     "No EventType with name \""
                             + checkPoint.getEventType()
@@ -151,7 +151,7 @@ class TdlValidator {
         fieldErrorDescriptions.add(new TdlFileFieldErrorDescriptor(errorDescription, nodePath));
     }
 
-    String getError() {
+    public String getError() {
         String ret = "";
         if (numParseErrors > 0) {
             ret += "" + numParseErrors + " TDL parse errors.\n";
@@ -165,7 +165,7 @@ class TdlValidator {
         return ret;
     }
 
-    List<TdlFileFieldErrorDescriptor> getFieldErrorDescriptors() {
+    public List<TdlFileFieldErrorDescriptor> getFieldErrorDescriptors() {
         return fieldErrorDescriptions;
     }
 

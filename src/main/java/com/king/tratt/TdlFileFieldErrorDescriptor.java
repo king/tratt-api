@@ -1,8 +1,8 @@
 package com.king.tratt;
 
-class TdlFileFieldErrorDescriptor {
-	private String errorDescription;
-	private String errorNodePath;
+public class TdlFileFieldErrorDescriptor {
+	public String errorDescription;
+	public String errorNodePath;
 
     TdlFileFieldErrorDescriptor(String errorDescription, String errorNodePath) {
 		this.errorDescription = errorDescription;
