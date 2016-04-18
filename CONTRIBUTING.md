@@ -5,6 +5,11 @@ Thank you so much for wanting to contribute to tratt-api! Here are a few importa
 things you should know about contributing:
 
 
+Pull requests
+-----------------------------
+All contributions are made from pull requests. 
+
+
 Contributor License Agreement
 -----------------------------
 
