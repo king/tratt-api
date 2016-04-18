@@ -1,1 +1,1 @@
-See [User Guide](../../wiki)
+See [wiki](../../wiki) for User Guide.
