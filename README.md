@@ -1,7 +1,7 @@
 # Overview
 
-When a user interacts with your system (for example: makes a purchase in your app, or clicks on a button in your webpage etc.) one or several events are logged to some server where your analysts can analyze it later. We call this log mechanism for tracking.
+The purpose of the "tratt-api" library is to help verifying that a **tracking** mechanism is working as expected on an end-to-end level.
 
-The purpose of the tratt-api library is to help you verify that your tracking mechanism is working as expected at _end-to-end_ level. 
+When a user interacts with a system, e.g. makes a purchase in an app or clicks a button on a webpage, one or multiple events are logged to a server. These logs on the server can later be used for data analysis. This logging mechanism is referred by King as tracking. The "tratt-api" is a regular java library API and can be used with any test automation framework, e.g. JUnit, TestNG.
 
-See [Wiki](../../wiki) for User Guide.
+For additional information See [User Guide](../../wiki).
