@@ -2,7 +2,7 @@
   "comment" : "",
   "variables" : [ ],
   "sequences" : [ {
-    "type" : "FUNNEL",
+    "type" : "UNWANTED",
     "name" : "seq-1",
     "sequenceMaxTime" : "pt15m",
     "checkPoints" : [ ]

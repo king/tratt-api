@@ -5,7 +5,7 @@
   ],
   "sequences": [
     {
-      "type": "funnel",
+      "type": "UNWANTED",
       "name": "EventA-test",
       "sequenceMaxTime": "pt10s",
       "checkPoints": [

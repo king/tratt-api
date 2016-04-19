@@ -16,9 +16,7 @@ public final class Sequence {
 
     SequenceInternal seqInternal;
 
-    public enum Type {
-        CONTAINER, FUNNEL, UNWANTED
-    };
+    public enum Type { CONTAINER, UNWANTED };
 
     Sequence(SequenceInternal seq) {
         seqInternal = seq;

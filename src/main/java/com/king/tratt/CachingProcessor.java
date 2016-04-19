@@ -24,7 +24,7 @@ class CachingProcessor implements SimpleProcessor {
         return "eventCache: " + blockingQueue.toString();
     }
 
-    public Event poll(long timeout, TimeUnit timeUnit) throws InterruptedException {
+    Event poll(long timeout, TimeUnit timeUnit) throws InterruptedException {
         return blockingQueue.poll(timeout, timeUnit);
     }
 }

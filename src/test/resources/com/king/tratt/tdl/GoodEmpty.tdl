@@ -1,7 +1,7 @@
 {
   "sequences": [
     {
-	  "type": "funnel",
+	  "type": "UNWANTED",
       "checkPoints": [{}]
     }
   ]

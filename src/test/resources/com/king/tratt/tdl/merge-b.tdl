@@ -2,7 +2,7 @@
   "comment" : "CommentB",
   "variables" : [ "varB=valB", "varA=valB" ],
   "sequences" : [ {
-    "type" : "FUNNEL",
+    "type" : "UNWANTED",
     "name" : "seqB",
     "sequenceMaxTime" : "PT60S",
     "checkPoints" : [ {

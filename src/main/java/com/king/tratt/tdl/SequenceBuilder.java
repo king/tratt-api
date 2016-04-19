@@ -5,6 +5,7 @@
 package com.king.tratt.tdl;
 
 import static com.king.tratt.internal.Util.requireNonNull;
+import static com.king.tratt.internal.Util.requireNoneNegative;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -78,10 +79,7 @@ public final class SequenceBuilder {
     }
 
     public SequenceBuilder maxTime(long duration, TimeUnit timeUnit) {
-        if (duration < 0) {
-            String message = "Argument 'duration' is negative.";
-            throw new IllegalArgumentException(message);
-        }
+        requireNoneNegative(duration, "duration");
         requireNonNull(timeUnit, "timeUnit");
         sequenceMaxTime = Duration.ofMillis(timeUnit.toMillis(duration)).toString();
         return this;
