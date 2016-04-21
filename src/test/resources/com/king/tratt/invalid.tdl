@@ -1,0 +1,27 @@
+{
+    "comment": "CommentA",
+    "variables": ["", "varA=A"],
+    "sequences": 
+    [
+        {
+            "type": "container",
+            "name": "seqA",
+            "sequenceMaxTime": "X",
+            "checkPoints": 
+            [{
+                    "eventType": "EventA",
+                    "match": "userid==$varB && a==123",
+                    "validate": "b=='abc' && c==EB_fieldF && unknownField==123",
+                    "set": ["EA_localVarA='aaa'", "EA_fieldA=a"]
+                },{
+                    "eventType": "EventB",
+                    "match": "userid==$varA && a==456",
+                    "validate": "b==unquotedString && c=='EFG' && d==EA_fieldA && e==789 && f==true",
+                    "set": ["EB_fieldF=f", "EB_localVarB=5", ""]
+                },{
+                    "eventType": "FakeEvent"
+                }
+            ]
+        }
+    ]
+}

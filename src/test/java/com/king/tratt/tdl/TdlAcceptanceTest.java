@@ -10,6 +10,7 @@ import static com.king.tratt.tdl.Sequence.Type.UNWANTED;
 import static com.king.tratt.tdl.SequenceBuilder.ofType;
 import static com.king.tratt.tdl.Tdl.newBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.net.URI;
@@ -292,6 +293,12 @@ public class TdlAcceptanceTest {
         // when
         tdl.getSequence(null);
     }
+    
+    
+    @Test(expected = IllegalArgumentException.class)
+	public void shouldThrowWhenInvalidJson() throws Exception {
+		fromPath("invalid-json-.tdl");
+	}
 
     @Test
     public void canDetectWhenAVariableIsNotSet() throws Exception {
