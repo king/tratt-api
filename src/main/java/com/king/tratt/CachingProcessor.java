@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * (C) king.com Ltd 2016
+ *  
+ *******************************************************************************/
 package com.king.tratt;
 
 import java.util.concurrent.BlockingQueue;
@@ -20,7 +24,7 @@ class CachingProcessor implements SimpleProcessor {
         return "eventCache: " + blockingQueue.toString();
     }
 
-    public Event poll(long timeout, TimeUnit timeUnit) throws InterruptedException {
+    Event poll(long timeout, TimeUnit timeUnit) throws InterruptedException {
         return blockingQueue.poll(timeout, timeUnit);
     }
 }

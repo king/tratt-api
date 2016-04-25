@@ -1,3 +1,7 @@
+/*******************************************************************************
+ * (C) king.com Ltd 2016
+ *  
+ *******************************************************************************/
 package com.king.tratt;
 
 import static com.king.tratt.internal.Util.requireNonNull;
@@ -63,6 +67,11 @@ class VariableParser {
         NameValue(String name, String value) {
             this.name = name;
             this.value = value;
+        }
+        
+        @Override
+        public String toString() {
+        	return name + "=" + value;
         }
     }
 }

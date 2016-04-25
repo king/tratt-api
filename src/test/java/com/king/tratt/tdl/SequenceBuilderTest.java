@@ -1,8 +1,12 @@
+/*******************************************************************************
+ * (C) king.com Ltd 2016
+ *  
+ *******************************************************************************/
 package com.king.tratt.tdl;
 
 import static com.king.tratt.tdl.CheckPointBuilder.forEvent;
 import static com.king.tratt.tdl.Sequence.Type.CONTAINER;
-import static com.king.tratt.tdl.Sequence.Type.FUNNEL;
+import static com.king.tratt.tdl.Sequence.Type.UNWANTED;
 import static com.king.tratt.tdl.SequenceBuilder.copyOf;
 import static com.king.tratt.tdl.SequenceBuilder.ofType;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +19,7 @@ import org.junit.Test;
 
 public class SequenceBuilderTest {
 
-    private SequenceBuilder builder = ofType(FUNNEL);
+    private SequenceBuilder builder = ofType(UNWANTED);
 
     @Test
     public void canMergeASequenceBuilderIntoSequenceBuilderInstance() throws Exception {
@@ -25,7 +29,7 @@ public class SequenceBuilderTest {
                 .name("nameA")
                 .withCheckPoint(forEvent("ExternalStoreTransactionBegin"));
 
-        SequenceBuilder sb2 = ofType(FUNNEL)
+        SequenceBuilder sb2 = ofType(UNWANTED)
                 .maxTime(1, TimeUnit.MINUTES)
                 .name("nameB")
                 .withCheckPoint(forEvent("ItemTransaction4"));
@@ -34,7 +38,7 @@ public class SequenceBuilderTest {
         Sequence merged = sb1.merge(sb2).build();
 
         // then
-        assertThat(merged.getType()).isEqualTo(FUNNEL);
+        assertThat(merged.getType()).isEqualTo(UNWANTED);
         assertThat(merged.getSequenceMaxTime()).isEqualTo("PT1M");
         assertThat(merged.getName()).isEqualTo("nameB");
         assertThat(merged.getCheckPoints()).hasSize(2);
@@ -49,7 +53,7 @@ public class SequenceBuilderTest {
                 .withCheckPoint(forEvent("ExternalStoreTransactionBegin"));
         Sequence seq1 = sb1.build();
 
-        SequenceBuilder sb2 = ofType(FUNNEL)
+        SequenceBuilder sb2 = ofType(UNWANTED)
                 .maxTime(1, TimeUnit.MINUTES)
                 .name("nameB")
                 .withCheckPoint(forEvent("ItemTransaction4"));
@@ -59,7 +63,7 @@ public class SequenceBuilderTest {
         Sequence merged = seq1.merge(seq2);
 
         // then
-        assertThat(merged.getType()).isEqualTo(FUNNEL);
+        assertThat(merged.getType()).isEqualTo(UNWANTED);
         assertThat(merged.getSequenceMaxTime()).isEqualTo("PT1M");
         assertThat(merged.getName()).isEqualTo("nameB");
         assertThat(merged.getCheckPoints()).hasSize(2);
@@ -73,7 +77,7 @@ public class SequenceBuilderTest {
                 .name("nameA")
                 .withCheckPoint(forEvent("ExternalStoreTransactionBegin"));
 
-        SequenceBuilder sb2 = ofType(FUNNEL)
+        SequenceBuilder sb2 = ofType(UNWANTED)
                 .maxTime(1, TimeUnit.MINUTES)
                 .name("nameB")
                 .withCheckPoint(forEvent("ItemTransaction4"));
@@ -82,7 +86,7 @@ public class SequenceBuilderTest {
         Sequence merged = SequenceBuilder.merge(sb1, sb2).build();
 
         // then
-        assertThat(merged.getType()).isEqualTo(FUNNEL);
+        assertThat(merged.getType()).isEqualTo(UNWANTED);
         assertThat(merged.getSequenceMaxTime()).isEqualTo("PT1M");
         assertThat(merged.getName()).isEqualTo("nameB");
         assertThat(merged.getCheckPoints()).hasSize(2);
@@ -110,7 +114,7 @@ public class SequenceBuilderTest {
     @Test
     public void canCopyExistingSequenceAndOverrideValues() throws Exception {
         // given
-        Sequence sequence = ofType(FUNNEL)
+        Sequence sequence = ofType(UNWANTED)
                 .maxTime(2, TimeUnit.MINUTES)
                 .name("name")
                 .withCheckPoint(forEvent("ExternalStoreTransactionBegin"))

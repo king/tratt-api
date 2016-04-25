@@ -1,0 +1,6 @@
+{
+    "comment": "CommentA",
+    "variables": ["varB=B", "varA=A"],
+    "sequences": 
+    [
+}

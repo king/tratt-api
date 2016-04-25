@@ -1,7 +1,10 @@
+/*******************************************************************************
+ * (C) king.com Ltd 2016
+ *  
+ *******************************************************************************/
 package com.king.tratt;
 
 import static java.lang.System.out;
-import static java.lang.Thread.getAllStackTraces;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,8 +38,28 @@ public class AcceptanceTest {
     public ExpectedException expected = ExpectedException.none();
 
     @Test
+	public void shouldThrowWhenInvalidTdl() throws Exception {
+    	// given
+    	expected.expect(InvalidTdlException.class);
+    	expected.expectMessage("Faulty value is 'unknownField'");
+    	expected.expectMessage("Faulty value is 'unquotedString'");
+    	expected.expectMessage("Invalid variable set expression");
+    	expected.expectMessage("Invalid time format");
+    	expected.expectMessage("No EventType with name ");
+    	expected.expectMessage("Invalid sequence-local variable set expression");
+    	 
+    	// when
+    	Tratt.newEventProcessorBuilder()
+                .setTimeout(5, SECONDS)
+                .addEventIterator(eventsFromFile)
+                .setEventMetaDataFatory(mdFactory)
+                .setValueFactory(valueFactory)
+                .addTdls(Tdl.fromPath("classpath:com/king/tratt/invalid.tdl"))
+                .start();
+	}
+    
+    @Test
     public void canProcessEventsAccordingToTdl() throws Exception {
-        System.out.println(getAllStackTraces().size() + " : " + getAllStackTraces());
         StartedEventProcessor started = Tratt.newEventProcessorBuilder()
                 .setTimeout(5, SECONDS)
                 .addEventIterator(eventsFromFile)
@@ -45,7 +68,6 @@ public class AcceptanceTest {
                 .addTdls(Tdl.fromPath("classpath:com/king/tratt/acceptance.tdl"))
                 .start();
         started.awaitSuccess();
-        System.out.println(getAllStackTraces().size() + " : " + getAllStackTraces());
     }
 
     @Test
@@ -120,7 +142,7 @@ public class AcceptanceTest {
     @Test
     public void canUseApiConfigurationProviderFromServiceLoader() throws Exception {
 
-        TestEvent.fields();
+        TestEvent.fields(); // TODO fix dirty workaround
         new MockUp<ServiceLoader<ApiConfigurationProvider>>() {
             @Mock
             public Iterator<? extends ApiConfigurationProvider> iterator() {

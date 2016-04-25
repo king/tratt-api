@@ -5,7 +5,7 @@
   ],
   "sequences": [
     {
-      "type": "FUNNEL",
+      "type": "UNWANTED",
       "name": "EventA-test",
       "sequenceMaxTime": "pt15m",
       "checkPoints": [

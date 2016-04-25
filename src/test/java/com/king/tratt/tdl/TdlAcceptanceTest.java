@@ -1,11 +1,16 @@
+/*******************************************************************************
+ * (C) king.com Ltd 2016
+ *  
+ *******************************************************************************/
 package com.king.tratt.tdl;
 
 import static com.king.tratt.tdl.CheckPointBuilder.forEvent;
 import static com.king.tratt.tdl.Sequence.Type.CONTAINER;
-import static com.king.tratt.tdl.Sequence.Type.FUNNEL;
+import static com.king.tratt.tdl.Sequence.Type.UNWANTED;
 import static com.king.tratt.tdl.SequenceBuilder.ofType;
 import static com.king.tratt.tdl.Tdl.newBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.net.URI;
@@ -119,7 +124,7 @@ public class TdlAcceptanceTest {
     @Test
     public void canGetDefaultValuesWhenCreatingTdlProgramatically() throws Exception {
         tdl = Tdl.newBuilder()
-                .addSequence(ofType(FUNNEL).name("seq0"))
+                .addSequence(ofType(UNWANTED).name("seq0"))
                 .addSequence(ofType(CONTAINER)
                         .name("seq1")
                         .withCheckPoint(forEvent("ItemTransaction4")))
@@ -155,7 +160,7 @@ public class TdlAcceptanceTest {
 
         assertThat(seq.getName()).isEqualToIgnoringCase("EventA-test");
         assertThat(seq.getSequenceMaxTime()).isEqualToIgnoringCase("pt10s");
-        assertThat(seq.getType()).isEqualTo(Sequence.Type.FUNNEL);
+        assertThat(seq.getType()).isEqualTo(UNWANTED);
 
         assertThat(checkPoint.getEventType()).isEqualToIgnoringCase("EventA");
         assertThat(checkPoint.getMatch()).isEmpty();
@@ -168,7 +173,7 @@ public class TdlAcceptanceTest {
         tdl = fromPath("OnlySequences.tdl");
         String serialized = tdl.toString();
 
-        assertThat(serialized).containsIgnoringCase("\"type\": \"FUNNEL\"");
+        assertThat(serialized).containsIgnoringCase("\"type\": \"UNWANTED\"");
         assertThat(serialized).containsIgnoringCase("\"validate\": \"field3==$varA\"");
     }
 
@@ -186,7 +191,7 @@ public class TdlAcceptanceTest {
                                 .match("coreUserId == $coreUserId")
                                 .validate("fieldA == aValue && fieldB == anotherValue")
                                 .set("name1=value1", "name2=value2")))
-                .addSequence(ofType(FUNNEL)
+                .addSequence(ofType(UNWANTED)
                         .name("seq-name")
                         .withCheckPoint(forEvent("ExternalStoreTransactionDone")
                                 .match("coreUserId == $coreUserId")
@@ -288,6 +293,12 @@ public class TdlAcceptanceTest {
         // when
         tdl.getSequence(null);
     }
+    
+    
+    @Test(expected = IllegalArgumentException.class)
+	public void shouldThrowWhenInvalidJson() throws Exception {
+		fromPath("invalid-json-.tdl");
+	}
 
     @Test
     public void canDetectWhenAVariableIsNotSet() throws Exception {
@@ -331,7 +342,7 @@ public class TdlAcceptanceTest {
         Sequence sequence = tdl.getSequences().get(0);
         assertThat(sequence.getName()).isEqualTo("EventA-test");
         assertThat(sequence.getSequenceMaxTime()).isEqualToIgnoringCase("PT15M");
-        assertThat(sequence.getType()).isEqualTo(FUNNEL);
+        assertThat(sequence.getType()).isEqualTo(UNWANTED);
 
         CheckPoint checkPoint = sequence.getCheckPoints().get(0);
         assertThat(checkPoint.getEventType()).isEqualTo("EventA");
@@ -360,7 +371,7 @@ public class TdlAcceptanceTest {
         for (Sequence seq : tdl.getSequences()) {
             seqTypes.add(seq.getType());
         }
-        assertThat(seqTypes).containsOnly(CONTAINER, FUNNEL);
+        assertThat(seqTypes).containsOnly(CONTAINER, UNWANTED);
     }
 
     @Test
@@ -463,7 +474,7 @@ public class TdlAcceptanceTest {
         assertThat(seq.getCheckPoints()).hasSize(1);
         assertThat(seq.getName()).isEqualTo("EventA-test");
         assertThat(seq.getSequenceMaxTime()).isEqualToIgnoringCase("pt15m");
-        assertThat(seq.getType()).isEqualTo(FUNNEL);
+        assertThat(seq.getType()).isEqualTo(UNWANTED);
     }
 
     @Test
