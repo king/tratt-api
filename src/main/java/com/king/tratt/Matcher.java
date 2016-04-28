@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -51,7 +51,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             return false;
         }
     }
-    
+
     @Override
     public String toDebugString(Event event, Context context) {
         if (matches(event, context)) {
@@ -59,27 +59,27 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
         } else {
             try {
                 return format(" >> %s << ", toDebugStringImp(event, context));
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 String message = "Unexpected crash! See underlying exceptions for more info.\n"
                         + "  matcher: %s; event: %s; context: %s";
                 message = format(message, this, event, context);
                 LOG.error(message, ex);
-                String result = " >> @CRASH due to '%s' in '%s'. See console log for more info. << "; 
-                return format(result, rootCause(ex).getMessage(), this); 
+                String result = " >> @CRASH due to '%s' in '%s'. See console log for more info. << ";
+                return format(result, rootCause(ex).getMessage(), this);
             }
         }
     }
 
     private Throwable rootCause(Throwable e) {
         Throwable cause = e.getCause();
-        return cause == null ? e : rootCause(cause); 
+        return cause == null ? e : rootCause(cause);
     }
 
     @Override
     public boolean hasSufficientContext(Context context) {
         return awares.stream().allMatch(e -> e.hasSufficientContext(context));
     }
-    
+
     /*
      * Anonymous Matchers goes below
      */
@@ -95,7 +95,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             protected String toDebugStringImp(Event e, Context context) {
                 return util.format(e, context, "(~d < ~d)", left, right);
             }
-            
+
             @Override
             public String toString() {
                 return left + "<" + right;
@@ -115,7 +115,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             protected String toDebugStringImp(Event e, Context context) {
                 return util.format(e, context, "(0 != ~d)", value);
             }
-            
+
             @Override
             public String toString() {
                 return "0!=" + value;
@@ -132,10 +132,8 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             }
 
             @Override
-            /*
-             * bypass the super class, as we don't want error signs
-             * surrounding the debug string form this matcher.
-             */
+            // bypass the super class, as we don't want error signs
+            // surrounding the debug string form this matcher.
             public String toDebugString(Event e, Context context) {
                 return toDebugStringImp(e, context);
             }
@@ -144,7 +142,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             protected String toDebugStringImp(Event e, Context context) {
                 return util.format(e, context, "(~d && ~d)", left, right);
             }
-            
+
             @Override
             public String toString() {
                 return left + "&&" + right;
@@ -161,10 +159,8 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             }
 
             @Override
-            /*
-             * bypass the super class, as we don't want error signs
-             * surrounding the debug string form this matcher.
-             */
+            // bypass the super class, as we don't want error signs
+            // surrounding the debug string form this matcher.
             public String toDebugString(Event e, Context context) {
                 return toDebugStringImp(e, context);
             }
@@ -173,7 +169,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             protected String toDebugStringImp(Event e, Context context) {
                 return util.format(e, context, "(~d || ~d)", left, right);
             }
-            
+
             @Override
             public String toString() {
                 return left + "||" + right;
@@ -195,7 +191,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             protected String toDebugStringImp(Event e, Context context) {
                 return util.format(e, context, "(~d == ~d)", left, right);
             }
-            
+
             @Override
             public String toString() {
                 return left + "==" + right;
@@ -217,7 +213,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             protected String toDebugStringImp(Event e, Context context) {
                 return util.format(e, context, "(~d != ~d)", left, right);
             }
-            
+
             @Override
             public String toString() {
                 return left + "!=" + right;
@@ -237,7 +233,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             protected String toDebugStringImp(Event e, Context context) {
                 return util.format(e, context, "(~d <= ~d)", left, right);
             }
-            
+
             @Override
             public String toString() {
                 return left + "<=" + right;
@@ -257,7 +253,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             protected String toDebugStringImp(Event e, Context context) {
                 return util.format(e, context, "(~d > ~d)", left, right);
             }
-            
+
             @Override
             public String toString() {
                 return left + ">" + right;
@@ -277,7 +273,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             protected String toDebugStringImp(Event e, Context context) {
                 return util.format(e, context, "(~d >= ~d)", left, right);
             }
-            
+
             @Override
             public String toString() {
                 return left + ">=" + right;
@@ -292,18 +288,16 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             protected boolean matchesImp(Event e, Context context) {
                 return !matcher.matches(e, context);
             }
-            
+
             @Override
             protected String toDebugStringImp(Event e, Context context) {
-                /*
-                 * Do not call "matcher.toDebugString(...) as it will
-                 * be surrounded by false error signs ( >> << ).
-                 * In this case underlying matcher should fail
-                 * for this matcher to pass.
-                 */
+                // Do not call "matcher.toDebugString(...) as it will
+                // be surrounded by false error signs ( >> << ).
+                // In this case underlying matcher should fail
+                // for this matcher to pass.
                 return "!" + matcher.toDebugStringImp(e, context);
             }
-            
+
             @Override
             public String toString() {
                 return "!" + matcher;
@@ -323,7 +317,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             protected String toDebugStringImp(Event e, Context context) {
                 return function.toDebugString(e, context);
             }
-            
+
             @Override
             public String toString() {
                 return function.toString();

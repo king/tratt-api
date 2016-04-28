@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -50,7 +50,8 @@ public final class Multicaster {
     }
 
     Multicaster start() {
-        PipelineEventMulticaster multicaster = new PipelineEventMulticaster(preprocessor.eventCache.blockingQueue);
+        PipelineEventMulticaster multicaster = new PipelineEventMulticaster(
+                preprocessor.eventCache.blockingQueue);
         startedProcessors = builders.parallelStream()
                 .map(eventProcessorBuilder -> {
                     CachingProcessor cache = new CachingProcessor();

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -17,14 +17,17 @@ final class ContextImp implements Context {
 
     private final Map<String, Object> map = new HashMap<>();
 
+    @Override
     public boolean containsKey(String name) {
         return map.containsKey(name);
     }
 
+    @Override
     public Object get(String name) {
         return map.get(name);
     }
 
+    @Override
     public void set(String name, Object value) {
         map.put(name, value);
     }

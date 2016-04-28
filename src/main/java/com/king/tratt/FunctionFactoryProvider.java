@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -42,7 +42,7 @@ class FunctionFactoryProvider {
     List<String> getFunctionNames() {
         return new ArrayList<>(functions.keySet());
     }
-    
+
     static FunctionFactory jsonField() {
         return new FunctionFactory() {
             Value pathValue;
@@ -74,14 +74,14 @@ class FunctionFactoryProvider {
 
                     @Override
                     public String toDebugString(Event e, Context context) {
-                        return util.format(e, context, "[[source:jsonfield('~g', '~g')]]~p", pathValue, jsonValue, this);
+                        return util.format(e, context, "[[source:jsonfield('~g', '~g')]]~p",
+                                pathValue, jsonValue, this);
                     }
 
                     @Override
                     protected Object getImp(Event e, Context context) {
                         String path = pathValue.asString(e, context);
                         String json = jsonValue.asString(e, context);
-
 
                         String result = null;
                         try {
@@ -139,7 +139,8 @@ class FunctionFactoryProvider {
 
                     @Override
                     public String toString() {
-                        return String.format("substr('%s', '%s', '%s')", fromValue, toValue, strValue);
+                        return String.format("substr('%s', '%s', '%s')", fromValue, toValue,
+                                strValue);
                     }
 
                     @Override
@@ -186,7 +187,8 @@ class FunctionFactoryProvider {
 
                     @Override
                     public String toString() {
-                        return String.format("split('%s', '%s', '%s')", strValue, delimiterValue, indexValue);
+                        return String.format("split('%s', '%s', '%s')", strValue, delimiterValue,
+                                indexValue);
                     }
 
                     @Override
@@ -236,7 +238,8 @@ class FunctionFactoryProvider {
                     @Override
                     public String toDebugString(Event e, Context context) {
                         String joinedValues = util.formatJoin(e, context, ", ", "'~g'", arguments);
-                        return util.format(e, context, "[[source:concat(~s)]]'~g'", joinedValues, this);
+                        return util.format(e, context, "[[source:concat(~s)]]'~g'", joinedValues,
+                                this);
                     }
 
                     @Override

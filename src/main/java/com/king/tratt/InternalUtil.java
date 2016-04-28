@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -67,13 +67,18 @@ class InternalUtil {
     }
 
     /**
-     * The 'format' string can contain the following conversion patterns, where each conversion
-     * pattern corresponds to an object in the args list (in order. e.g first conversion pattern
-     * found * in 'format' corresponds to first element in args and so on).
-     * '~d' (d as in debug):
-     * '~g' (g as in get):
-     * '~s' (s as in string):
-     * '~p' (p as in plain):
+     * The 'format' string can contain the following conversion patterns, where
+     * each conversion pattern corresponds to an object in the args list (in
+     * order. e.g first conversion pattern found in 'format' corresponds to
+     * first element in args and so on).
+     *
+     * <pre>
+     * '~d' (d as in debug)
+     * '~g' (g as in get)
+     * '~s' (s as in string)
+     * '~p' (p as in plain) TODO change to 'q'?
+     * </pre>
+     *
      * check the below switch case to see what the conversion patterns do.
      *
      * @return a formatted string
@@ -92,7 +97,7 @@ class InternalUtil {
         return sb.toString();
     }
 
-    //TODO : change "g" to "v"; v as in value
+    // TODO : change "g" to "v"; v as in value
     private String doConversion(Event e, Context context, String action, Object o) {
         switch (action) {
         case "~g":
@@ -110,15 +115,15 @@ class InternalUtil {
     }
 
     ExecutorService newThreadPool() {
-		return newCachedThreadPool(runnable -> {
+        return newCachedThreadPool(runnable -> {
             Thread thread = new Thread(runnable, "TRATT." + counter.incrementAndGet());
             thread.setUncaughtExceptionHandler((Thread t, Throwable e) -> {
                 String message = "Thread '%s' crashed unexpectedly due to:\n";
                 LOG.error(String.format(message, t), e);
             });
             return thread;
-		});
-	}
+        });
+    }
 
     CachingProcessor startProcessingEventsAndCreateCache(
             BlockingQueue<Event> pipeline, List<EventIterator> eventIterators,
@@ -142,7 +147,8 @@ class InternalUtil {
         return cachedEvents;
     }
 
-    void shutdownStoppablesAndExecutorService(List<Stoppable> stoppables, ExecutorService executor) {
+    void shutdownStoppablesAndExecutorService(List<Stoppable> stoppables,
+            ExecutorService executor) {
         for (Stoppable stopable : stoppables) {
             stopable.stop();
         }

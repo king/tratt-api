@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi;
 
@@ -10,5 +10,6 @@ package com.king.tratt.spi;
  */
 public interface Event {
     String getId();
+
     long getTimestampMillis();
 }

@@ -1,17 +1,17 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
-import com.king.tratt.spi.Context;
-import com.king.tratt.spi.Event;
+import static java.util.stream.Collectors.groupingBy;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static java.util.stream.Collectors.groupingBy;
+import com.king.tratt.spi.Context;
+import com.king.tratt.spi.Event;
 
 class ContainerSequenceProcessor extends SequenceProcessor {
     private final List<Memory> eventsToMatchContainer = new CopyOnWriteArrayList<>();
@@ -97,6 +97,7 @@ class ContainerSequenceProcessor extends SequenceProcessor {
         helper.notifyCheckPointMatch(memory.event, memory.cpMatcher, context);
         return VALID_CHECKER_STATE;
     };
+
     private boolean isFirstMatchInSequence() {
         return endTimeMillis == null;
     }
@@ -110,7 +111,8 @@ class ContainerSequenceProcessor extends SequenceProcessor {
     }
 
     private void resetSequence() {
-        checkPointMatchers = helper.getCheckPointMatchers().stream().collect(groupingBy(CheckPointMatcher::getEventId));
+        checkPointMatchers = helper.getCheckPointMatchers().stream()
+                .collect(groupingBy(CheckPointMatcher::getEventId));
         context = helper.newContext();
         endTimeMillis = null;
         eventsToMatchContainer.clear();

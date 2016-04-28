@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi;
 
@@ -52,7 +52,8 @@ public abstract class Value implements DebugStringAware, SufficientContextAware 
                 .collect(toList());
         if (!methodWithUnsupportedReturnTypes.isEmpty()) {
             String message = "Method 'getImp' has unsupported return type. Supported are: %s\n%s";
-            message = String.format(message, supportedReturnTypes(), methodWithUnsupportedReturnTypes);
+            message = String.format(message, supportedReturnTypes(),
+                    methodWithUnsupportedReturnTypes);
             throw new UnsupportedReturnTypeException(message);
         }
     }
@@ -65,9 +66,7 @@ public abstract class Value implements DebugStringAware, SufficientContextAware 
         if (cls.equals(Value.class)) {
             return empty();
         }
-        return concat(
-                stream(cls.getDeclaredMethods()),
-                getAllMethods(cls.getSuperclass()));
+        return concat(stream(cls.getDeclaredMethods()), getAllMethods(cls.getSuperclass()));
     }
 
     protected abstract Object getImp(Event e, Context context);

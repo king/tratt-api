@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -23,9 +23,9 @@ class PipelineProducerFromEventIterator implements Runnable {
 
     @Override
     public void run() {
-            while (iterator.hasNext() && !currentThread().isInterrupted()) {
-                blockingQueue.add(iterator.next());
-            }
+        while (iterator.hasNext() && !currentThread().isInterrupted()) {
+            blockingQueue.add(iterator.next());
+        }
     }
 
 }

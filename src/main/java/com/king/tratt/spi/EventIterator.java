@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi;
 
@@ -13,8 +13,9 @@ import java.util.Iterator;
 public interface EventIterator extends Iterator<Event>, Stoppable {
 
     /**
-     * This must be a blocking call. Shall only return false after {@link #stop()} method has been
-     * called, or if thread is interrupted. Shall return true as soon as there is an next event.
+     * This must be a blocking call. Shall only return false after
+     * {@link #stop()} method has been called, or if thread is interrupted.
+     * Shall return true as soon as there is an next event.
      *
      * @return
      */

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi;
 
@@ -15,7 +15,7 @@ public interface Context {
 
     /**
      * TODO
-     * 
+     *
      * @param key
      * @param value
      *            can only be of type: long, String boolean

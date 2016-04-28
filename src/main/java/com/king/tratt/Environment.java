@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -25,7 +25,8 @@ class Environment {
 
     @Override
     public String toString() {
-        return "Environment [sequenceVariables=" + sequenceVariables + ", tdlVariables=" + tdlVariables + "]";
+        return "Environment [sequenceVariables=" + sequenceVariables +
+                ", tdlVariables=" + tdlVariables + "]";
     }
 
 }

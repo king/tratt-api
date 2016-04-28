@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 /*
  * // (C) king.com Ltd 2014
@@ -44,7 +44,9 @@ class Node {
     }
 
     String getExpression() {
-        return literalString == null ? range.getExpression(operator == null || !operator.isCaseSensitive()) : literalString;
+        return literalString == null
+                ? range.getExpression(operator == null || !operator.isCaseSensitive())
+                : literalString;
     }
 
     boolean isLiteralString() {
@@ -64,7 +66,7 @@ class Node {
     }
 
     Operator.Type getOperatorType() {
-        return operator==null ? null : operator.getType();
+        return operator == null ? null : operator.getType();
     }
 
     String getOperatorSymbol() {
@@ -80,23 +82,23 @@ class Node {
     }
 
     String getCurrentString() {
-        return range.getPreviousExpression()+"@@"+range.getExpression();
+        return range.getPreviousExpression() + "@@" + range.getExpression();
     }
 
     @Override
     public String toString() {
-        if(operator == null) {
-            return "{"+getExpression()+"}";
+        if (operator == null) {
+            return "{" + getExpression() + "}";
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append("{").append("\"").append(operator.getSymbol());
-        if(operator.getClosingOperator() != null) {
+        if (operator.getClosingOperator() != null) {
             sb.append(operator.getClosingOperator().getSymbol());
         }
         sb.append("\",");
-        for(int i = 0 ; i < subNodes.size() ; i++) {
-            if(i>0) {
+        for (int i = 0; i < subNodes.size(); i++) {
+            if (i > 0) {
                 sb.append(", ");
             }
             sb.append(subNodes.get(i));

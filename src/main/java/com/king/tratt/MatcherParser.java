@@ -1,15 +1,8 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
-
-import com.king.tratt.spi.EventMetaData;
-import com.king.tratt.spi.Value;
-import com.king.tratt.spi.ValueFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.king.tratt.FunctionFactory.VAR_ARG;
 import static com.king.tratt.Tratt.util;
@@ -17,6 +10,13 @@ import static com.king.tratt.Tratt.values;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Long.parseLong;
 import static java.lang.String.format;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.king.tratt.spi.EventMetaData;
+import com.king.tratt.spi.Value;
+import com.king.tratt.spi.ValueFactory;
 
 class MatcherParser {
 
@@ -68,7 +68,8 @@ class MatcherParser {
         }
     }
 
-    private Matcher buildIntBooleanMatcher(EventMetaData eventMetaData, Node node, Environment env) {
+    private Matcher buildIntBooleanMatcher(EventMetaData eventMetaData, Node node,
+            Environment env) {
         Value value = getValue(eventMetaData, node, env);
         return Matcher.intBoolean(value);
     }
@@ -123,8 +124,8 @@ class MatcherParser {
     }
 
     private Value getValue(EventMetaData eventMetaData, Node node, Environment env) {
-        if(node.getOperatorType() != null) {
-            switch(node.getOperatorSymbol()) {
+        if (node.getOperatorType() != null) {
+            switch (node.getOperatorSymbol()) {
             case "'":
                 String nodeValue = node.getNode(0).getExpression();
                 // return new Constant(nodeValue);
@@ -153,24 +154,24 @@ class MatcherParser {
                 return values.subtract(left, right); // new Minus(left,
                                                      // right);
             }
-            case "*":{
+            case "*": {
                 Value left = getValue(eventMetaData, node.getNode(0), env);
                 Value right = getValue(eventMetaData, node.getNode(1), env);
                 return values.multiply(left, right); // new Times(left,
                                                      // right);
             }
-            case "/":{
+            case "/": {
                 Value left = getValue(eventMetaData, node.getNode(0), env);
                 Value right = getValue(eventMetaData, node.getNode(1), env);
                 return values.divide(left, right);
             }
-            case "(":{
+            case "(": {
                 return getValue(eventMetaData, node.getNode(0), env);
             }
             default: {
-                if(node.getOperatorType() == Operator.Type.FUNCTION_START) {
+                if (node.getOperatorType() == Operator.Type.FUNCTION_START) {
                     List<Value> arguments = new ArrayList<>();
-                    for(Node n : node.getSubNodes()) {
+                    for (Node n : node.getSubNodes()) {
                         arguments.add(getValue(eventMetaData, n, env));
                     }
                     return createFunctionValue(node.getOperatorSymbol(), arguments);

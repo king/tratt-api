@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -39,7 +39,6 @@ public final class EventProcessorBuilder {
     EventMetaDataFactory metaDataFactory;
     CompletionStrategy completionStrategy;
     boolean isPreprocessorUsed = false;
-
 
     EventProcessorBuilder() {
         /* for package private usage only */
@@ -91,13 +90,15 @@ public final class EventProcessorBuilder {
     }
 
     /**
-     * Add a variable into the provided TDL file.
-     * (provided with {@link #useTdl(TdlFile)} or {@link #useTdl(TdlBuilder)})
+     * Add a variable into the provided TDL file. (provided with
+     * {@link #useTdl(TdlFile)} or {@link #useTdl(TdlBuilder)})
      * <p>
      * if the variable already exists in the TDL, it will be overwritten.
      *
-     * @param name of variable.
-     * @param value of variable.
+     * @param name
+     *            of variable.
+     * @param value
+     *            of variable.
      * @return this builder
      */
     public EventProcessorBuilder addVariable(String name, Long value) {
@@ -106,13 +107,15 @@ public final class EventProcessorBuilder {
     }
 
     /**
-     * Add a variable into the provided TDL file.
-     * (provided with {@link #useTdl(TdlFile)} or {@link #useTdl(TdlBuilder)}).
+     * Add a variable into the provided TDL file. (provided with
+     * {@link #useTdl(TdlFile)} or {@link #useTdl(TdlBuilder)}).
      * <p>
      * if the variable already exists in the TDL, it will be overwritten.
      *
-     * @param name of variable.
-     * @param value of variable.
+     * @param name
+     *            of variable.
+     * @param value
+     *            of variable.
      * @return this builder
      */
     public EventProcessorBuilder addVariable(String name, Integer value) {
@@ -121,13 +124,15 @@ public final class EventProcessorBuilder {
     }
 
     /**
-     * Add a variable into the provided TDL file.
-     * (provided with {@link #useTdl(TdlFile)} or {@link #useTdl(TdlBuilder)})
+     * Add a variable into the provided TDL file. (provided with
+     * {@link #useTdl(TdlFile)} or {@link #useTdl(TdlBuilder)})
      * <p>
      * if the variable already exists in the TDL, it will be overwritten.
      *
-     * @param name of variable.
-     * @param value of variable.
+     * @param name
+     *            of variable.
+     * @param value
+     *            of variable.
      * @return this builder
      */
     public EventProcessorBuilder addVariable(String name, String value) {
@@ -139,8 +144,10 @@ public final class EventProcessorBuilder {
      * Add any TDL file(s) to use. Multiple added TDL files will be merged into
      * one TDL file, before event processing is started.
      *
-     * @param first TDL
-     * @param rest additional TDL
+     * @param first
+     *            TDL
+     * @param rest
+     *            additional TDL
      * @return
      */
     public EventProcessorBuilder addTdls(Tdl first, Tdl... rest) {
@@ -161,42 +168,43 @@ public final class EventProcessorBuilder {
      * @param preprocessor
      * @return this builder TODO Preprocessor
      */
-    //    public EventProcessorBuilder setPreprocessor(final Preprocessor preprocessor) {
+    // public EventProcessorBuilder setPreprocessor(final Preprocessor
+    // preprocessor) {
     /*
      * Set all pre-processor specifics here.
      */
 
-    //        statisticsDataHolder.merge(preprocessor.statisticsDataHolder);
-    //        pipeline = preprocessor.eventCacher.getQueue();
-    //        stoppables.add(new Stoppable() {
+    // statisticsDataHolder.merge(preprocessor.statisticsDataHolder);
+    // pipeline = preprocessor.eventCacher.getQueue();
+    // stoppables.add(new Stoppable() {
     //
-    //            @Override
-    //            public void stop() {
-    //                preprocessor.shutdown();
-    //            }
-    //        });
+    // @Override
+    // public void stop() {
+    // preprocessor.shutdown();
+    // }
+    // });
     // To avoid the nonEmptyEventIterators check to fire.
-    //        addEventIterator(thatStopsImmediately());
-    //    return this;
-    //    }
+    // addEventIterator(thatStopsImmediately());
+    // return this;
+    // }
 
     /**
-	 * For experimental usage only! Be aware that method signature will change
-	 * without any notice. TODO
-	 * 
-	 * @param listener
-	 * @return this builder
-	 */
+     * For experimental usage only! Be aware that method signature will change
+     * without any notice. TODO
+     * 
+     * @param listener
+     * @return this builder
+     */
     public EventProcessorBuilder addProcessorListener(SequenceProcessorListener listener) {
         requireNonNull(listener, "listener");
-		sequenceListeners.add(listener);
-		return this;
-	}
-	
+        sequenceListeners.add(listener);
+        return this;
+    }
+
     EventProcessorBuilder addCompletionStrategy(CompletionStrategy strategy) {
-		completionStrategy = strategy;
-		return this;
-	}
+        completionStrategy = strategy;
+        return this;
+    }
 
     /**
      * Set max allowed duration for the {@link StartedEventProcessor} as
@@ -220,6 +228,7 @@ public final class EventProcessorBuilder {
 
     /**
      * disables TDL validation when starting the EventProcessor.
+     * 
      * @return this builder
      */
     public EventProcessorBuilder disableTdlValidation() {

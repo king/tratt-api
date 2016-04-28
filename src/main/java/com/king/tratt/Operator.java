@@ -1,20 +1,12 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
 class Operator {
     public static enum Type {
-        PRE,
-        MIDDLE,
-        GROUPING_START,
-        GROUPING_END,
-        ARRAY_START,
-        ARRAY_END,
-        ARRAY_DELIMITER,
-        STRING_SIGN,
-        FUNCTION_START,
+        PRE, MIDDLE, GROUPING_START, GROUPING_END, ARRAY_START, ARRAY_END, ARRAY_DELIMITER, STRING_SIGN, FUNCTION_START,
     }
 
     private final String symbol;
@@ -46,13 +38,12 @@ class Operator {
         this.spaceSensitive = spaceSensitive;
         this.caseSensitive = caseSensitive;
         this.closingOperator = closingOperator;
-        if(preAlternativeStrength >= 0) {
+        if (preAlternativeStrength >= 0) {
             preOperator = new Operator(symbol, Type.PRE, preAlternativeStrength);
         } else {
             preOperator = null;
         }
     }
-
 
     String getSymbol() {
         return symbol;
@@ -84,7 +75,7 @@ class Operator {
 
     @Override
     public String toString() {
-        return type+"_"+symbol;
+        return type + "_" + symbol;
     }
 
     @Override

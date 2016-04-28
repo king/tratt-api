@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -49,7 +49,8 @@ class OnBase {
     static class OnCheckPointWithEventBase extends OnCheckPointBase {
         final Event event;
 
-        OnCheckPointWithEventBase(String seqName, Event event, CheckPointMatcher cpMatcher, Context context) {
+        OnCheckPointWithEventBase(String seqName, Event event, CheckPointMatcher cpMatcher,
+                Context context) {
             super(seqName, cpMatcher, context);
             this.event = event;
         }

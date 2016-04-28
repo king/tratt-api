@@ -1,19 +1,19 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.EventMetaData;
 import com.king.tratt.spi.Value;
 import com.king.tratt.tdl.CheckPoint;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 final class CheckPointMatcher {
     private final MatcherParser matcherParser;
@@ -27,7 +27,8 @@ final class CheckPointMatcher {
     final int cpIndex;
 
     CheckPointMatcher(int seqIndex, int cpIndex, CheckPoint checkPoint, Environment env,
-            MatcherParser matcherParser, StartedEventProcessor started, Map<String, Value> valuesToStore) {
+            MatcherParser matcherParser, StartedEventProcessor started,
+            Map<String, Value> valuesToStore) {
         this.seqIndex = seqIndex;
         this.cpIndex = cpIndex;
         this.checkPoint = checkPoint;
