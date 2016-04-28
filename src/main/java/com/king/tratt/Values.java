@@ -4,15 +4,15 @@
  *******************************************************************************/
 package com.king.tratt;
 
-import com.king.tratt.spi.Context;
-import com.king.tratt.spi.Event;
-import com.king.tratt.spi.Value;
-
-import java.util.function.Function;
-
 import static com.king.tratt.Tratt.util;
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Long.parseLong;
+
+import java.util.function.Function;
+
+import com.king.tratt.spi.Context;
+import com.king.tratt.spi.Event;
+import com.king.tratt.spi.Value;
 
 /*
  * Static factory method for various Values:
@@ -123,7 +123,7 @@ class Values {
         return new Value(value, modulus) {
             @Override
             public String toDebugString(Event e, Context context) {
-                return util.format(e, context, "(~d % ~d)~g", value, modulus, this);
+                return util.format(e, context, "(~d % ~d)~v", value, modulus, this);
             }
 
             @Override
@@ -143,7 +143,7 @@ class Values {
 
             @Override
             public String toDebugString(Event e, Context context) {
-                return util.format(e, context, "(~d + ~d)~g", left, right, this);
+                return util.format(e, context, "(~d + ~d)~v", left, right, this);
             }
 
             @Override
@@ -163,7 +163,7 @@ class Values {
 
             @Override
             public String toDebugString(Event e, Context context) {
-                return util.format(e, context, "(~d - ~d)~g", left, right, this);
+                return util.format(e, context, "(~d - ~d)~v", left, right, this);
             }
 
             @Override
@@ -183,7 +183,7 @@ class Values {
 
             @Override
             public String toDebugString(Event e, Context context) {
-                return util.format(e, context, "(~d * ~d)~g", left, right, this);
+                return util.format(e, context, "(~d * ~d)~v", left, right, this);
             }
 
             @Override
@@ -203,7 +203,7 @@ class Values {
 
             @Override
             public String toDebugString(Event e, Context context) {
-                return util.format(e, context, "(~d / ~d)~g", left, right, this);
+                return util.format(e, context, "(~d / ~d)~v", left, right, this);
             }
 
             @Override
@@ -223,7 +223,7 @@ class Values {
 
             @Override
             public String toDebugString(Event e, Context context) {
-                return util.format(e, context, "[[source:context.~s]]~g", name, this);
+                return util.format(e, context, "[[source:context.~s]]~v", name, this);
             }
 
             @Override
@@ -252,7 +252,7 @@ class Values {
 
             @Override
             public String toDebugString(Event e, Context context) {
-                return util.format(e, context, "[[source:event.id]]~g", this);
+                return util.format(e, context, "[[source:event.id]]~v", this);
             }
 
             @Override

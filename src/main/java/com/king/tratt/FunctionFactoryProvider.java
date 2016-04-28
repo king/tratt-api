@@ -74,7 +74,7 @@ class FunctionFactoryProvider {
 
                     @Override
                     public String toDebugString(Event e, Context context) {
-                        return util.format(e, context, "[[source:jsonfield('~g', '~g')]]~p",
+                        return util.format(e, context, "[[source:jsonfield('~v', '~v')]]~q",
                                 pathValue, jsonValue, this);
                     }
 
@@ -145,7 +145,7 @@ class FunctionFactoryProvider {
 
                     @Override
                     public String toDebugString(Event e, Context context) {
-                        return util.format(e, context, "[[source:substr(~g, ~g, '~g')]]'~g'",
+                        return util.format(e, context, "[[source:substr(~v, ~v, '~v')]]'~v'",
                                 fromValue, toValue, strValue, this);
                     }
 
@@ -193,7 +193,7 @@ class FunctionFactoryProvider {
 
                     @Override
                     public String toDebugString(Event e, Context context) {
-                        return util.format(e, context, "[[source:split('~g', '~g', ~g)]]'~g'",
+                        return util.format(e, context, "[[source:split('~v', '~v', ~v)]]'~v'",
                                 strValue, delimiterValue, indexValue, this);
                     }
 
@@ -237,8 +237,8 @@ class FunctionFactoryProvider {
 
                     @Override
                     public String toDebugString(Event e, Context context) {
-                        String joinedValues = util.formatJoin(e, context, ", ", "'~g'", arguments);
-                        return util.format(e, context, "[[source:concat(~s)]]'~g'", joinedValues,
+                        String joinedValues = util.formatJoin(e, context, ", ", "'~v'", arguments);
+                        return util.format(e, context, "[[source:concat(~s)]]'~v'", joinedValues,
                                 this);
                     }
 

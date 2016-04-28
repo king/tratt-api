@@ -33,7 +33,7 @@ import com.king.tratt.spi.Value;
 class InternalUtil {
     private static final Logger LOG = LoggerFactory.getLogger(InternalUtil.class);
     private static final Pattern IS_BOOLEAN = Pattern.compile("true|false", CASE_INSENSITIVE);
-    private static final Pattern CONVERSION_PATTERN = Pattern.compile("(~[gdsp])");
+    private static final Pattern CONVERSION_PATTERN = Pattern.compile("(~[vdsq])");
     private static final AtomicInteger counter = new AtomicInteger();
 
     InternalUtil() {
@@ -74,9 +74,9 @@ class InternalUtil {
      *
      * <pre>
      * '~d' (d as in debug)
-     * '~g' (g as in get)
-     * '~s' (s as in string)
-     * '~p' (p as in plain) TODO change to 'q'?
+     * '~v' (v as in get Value)
+     * '~s' (s as in toString)
+     * '~q' (q as in quoted value (quoted if applicable)).
      * </pre>
      *
      * check the below switch case to see what the conversion patterns do.
@@ -97,16 +97,15 @@ class InternalUtil {
         return sb.toString();
     }
 
-    // TODO : change "g" to "v"; v as in value
     private String doConversion(Event e, Context context, String action, Object o) {
         switch (action) {
-        case "~g":
+        case "~v":
             return ((Value) o).asString(e, context);
         case "~d":
             return ((DebugStringAware) o).toDebugString(e, context);
         case "~s":
             return o.toString();
-        case "~p":
+        case "~q":
             return values.quoted(((Value) o).get(e, context));
         default:
             String message = "Unsupported conversion: '%s'";

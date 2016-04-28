@@ -95,7 +95,7 @@ public class StartedEventProcessor {
             throw new IllegalStateException(message);
         }
 
-        // Log stuff here TODO log more stuff?
+        // Log stuff here
         LOG.debug("Actual used TDL:\n" + tdl);
         LOG.debug("Timeout set to: " + timeoutSeconds + " seconds.");
         LOG.debug("tdlValidationEnabled: " + tdlValidationEnabled);

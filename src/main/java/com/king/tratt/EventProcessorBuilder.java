@@ -44,6 +44,20 @@ public final class EventProcessorBuilder {
         /* for package private usage only */
     }
 
+    /**
+     * Starts the EventProcessor that process the events from the Kafka queue.
+     *
+     * @return
+     */
+    public StartedEventProcessor start() {
+        return new StartedEventProcessor(this).start();
+    }
+
+    /**
+     * 
+     * @param provider
+     * @return this builder
+     */
     public EventProcessorBuilder setApiConfigurationProvider(ApiConfigurationProvider provider) {
         requireNonNull(provider, "provider");
         setValueFactory(provider.valueFactory());
@@ -54,7 +68,7 @@ public final class EventProcessorBuilder {
     /**
      *
      * @param provider
-     * @return
+     * @return this builder
      */
     public EventProcessorBuilder setValueFactory(ValueFactory valueFactory) {
         requireNonNull(valueFactory, "valueFactory");
@@ -81,17 +95,7 @@ public final class EventProcessorBuilder {
     }
 
     /**
-     * Starts the EventProcessor that process the events from the Kafka queue.
-     *
-     * @return
-     */
-    public StartedEventProcessor start() {
-        return new StartedEventProcessor(this).start();
-    }
-
-    /**
-     * Add a variable into the provided TDL file. (provided with
-     * {@link #useTdl(TdlFile)} or {@link #useTdl(TdlBuilder)})
+     * Add a variable into the actual used TDL file.
      * <p>
      * if the variable already exists in the TDL, it will be overwritten.
      *
@@ -107,8 +111,7 @@ public final class EventProcessorBuilder {
     }
 
     /**
-     * Add a variable into the provided TDL file. (provided with
-     * {@link #useTdl(TdlFile)} or {@link #useTdl(TdlBuilder)}).
+     * Add a variable into the actual used TDL file.
      * <p>
      * if the variable already exists in the TDL, it will be overwritten.
      *
@@ -124,8 +127,7 @@ public final class EventProcessorBuilder {
     }
 
     /**
-     * Add a variable into the provided TDL file. (provided with
-     * {@link #useTdl(TdlFile)} or {@link #useTdl(TdlBuilder)})
+     * Add a variable into the actual used TDL file.
      * <p>
      * if the variable already exists in the TDL, it will be overwritten.
      *
@@ -160,37 +162,6 @@ public final class EventProcessorBuilder {
     }
 
     /**
-     * Set a {@link Preprocessor} if such has been used. The
-     * {@link Preprocessor} contains a cache of events. Can for example be used
-     * if you want to cache the events that happens during installation of your
-     * app.
-     *
-     * @param preprocessor
-     * @return this builder TODO Preprocessor
-     */
-    // public EventProcessorBuilder setPreprocessor(final Preprocessor
-    // preprocessor) {
-    /*
-     * Set all pre-processor specifics here.
-     */
-
-    // statisticsDataHolder.merge(preprocessor.statisticsDataHolder);
-    // pipeline = preprocessor.eventCacher.getQueue();
-    // stoppables.add(new Stoppable() {
-    //
-    // @Override
-    // public void stop() {
-    // preprocessor.shutdown();
-    // }
-    // });
-    // To avoid the nonEmptyEventIterators check to fire.
-    // addEventIterator(thatStopsImmediately());
-    // return this;
-    // }
-
-    /**
-     * For experimental usage only! Be aware that method signature will change
-     * without any notice. TODO
      * 
      * @param listener
      * @return this builder

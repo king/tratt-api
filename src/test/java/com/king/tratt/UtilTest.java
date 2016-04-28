@@ -35,7 +35,7 @@ public class UtilTest {
         Mockito.when(v2.toDebugString(e, null)).thenReturn("DDD");
         Mockito.when(v3.get(e, null)).thenReturn("5");
 
-        assertThat(util.format(e, null, "A ~g ~s ~d ~p END", v1, "C", v2, v3))
+        assertThat(util.format(e, null, "A ~v ~s ~d ~q END", v1, "C", v2, v3))
         .isEqualTo("A B C DDD 5 END");
     }
 
@@ -51,7 +51,7 @@ public class UtilTest {
         Mockito.when(v2.get(e, null)).thenReturn("5");
         Mockito.when(v3.get(e, null)).thenReturn("C");
 
-        assertThat(util.formatJoin(e, null, ", ", "~p", Arrays.asList(v1, v2, v3)))
+        assertThat(util.formatJoin(e, null, ", ", "~q", Arrays.asList(v1, v2, v3)))
         .isEqualTo("'A', 5, 'C'");
     }
 

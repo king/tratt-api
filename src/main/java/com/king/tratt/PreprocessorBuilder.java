@@ -38,7 +38,7 @@ public final class PreprocessorBuilder {
         return this;
     }
 
-    // TODO add filter method
+    // TODO add enableConsoleLogger(EventFilter...) method
 
     public Preprocessor start() {
         return new Preprocessor(this).start();

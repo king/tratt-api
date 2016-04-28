@@ -30,29 +30,6 @@ public final class Tratt {
 
     }
 
-    public static PreprocessorBuilder newPreprocessor() {
-        return new PreprocessorBuilder();
-    }
-
-    public static Multicaster newMulticaster(Preprocessor pre, EventProcessorBuilder first,
-            EventProcessorBuilder... rest) {
-        requireNonNull(first, "first");
-        requireNonNull(rest, "rest");
-        requireNonNullElements(asList(rest), "rest");
-        return new Multicaster(pre, concat(first, rest)).start();
-    }
-
-    /**
-     * Use this for configuring how event flow verification is done, using a
-     * simplified API, where you don't need to know about TDL files (as it will be generated
-     * for you).
-     *
-     * @return {@link SimpleEventProcessorBuilder}
-     */
-    //    public static SimpleEventProcessorBuilder newSimpleEventProcessorBuilder() {
-    //        return new SimpleEventProcessorBuilder();
-    //    }
-
     /**
      * Use this to cache events to be used later. For example if you want to cache events
      * during installation of an app/game. Make sure to start it before your app/game is
@@ -63,9 +40,24 @@ public final class Tratt {
      *
      * @return {@link PreprocessorBuilder}
      */
-    // TODO!
-    //    public static PreprocessorBuilder newPreprocessorBuilder() {
-    //        return new PreprocessorBuilder();
-    //    }
+    public static PreprocessorBuilder newPreprocessor() {
+        return new PreprocessorBuilder();
+    }
 
+    /**
+     * Use this if you want to multicast the cached events from a
+     * {@link Preprocessor} into multiple {@link EventProcessorBuilder}'s.
+     * 
+     * @param preprocessor
+     * @param first
+     * @param rest
+     * @return
+     */
+    public static Multicaster newMulticaster(Preprocessor preprocessor, EventProcessorBuilder first,
+            EventProcessorBuilder... rest) {
+        requireNonNull(first, "first");
+        requireNonNull(rest, "rest");
+        requireNonNullElements(asList(rest), "rest");
+        return new Multicaster(preprocessor, concat(first, rest)).start();
+    }
 }
