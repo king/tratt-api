@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -33,31 +33,32 @@ import mockit.integration.junit4.JMockit;
 public class AcceptanceTest {
     TestEventMetaDataFactory mdFactory = new TestEventMetaDataFactory();
     TestValueFactory valueFactory = new TestValueFactory(mdFactory);
-    TestFromFileEventIterator eventsFromFile = new TestFromFileEventIterator("classpath:com/king/tratt/events.dat");
+    TestFromFileEventIterator eventsFromFile = new TestFromFileEventIterator(
+            "classpath:com/king/tratt/events.dat");
     @Rule
     public ExpectedException expected = ExpectedException.none();
 
     @Test
-	public void shouldThrowWhenInvalidTdl() throws Exception {
-    	// given
-    	expected.expect(InvalidTdlException.class);
-    	expected.expectMessage("Faulty value is 'unknownField'");
-    	expected.expectMessage("Faulty value is 'unquotedString'");
-    	expected.expectMessage("Invalid variable set expression");
-    	expected.expectMessage("Invalid time format");
-    	expected.expectMessage("No EventType with name ");
-    	expected.expectMessage("Invalid sequence-local variable set expression");
-    	 
-    	// when
-    	Tratt.newEventProcessorBuilder()
+    public void shouldThrowWhenInvalidTdl() throws Exception {
+        // given
+        expected.expect(InvalidTdlException.class);
+        expected.expectMessage("Faulty value is 'unknownField'");
+        expected.expectMessage("Faulty value is 'unquotedString'");
+        expected.expectMessage("Invalid variable set expression");
+        expected.expectMessage("Invalid time format");
+        expected.expectMessage("No EventType with name ");
+        expected.expectMessage("Invalid sequence-local variable set expression");
+
+        // when
+        Tratt.newEventProcessorBuilder()
                 .setTimeout(5, SECONDS)
                 .addEventIterator(eventsFromFile)
                 .setEventMetaDataFatory(mdFactory)
                 .setValueFactory(valueFactory)
                 .addTdls(Tdl.fromPath("classpath:com/king/tratt/invalid.tdl"))
                 .start();
-	}
-    
+    }
+
     @Test
     public void canProcessEventsAccordingToTdl() throws Exception {
         StartedEventProcessor started = Tratt.newEventProcessorBuilder()
@@ -71,7 +72,8 @@ public class AcceptanceTest {
     }
 
     @Test
-    public void canUsePreprocessorWithSingleEventProcessorAndProcessEventsAccordingToTdl() throws Exception {
+    public void canUsePreprocessorWithSingleEventProcessorAndProcessEventsAccordingToTdl()
+            throws Exception {
         Preprocessor pre = Tratt.newPreprocessor()
                 .addEventIterator(eventsFromFile)
                 .addSimpleProcessor(out::println)
@@ -88,7 +90,8 @@ public class AcceptanceTest {
     }
 
     @Test
-    public void canUsePreprocessorWithMultipleEventProcessorAndProcessEventsAccordingToTdl() throws Exception {
+    public void canUsePreprocessorWithMultipleEventProcessorAndProcessEventsAccordingToTdl()
+            throws Exception {
         Preprocessor preprocessor = Tratt.newPreprocessor()
                 .addEventIterator(eventsFromFile)
                 .addSimpleProcessor(e -> out.println("#" + e))

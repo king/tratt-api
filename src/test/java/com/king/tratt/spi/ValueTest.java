@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi;
 
@@ -78,6 +78,7 @@ public class ValueTest {
         }
 
     }
+
     @Test
     public void shouldThrowWhenUnsupportedReturnType() throws Exception {
         // given
@@ -99,14 +100,14 @@ public class ValueTest {
             }
         };
     }
-    
+
     @Test
     public void shouldThrowWhenGetImpThrows() throws Exception {
         // given
         expected.expect(IllegalStateException.class);
         expected.expectMessage("Unexpected crash! See underlying exceptions for more info.");
         expected.expectMessage("value: ValueForTesting; event: null; context: null");
-        
+
         // when
         Value value = new ValueForTesting() {
             @Override
@@ -114,7 +115,7 @@ public class ValueTest {
                 throw new RuntimeException("testing");
             }
         };
-        
+
         // then
         value.get(EVENT, CONTEXT);
     }

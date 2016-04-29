@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.tdl;
 
@@ -16,7 +16,9 @@ public final class Sequence {
 
     SequenceInternal seqInternal;
 
-    public enum Type { CONTAINER, UNWANTED };
+    public enum Type {
+        CONTAINER, UNWANTED
+    };
 
     Sequence(SequenceInternal seq) {
         seqInternal = seq;
@@ -50,8 +52,8 @@ public final class Sequence {
 
     /**
      * @param other
-     * @return a new instance, which is a copy of this, but with the
-     *         values of other merged into it.
+     * @return a new instance, which is a copy of this, but with the values of
+     *         other merged into it.
      */
     public Sequence merge(Sequence other) {
         return SequenceBuilder.merge(copyOf(this), copyOf(other)).build();

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -20,67 +20,67 @@ public class VariableParserTest {
     @Test
     public void shouldThrowWhenNameValuesIsNull() throws Exception {
         assertThatExceptionOfType(NullPointerException.class)
-        .isThrownBy(() -> parse(PREFIX, (List<String>) null))
+                .isThrownBy(() -> parse(PREFIX, (List<String>) null))
                 .withMessage("'nameValues' must not be null!");
     }
 
     @Test
     public void shouldThrowWhenKeyPrefixIsNull() throws Exception {
         assertThatExceptionOfType(NullPointerException.class)
-        .isThrownBy(() -> parse(null, asList()))
+                .isThrownBy(() -> parse(null, asList()))
                 .withMessage("'keyPrefix' must not be null!");
     }
 
     @Test
     public void shouldThrowWhenKeyIsEmpty() throws Exception {
         assertThatExceptionOfType(IllegalArgumentException.class)
-        .isThrownBy(() -> parse(PREFIX, "=ab"))
-        .withMessage("Name part cannot be empty string: '=ab'");
+                .isThrownBy(() -> parse(PREFIX, "=ab"))
+                .withMessage("Name part cannot be empty string: '=ab'");
     }
 
     @Test
     public void shouldThrowWhenMissingEqualSign() throws Exception {
         assertThatExceptionOfType(IllegalArgumentException.class)
-        .isThrownBy(() -> parse(PREFIX, "ab"))
-        .withMessage("Name/Value must be delimit by a '=' sign: 'ab'");
+                .isThrownBy(() -> parse(PREFIX, "ab"))
+                .withMessage("Name/Value must be delimit by a '=' sign: 'ab'");
     }
 
     @Test
     public void shouldThrowWhenNameValueIsEmpty() throws Exception {
         assertThatExceptionOfType(IllegalArgumentException.class)
-        .isThrownBy(() -> parse(PREFIX, ""))
-        .withMessage("Name/Value cannot be an empty string: ''");
+                .isThrownBy(() -> parse(PREFIX, ""))
+                .withMessage("Name/Value cannot be an empty string: ''");
     }
 
     @Test
     public void shouldThrowWhenNameValueIsNull() throws Exception {
         assertThatExceptionOfType(NullPointerException.class)
-        .isThrownBy(() -> parse(PREFIX, (String) null))
-        .withMessage("Name/Value cannot be null: 'null'");
+                .isThrownBy(() -> parse(PREFIX, (String) null))
+                .withMessage("Name/Value cannot be null: 'null'");
     }
 
     @Test
     public void canParseVariablesWhenSize3() throws Exception {
         assertThat(parse(asList("a=b", "c=d=e", "d=")))
-        .containsOnly(entry("a", "b"), entry("c", "d=e"), entry("d", ""));
+                .containsOnly(entry("a", "b"), entry("c", "d=e"), entry("d", ""));
     }
 
     @Test
     public void canParseVariablesWhenSize1() throws Exception {
         assertThat(parse(asList("a=b")))
-        .containsOnly(entry("a", "b"));
+                .containsOnly(entry("a", "b"));
     }
 
     @Test
     public void canParseVariablesWhenSize2AndAddKeyPrefix() throws Exception {
         assertThat(parse("$", asList("a=b", "c=d")))
-        .containsOnly(entry("$a", "b"), entry("$c", "d"));
+                .containsOnly(entry("$a", "b"), entry("$c", "d"));
     }
 
     @Test
     public void canParseVariablesWhenSize1AndAddKeyPrefix() throws Exception {
         assertThat(parse("$", asList("a=b")))
-        .containsOnly(entry("$a", "b"));
+                .containsOnly(entry("$a", "b"));
     }
 
     @Test

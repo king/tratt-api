@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -34,25 +34,21 @@ public class StartedEventProcessor {
 
     private static Logger LOG = LoggerFactory.getLogger(StartedEventProcessor.class);
     private static String ERROR_MESSAGE = "Sequence '%s' is not valid due to: %s \n";
-    //    final String requestId;
     private Future<CompletedEventProcessor> tdlProcessorResults;
     final ExecutorService executor = util.newThreadPool();
     final Tdl tdl;
     private final List<EventIterator> eventIterators;
-    //    private final StatisticsDataHolder statsDataHolder;
     private final boolean isPreprocessorUsed;
     private final List<Stoppable> stoppables;
     private final BlockingQueue<Event> pipeline;
     private final boolean tdlValidationEnabled;
     final long timeoutSeconds;
-    //    private final String trackingToolUrl;
     private final ArrayList<SimpleProcessor> simpleProcessors;
     EventMetaDataFactory metadataFactory;
     ValueFactory valueFactory;
     final List<SequenceProcessorListener> sequenceListeners;
     final ProgressSequenceProcessorListener progressListener;
     CompletionStrategy completionStrategy;
-
 
     StartedEventProcessor(EventProcessorBuilder builder) {
         // first copy...
@@ -61,7 +57,6 @@ public class StartedEventProcessor {
         valueFactory = builder.valueFactory;
         tdlValidationEnabled = builder.tdlValidationEnabled;
         isPreprocessorUsed = builder.isPreprocessorUsed;
-        //        trackingToolUrl = builder.trackingToolUrl;
         timeoutSeconds = builder.timeoutSeconds;
         eventIterators = new ArrayList<>(builder.eventIterators);
         simpleProcessors = new ArrayList<>(builder.simpleProcessors);
@@ -73,8 +68,6 @@ public class StartedEventProcessor {
 
         sequenceListeners.add(progressListener);
         sequenceListeners.add(new ProcessorLogger());
-        //        statsDataHolder = StatisticsDataHolder.copyOf(builder.statisticsDataHolder);
-        //        requestId = builder.requestId == null ? valueOf(nanoTime()) : builder.requestId;
 
         // ...then check invariants
         if (completionStrategy == null) {
@@ -107,7 +100,8 @@ public class StartedEventProcessor {
     }
 
     private void setApiConfigurationIfAvailableFromServiceLoader() {
-        ServiceLoader<ApiConfigurationProvider> serviceLoader = ServiceLoader.load(ApiConfigurationProvider.class);
+        ServiceLoader<ApiConfigurationProvider> serviceLoader = ServiceLoader
+                .load(ApiConfigurationProvider.class);
         serviceLoader.forEach(apiConf -> {
             if (metadataFactory == null) {
                 EventMetaDataFactory mdFactory = apiConf.metaDataFactory();
@@ -126,7 +120,8 @@ public class StartedEventProcessor {
 
     private void checkNotNull(Object o, Class<?> type) {
         if (o == null) {
-            String message = String.format("No '%s' implementation found! Set one by calling method on %s",
+            String message = String.format(
+                    "No '%s' implementation found! Set one by calling method on %s",
                     type.getSimpleName(), EventProcessorBuilder.class.getSimpleName());
             throw new IllegalStateException(message);
         }
@@ -152,8 +147,6 @@ public class StartedEventProcessor {
         CachingProcessor cachedEvents = util.startProcessingEventsAndCreateCache(
                 pipeline, eventIterators, stoppables, simpleProcessors, executor);
         if (!tdl.getSequences().isEmpty()) {
-            //            listeners.add(new StatisticsProcessListener(requestId, statsDataHolder,
-            //                    tdl, trackingToolUrl, executor));
             tdlProcessorResults = newFutureTask(new TdlProcessor(cachedEvents, this));
         } else {
             tdlProcessorResults = newInvalidCompletedFuture();
@@ -186,8 +179,9 @@ public class StartedEventProcessor {
             }
 
             @Override
-            public CompletedEventProcessor get(long timeout, TimeUnit unit) throws InterruptedException,
-            ExecutionException, TimeoutException {
+            public CompletedEventProcessor get(long timeout, TimeUnit unit)
+                    throws InterruptedException,
+                    ExecutionException, TimeoutException {
                 return get();
             }
 
@@ -196,8 +190,8 @@ public class StartedEventProcessor {
 
     private synchronized Future<CompletedEventProcessor> newFutureTask(TdlProcessor tdlProcessor) {
         Callable<CompletedEventProcessor> r = () -> {
-                List<SequenceResult> results = tdlProcessor.processTdl(tdl);
-                return new CompletedEventProcessor(results);
+            List<SequenceResult> results = tdlProcessor.processTdl(tdl);
+            return new CompletedEventProcessor(results);
         };
         FutureTask<CompletedEventProcessor> task = new FutureTask<CompletedEventProcessor>(r);
         new Thread(task).start();
@@ -205,13 +199,16 @@ public class StartedEventProcessor {
     }
 
     /**
-     * Waits until all Sequences have successfully ended. All EventProcessors are automatically
-     * shutdown before this method returns.
+     * Waits until all Sequences have successfully ended. All EventProcessors
+     * are automatically shutdown before this method returns.
      * <p>
-     * If no Sequences are running, this method returns immediately (for example if only the console
-     * logger is enabled) and EventProcessors are not shutdown.
+     * If no Sequences are running, this method returns immediately (for example
+     * if only the console logger is enabled) and EventProcessors are not
+     * shutdown.
      *
-     * @throws TdlFailureException when at least one EventProcessor (Sequence) fails or times out.
+     * @throws TdlFailureException
+     *             when at least one EventProcessor (Sequence) fails or times
+     *             out.
      */
     public void awaitSuccess() {
         CompletedEventProcessor completed = awaitCompletion();
@@ -230,14 +227,16 @@ public class StartedEventProcessor {
     }
 
     /**
-     * Waits until all Sequences have ended. All EventProcessors are automatically
-     * shutdown before this method returns.
+     * Waits until all Sequences have ended. All EventProcessors are
+     * automatically shutdown before this method returns.
      * <p>
-     * If no Sequences are running, this method returns immediately (for example if only the console
-     * logger is enabled) and EventProcessors are not shutdown.
+     * If no Sequences are running, this method returns immediately (for example
+     * if only the console logger is enabled) and EventProcessors are not
+     * shutdown.
      *
-     * @throws TimeoutException when at least one EventProcessor (Sequence) fails, or
-     *         a timeout occurs.
+     * @throws TimeoutException
+     *             when at least one EventProcessor (Sequence) fails, or a
+     *             timeout occurs.
      */
     public CompletedEventProcessor awaitCompletion() {
         try {
@@ -258,8 +257,8 @@ public class StartedEventProcessor {
     }
 
     /**
-     * Returns true if EventProcessor has completed. Use {@link #awaitCompletion()} to findout
-     * the result.
+     * Returns true if EventProcessor has completed. Use
+     * {@link #awaitCompletion()} to get the result.
      *
      * @return true if EventProcessor is completed, otherwise false.
      */

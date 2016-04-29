@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -29,14 +29,15 @@ class TdlNodeParser {
         for (String name : names) {
             final Operator end = getFunctionEndOperator();
             final int strength = getMaxFunctionStrength() + 1;
-            operators.add(new Operator(name, Operator.Type.FUNCTION_START, strength, true, false, end, -1));
+            operators.add(new Operator(name, Operator.Type.FUNCTION_START, strength, true, false,
+                    end, -1));
         }
     }
 
     private int getMaxFunctionStrength() {
         int out = 53000;
-        for(Operator o : operators) {
-            if(o.getType() == Operator.Type.FUNCTION_START && o.getStrength() > out) {
+        for (Operator o : operators) {
+            if (o.getType() == Operator.Type.FUNCTION_START && o.getStrength() > out) {
                 out = o.getStrength();
             }
         }
@@ -44,8 +45,8 @@ class TdlNodeParser {
     }
 
     private Operator getFunctionEndOperator() {
-        for(Operator o : operators) {
-            if(o.getType() == Operator.Type.GROUPING_END) {
+        for (Operator o : operators) {
+            if (o.getType() == Operator.Type.GROUPING_END) {
                 return o;
             }
         }
@@ -56,7 +57,7 @@ class TdlNodeParser {
         Set<Operator> out = new TreeSet<Operator>(new Comparator<Operator>() {
             @Override
             public int compare(Operator o1, Operator o2) {
-                return o1.getStrength()-o2.getStrength();
+                return o1.getStrength() - o2.getStrength();
             }
         });
 
@@ -103,18 +104,19 @@ class TdlNodeParser {
         if (containsForbiddenSymbolNames(out)) {
             throw new MatchExpressionParseException(
                     "Names in match expression must only contain alphanumeric characters, " +
-                    "\"$\", and \"_\"");
+                            "\"$\", and \"_\"");
         }
 
         return out;
     }
 
     private boolean containsForbiddenSymbolNames(Node node) {
-        if(node.getOperatorType()== Operator.Type.FUNCTION_START) {
-            if(!functionName.matcher(node.getOperatorSymbol()).matches()) {
+        if (node.getOperatorType() == Operator.Type.FUNCTION_START) {
+            if (!functionName.matcher(node.getOperatorSymbol()).matches()) {
                 return false;
             }
-        } else if (!node.isLiteralString() && !node.isNumberFormatted() && node.getOperatorType() == null &&
+        } else if (!node.isLiteralString() && !node.isNumberFormatted()
+                && node.getOperatorType() == null &&
                 symbolForbiddenChars.matcher(node.getExpression()).find()) {
             return true;
         }
@@ -134,8 +136,9 @@ class TdlNodeParser {
     }
 
     private Node createGroupNode(List<Match> matches, Range expression) {
-        final List<Match> regionMatches = matches.subList(1, matches.size()-1);
-        final Range regionRange = expression.getRegion(matches.get(0), matches.get(matches.size() - 1));
+        final List<Match> regionMatches = matches.subList(1, matches.size() - 1);
+        final Range regionRange = expression.getRegion(matches.get(0),
+                matches.get(matches.size() - 1));
         final Node content = createNode(regionMatches, regionRange);
 
         final Node out = new Node(matches.get(0).getOperator(), expression, content);
@@ -155,12 +158,12 @@ class TdlNodeParser {
 
     private Node createMiddleNode(List<Match> matches, Match root, Range expression) {
         final int splitIndex = matches.indexOf(root);
-        if(root.getIndex() == expression.getStart()) {
+        if (root.getIndex() == expression.getStart()) {
             return createPreNode(matches, expression);
         }
 
         final List<Match> leftMatches = matches.subList(0, splitIndex);
-        final List<Match> rightMatches = matches.subList(splitIndex+1, matches.size());
+        final List<Match> rightMatches = matches.subList(splitIndex + 1, matches.size());
         final Range leftRange = expression.getLeftSplit(root);
         final Range rightRange = expression.getRightSplit(root);
 
@@ -171,7 +174,6 @@ class TdlNodeParser {
         return out;
     }
 
-
     private Node createArrayNode(List<Match> matches, Range expression) {
         Range range = expression.getRightSplit(matches.get(0));
 
@@ -179,30 +181,7 @@ class TdlNodeParser {
         final Node array = new Node(items, matches.get(0).getOperator(), expression);
 
         return array;
-
     }
-
-    //    private Node createArrayNode2(List<Match> matches, Range expression) {
-    //        final List<Node> items = new ArrayList<>();
-    //        Range range = expression.getRightSplit(matches.get(0));
-    //        int lastIndex = 0;
-    //        for(int i = 1 ; i < matches.size() ; i++) {
-    //            if(i<matches.size()-1 && matches.get(i).getOperator().getType() != Operator.Type.ARRAY_DELIMITER && matches.get(i).getOperator().getType()!= Operator.Type.GROUPING_END) {
-    //                continue;
-    //            }
-    //            final Range itemRange = range.getLeftSplit(matches.get(i));
-    //            range = range.getRightSplit(matches.get(i));
-    //            final List<Match> itemMatches = matches.subList(lastIndex+1, i);
-    //
-    //            final Node itemNode = createNode(itemMatches, itemRange);
-    //            lastIndex = i;
-    //            items.add(itemNode);
-    //        }
-    //        final Node array = new Node(items, matches.get(0).getOperator(), expression);
-    //
-    //        return array;
-    //    }
-
 
     private String cleanStringFromEscapeChars(Range range) {
         return range.getExpression().replace(escapeChar + literalQuoteChar, literalQuoteChar);
@@ -217,14 +196,14 @@ class TdlNodeParser {
     }
 
     private Node createNode(List<Match> matches, Range expression) {
-        if(matches.isEmpty()) {
+        if (matches.isEmpty()) {
             final Node node = createNode(expression);
             return node;
         }
 
         final Match root = getRootMatch(matches);
 
-        switch(root.getOperator().getType()) {
+        switch (root.getOperator().getType()) {
         case GROUPING_START:
             return createGroupNode(matches, expression);
         case PRE:
@@ -245,7 +224,7 @@ class TdlNodeParser {
     private Node createFunctionNode(List<Match> matches, Range expression) {
         Range range = expression.getRightSplit(matches.get(1));
 
-        final List<Node> items = getArray(matches.subList(2,matches.size()), range);
+        final List<Node> items = getArray(matches.subList(2, matches.size()), range);
         final Node array = new Node(items, matches.get(0).getOperator(), expression);
 
         return array;
@@ -257,23 +236,28 @@ class TdlNodeParser {
         Range current = expression;
         int currentIndex = -1;
         boolean inString = false;
-        for(int i = 0 ; i < matches.size() ; i++) {
+        for (int i = 0; i < matches.size(); i++) {
             final Match match = matches.get(i);
-            if(match.getOperator().getType() == Operator.Type.STRING_SIGN) {
+            if (match.getOperator().getType() == Operator.Type.STRING_SIGN) {
                 inString = !inString;
-            } else if(inString) {
+            } else if (inString) {
                 continue;
             }
-            if(bracketCount==0 && match.getOperator().getType() == Operator.Type.ARRAY_DELIMITER) {
-                out.add(createNode(matches.subList(currentIndex+1, i), current.getLeftSplit(match)));
+            if (bracketCount == 0
+                    && match.getOperator().getType() == Operator.Type.ARRAY_DELIMITER) {
+                out.add(createNode(matches.subList(currentIndex + 1, i),
+                        current.getLeftSplit(match)));
                 current = current.getRightSplit(match);
                 currentIndex = i;
-            } else if(match.getOperator().getType() == Operator.Type.GROUPING_START || match.getOperator().getType() == Operator.Type.ARRAY_START) {
+            } else if (match.getOperator().getType() == Operator.Type.GROUPING_START
+                    || match.getOperator().getType() == Operator.Type.ARRAY_START) {
                 bracketCount++;
-            } else if(match.getOperator().getType() == Operator.Type.GROUPING_END || match.getOperator().getType() == Operator.Type.ARRAY_END) {
+            } else if (match.getOperator().getType() == Operator.Type.GROUPING_END
+                    || match.getOperator().getType() == Operator.Type.ARRAY_END) {
                 bracketCount--;
-                if(bracketCount < 0) {
-                    out.add(createNode(matches.subList(currentIndex+1, i), current.getLeftSplit(match)));
+                if (bracketCount < 0) {
+                    out.add(createNode(matches.subList(currentIndex + 1, i),
+                            current.getLeftSplit(match)));
                     currentIndex = i;
                 }
             }
@@ -287,19 +271,19 @@ class TdlNodeParser {
         int arrayCount = 0;
         boolean isString = false;
 
-        for(Match m : matches) {
-            if(isString && m.getOperator().getType() != Operator.Type.STRING_SIGN) {
+        for (Match m : matches) {
+            if (isString && m.getOperator().getType() != Operator.Type.STRING_SIGN) {
                 continue;
             }
-            switch(m.getOperator().getType()) {
+            switch (m.getOperator().getType()) {
             case STRING_SIGN:
                 isString = !isString;
-                if(root == null && isString) {
+                if (root == null && isString) {
                     root = m;
                 }
                 break;
             case GROUPING_START:
-                if(root == null && groupCount==0) {
+                if (root == null && groupCount == 0) {
                     root = m;
                 }
                 groupCount++;
@@ -308,7 +292,7 @@ class TdlNodeParser {
                 groupCount--;
                 break;
             case ARRAY_START:
-                if(root == null && arrayCount==0) {
+                if (root == null && arrayCount == 0) {
                     root = m;
                 }
                 arrayCount++;
@@ -317,7 +301,7 @@ class TdlNodeParser {
                 arrayCount--;
                 break;
             case FUNCTION_START:
-                if(root == null && groupCount==0) {
+                if (root == null && groupCount == 0) {
                     root = m;
                 }
                 break;
@@ -329,7 +313,7 @@ class TdlNodeParser {
                 }
                 if (root == null) {
                     root = m;
-                } else if(root.getOperator().getStrength() > m.getOperator().getStrength()) {
+                } else if (root.getOperator().getStrength() > m.getOperator().getStrength()) {
                     root = m;
                 }
                 break;

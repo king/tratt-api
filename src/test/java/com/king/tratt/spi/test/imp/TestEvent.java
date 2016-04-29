@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi.test.imp;
 
@@ -41,7 +41,8 @@ public class TestEvent implements Event {
 
     synchronized private static long toTime(String timestamp) {
         try {
-            // Note: SimpleDateFormat is not thread safe. 
+            // TODO use Java8 DateTime API?
+            // Note: SimpleDateFormat is not thread safe.
             return DATE_FORMATER.parse(timestamp).getTime();
         } catch (ParseException e) {
             throw new RuntimeException("Can not parse to time: " + timestamp, e);

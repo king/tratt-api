@@ -1,23 +1,23 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
 public class TdlFileFieldErrorDescriptor {
-	public String errorDescription;
-	public String errorNodePath;
+    public String errorDescription;
+    public String errorNodePath;
 
     TdlFileFieldErrorDescriptor(String errorDescription, String errorNodePath) {
-		this.errorDescription = errorDescription;
-		this.errorNodePath = errorNodePath;
-	}
+        this.errorDescription = errorDescription;
+        this.errorNodePath = errorNodePath;
+    }
 
     String getErrorDescription() {
-		return errorDescription;
-	}
+        return errorDescription;
+    }
 
     String getErrorNodePath() {
-		return errorNodePath;
-	}
+        return errorNodePath;
+    }
 }

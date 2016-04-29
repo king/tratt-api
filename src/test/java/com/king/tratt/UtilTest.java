@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -36,7 +36,7 @@ public class UtilTest {
         Mockito.when(v3.get(e, null)).thenReturn("5");
 
         assertThat(util.format(e, null, "A ~v ~s ~d ~q END", v1, "C", v2, v3))
-        .isEqualTo("A B C DDD 5 END");
+                .isEqualTo("A B C DDD 5 END");
     }
 
     @Test
@@ -52,7 +52,7 @@ public class UtilTest {
         Mockito.when(v3.get(e, null)).thenReturn("C");
 
         assertThat(util.formatJoin(e, null, ", ", "~q", Arrays.asList(v1, v2, v3)))
-        .isEqualTo("'A', 5, 'C'");
+                .isEqualTo("'A', 5, 'C'");
     }
 
 }

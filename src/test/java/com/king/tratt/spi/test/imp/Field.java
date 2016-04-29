@@ -1,13 +1,12 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi.test.imp;
 
 import com.google.gson.JsonObject;
 
 public class Field {
-
 
     private JsonObject json;
     private int i;

@@ -1,13 +1,11 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
 
 public final class SequenceResult {
 

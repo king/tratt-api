@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -10,7 +10,7 @@ class Range {
     private final String expression;
 
     Range(String expression) {
-        this(expression, 0 , expression.length());
+        this(expression, 0, expression.length());
     }
 
     private Range(String expression, int start, int end) {
@@ -33,7 +33,7 @@ class Range {
 
     String getExpression(boolean trim) {
         final String out = expression.substring(start, end);
-        if(trim) {
+        if (trim) {
             return out.trim();
         }
         return out;
@@ -48,7 +48,7 @@ class Range {
     }
 
     private int getEndIndex(Match match) {
-        final int out = match.getIndex()+match.getOperator().getSymbol().length();
+        final int out = match.getIndex() + match.getOperator().getSymbol().length();
         return out;
     }
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.tdl;
 
@@ -19,8 +19,8 @@ public final class CheckPointBuilder {
     List<String> set = new ArrayList<>();
 
     /**
-     * Retrieve a new {@link CheckPointBuilder} for the given EventType.
-     * Use the {@link CheckPointBuilder} to create a new {@link CheckPoint}.
+     * Retrieve a new {@link CheckPointBuilder} for the given EventType. Use the
+     * {@link CheckPointBuilder} to create a new {@link CheckPoint}.
      *
      * @param eventType
      * @return
@@ -30,11 +30,12 @@ public final class CheckPointBuilder {
     }
 
     /**
-     * Retrieve a new {@link CheckPointBuilder} based on the given {@link CheckPoint},
-     * i.e. copy its values and set them as default. Use this {@link CheckPointBuilder} to
-     * modify any of those values.
+     * Retrieve a new {@link CheckPointBuilder} based on the given
+     * {@link CheckPoint}, i.e. copy its values and set them as default. Use
+     * this {@link CheckPointBuilder} to modify any of those values.
      *
-     * @param checkPoint the {@link CheckPoint} used as default value.
+     * @param checkPoint
+     *            the {@link CheckPoint} used as default value.
      * @return {@link CheckPointBuilder}
      */
     public static CheckPointBuilder copyOf(CheckPoint checkPoint) {
@@ -71,7 +72,8 @@ public final class CheckPointBuilder {
         for (String nameValuePair : nameValuePairs) {
             if (nameValuePair == null || nameValuePair.isEmpty() || !nameValuePair.contains("=")) {
                 String message = "VarArg argument contains illegal value: %s";
-                throw new NullPointerException(String.format(message, Arrays.toString(nameValuePairs)));
+                throw new NullPointerException(
+                        String.format(message, Arrays.toString(nameValuePairs)));
             }
         }
         set.addAll(Arrays.asList(nameValuePairs));

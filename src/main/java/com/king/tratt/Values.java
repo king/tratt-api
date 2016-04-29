@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -97,7 +97,6 @@ class Values {
         return parseValue(value, String::valueOf,
                 s -> String.format("'%s'", s), String::valueOf);
     }
-
 
     private <T> T parseValue(Object value, Function<Long, T> longFunc,
             Function<String, T> strFunc, Function<Boolean, T> boolFunc) {

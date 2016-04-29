@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -57,13 +57,15 @@ public interface SequenceProcessorListener {
     }
 
     public static final class OnCheckPointSuccess extends OnCheckPointWithEventBase {
-        OnCheckPointSuccess(String name, Event event, CheckPointMatcher cpMatcher, Context context) {
+        OnCheckPointSuccess(String name, Event event, CheckPointMatcher cpMatcher,
+                Context context) {
             super(name, event, cpMatcher, context);
         }
     }
 
     public static final class OnCheckPointFailure extends OnCheckPointWithEventBase {
-        OnCheckPointFailure(String seqName, Event event, CheckPointMatcher cpMatcher, Context context) {
+        OnCheckPointFailure(String seqName, Event event, CheckPointMatcher cpMatcher,
+                Context context) {
             super(seqName, event, cpMatcher, context);
         }
 

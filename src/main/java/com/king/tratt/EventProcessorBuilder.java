@@ -54,7 +54,7 @@ public final class EventProcessorBuilder {
     }
 
     /**
-     * 
+     *
      * @param provider
      * @return this builder
      */
@@ -162,7 +162,7 @@ public final class EventProcessorBuilder {
     }
 
     /**
-     * 
+     *
      * @param listener
      * @return this builder
      */
@@ -199,7 +199,7 @@ public final class EventProcessorBuilder {
 
     /**
      * disables TDL validation when starting the EventProcessor.
-     * 
+     *
      * @return this builder
      */
     public EventProcessorBuilder disableTdlValidation() {

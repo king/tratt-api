@@ -11,9 +11,6 @@ package com.king.tratt;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by magnus.ramstedt on 26/11/14.
- */
 class Node {
     private final List<Node> subNodes;
     private final Operator operator;

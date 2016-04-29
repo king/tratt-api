@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -21,7 +21,8 @@ public final class Tratt {
     }
 
     /**
-     * Use this for configuring how event flow verification is done, using a TDL file.
+     * Use this for configuring how event flow verification is done, using a TDL
+     * file.
      *
      * @return {@link EventProcessorBuilder}
      */
@@ -31,9 +32,9 @@ public final class Tratt {
     }
 
     /**
-     * Use this to cache events to be used later. For example if you want to cache events
-     * during installation of an app/game. Make sure to start it before your app/game is
-     * installed.
+     * Use this to cache events to be used later. For example if you want to
+     * cache events during installation of an app/game. Make sure to start it
+     * before your app/game is installed.
      * <p>
      * Use the following method to use the cached events.
      * {@link EventProcessorBuilder#setPreprocessor(Preprocessor)}
@@ -47,7 +48,7 @@ public final class Tratt {
     /**
      * Use this if you want to multicast the cached events from a
      * {@link Preprocessor} into multiple {@link EventProcessorBuilder}'s.
-     * 
+     *
      * @param preprocessor
      * @param first
      * @param rest

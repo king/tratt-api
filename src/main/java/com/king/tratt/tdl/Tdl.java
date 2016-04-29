@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 /*
  * // (C) king.com Ltd 2014
@@ -31,12 +31,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.king.tratt.tdl.TdlInternal.SequenceInternal;
 
-
-/**
- * Created by magnus.ramstedt on 29/10/14.
- */
 public final class Tdl {
-    private static final Gson PRETTY_WRITER = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    private static final Gson PRETTY_WRITER = new GsonBuilder().setPrettyPrinting()
+            .disableHtmlEscaping().create();
 
     private static final ClassLoader CLASS_LOADER = ClassLoader.getSystemClassLoader();
     private static final String CLASSPATH_PROTOCOL = "classpath:";
@@ -45,7 +42,6 @@ public final class Tdl {
 
     private final TdlInternal tdlInternal;
     private final Map<String, String> variables = new LinkedHashMap<>();
-
 
     public static TdlBuilder newBuilder() {
         return new TdlBuilder();
@@ -139,7 +135,6 @@ public final class Tdl {
         return result;
     }
 
-
     Tdl(TdlBuilder builder) {
         tdlInternal = new TdlInternal();
         Map<String, SequenceBuilder> tempSequenceBuilders = new LinkedHashMap<>();
@@ -147,7 +142,8 @@ public final class Tdl {
         populateTdlInternalWithData(builder, tempSequenceBuilders);
     }
 
-    private void prepareData(TdlBuilder builder, Map<String, SequenceBuilder> tempSequenceBuilders) {
+    private void prepareData(TdlBuilder builder,
+            Map<String, SequenceBuilder> tempSequenceBuilders) {
         if (!builder.addedTdls.isEmpty()) {
             for (Tdl tdl : builder.addedTdls) {
                 extractData(tdl, tempSequenceBuilders);
@@ -157,7 +153,8 @@ public final class Tdl {
         mergeSequenceBuilders(tempSequenceBuilders, builder.sequenceBuilders.values());
     }
 
-    private void populateTdlInternalWithData(TdlBuilder builder, Map<String, SequenceBuilder> tempSequenceBuilders) {
+    private void populateTdlInternalWithData(TdlBuilder builder,
+            Map<String, SequenceBuilder> tempSequenceBuilders) {
         if (builder.comment != null) {
             tdlInternal.comment = builder.comment;
         }
@@ -190,7 +187,8 @@ public final class Tdl {
         mergeSequenceBuilders(temp, result);
     }
 
-    private void mergeSequenceBuilders(Map<String, SequenceBuilder> temp, Collection<SequenceBuilder> sbs) {
+    private void mergeSequenceBuilders(Map<String, SequenceBuilder> temp,
+            Collection<SequenceBuilder> sbs) {
         for (SequenceBuilder sb : sbs) {
             if (temp.containsKey(sb.name)) {
                 SequenceBuilder sequenceBuilder = temp.get(sb.name);
@@ -210,7 +208,8 @@ public final class Tdl {
     }
 
     /**
-     * @param name of sequence, case sensitive.
+     * @param name
+     *            of sequence, case sensitive.
      * @return true if {@link Sequence} exists, otherwise false.
      */
     public boolean containsSequence(String name) {
@@ -224,7 +223,8 @@ public final class Tdl {
     }
 
     /**
-     * @param name of sequence, case sensitive.
+     * @param name
+     *            of sequence, case sensitive.
      * @return the wanted {@link Sequence}.
      */
     public Sequence getSequence(String name) {

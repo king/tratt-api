@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.tdl;
 
@@ -10,7 +10,6 @@ import static com.king.tratt.tdl.Sequence.Type.UNWANTED;
 import static com.king.tratt.tdl.SequenceBuilder.ofType;
 import static com.king.tratt.tdl.Tdl.newBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 import java.io.File;
 import java.net.URI;
@@ -30,7 +29,6 @@ public class TdlAcceptanceTest {
 
     private Tdl tdl;
 
-
     static Tdl fromPath(String name) {
         return Tdl.fromPath("classpath:com/king/tratt/tdl/" + name);
     }
@@ -42,7 +40,6 @@ public class TdlAcceptanceTest {
         Tdl tdlC = fromPath("merge-c.tdl");
         Tdl mergedAB = fromPath("merge-result-ab.tdl");
         Tdl mergedABC = fromPath("merge-result-abc.tdl");
-
 
         Tdl tdlAB = newBuilder().addTdls(tdlA, tdlB).build();
         assertThat(tdlAB).isEqualTo(mergedAB);
@@ -214,7 +211,8 @@ public class TdlAcceptanceTest {
         assertThat(checkPoint0.getMatch()).isEqualTo("coreUserId == $coreUserId");
         assertThat(checkPoint0.getEventType()).isEqualTo("ExternalStoreTransactionBegin");
         assertThat(checkPoint0.getSet()).containsOnly("name1=value1", "name2=value2");
-        assertThat(checkPoint0.getValidate()).isEqualTo("fieldA == aValue && fieldB == anotherValue");
+        assertThat(checkPoint0.getValidate())
+                .isEqualTo("fieldA == aValue && fieldB == anotherValue");
     }
 
     @Test
@@ -293,12 +291,11 @@ public class TdlAcceptanceTest {
         // when
         tdl.getSequence(null);
     }
-    
-    
+
     @Test(expected = IllegalArgumentException.class)
-	public void shouldThrowWhenInvalidJson() throws Exception {
-		fromPath("invalid-json-.tdl");
-	}
+    public void shouldThrowWhenInvalidJson() throws Exception {
+        fromPath("invalid-json-.tdl");
+    }
 
     @Test
     public void canDetectWhenAVariableIsNotSet() throws Exception {
@@ -308,7 +305,8 @@ public class TdlAcceptanceTest {
     }
 
     @Test
-    public void canAddExpectedVariableWhenModifingExistingTdlWithDuplicatedVariables() throws Exception {
+    public void canAddExpectedVariableWhenModifingExistingTdlWithDuplicatedVariables()
+            throws Exception {
         tdl = Tdl.newBuilder()
                 .addVariable("var1", "AA")
                 .addVariable("var2", "BB")
@@ -404,7 +402,8 @@ public class TdlAcceptanceTest {
 
     @Test
     public void canParseTdlFromFilepath() throws Exception {
-        String fileUrl = ClassLoader.getSystemResource("com/king/tratt/tdl/Good.tdl").toExternalForm();
+        String fileUrl = ClassLoader.getSystemResource("com/king/tratt/tdl/Good.tdl")
+                .toExternalForm();
         assertThat(fileUrl).startsWith("file:");
 
         verifyGoodTdl(Tdl.fromPath(fileUrl));
@@ -412,7 +411,8 @@ public class TdlAcceptanceTest {
 
     @Test
     public void canParseTdlFromLocalFilesystem() throws Exception {
-        File fileUrl = new File(ClassLoader.getSystemResource("com/king/tratt/tdl/Good.tdl").toURI());
+        File fileUrl = new File(
+                ClassLoader.getSystemResource("com/king/tratt/tdl/Good.tdl").toURI());
         verifyGoodTdl(Tdl.fromPath(fileUrl.getPath()));
     }
 

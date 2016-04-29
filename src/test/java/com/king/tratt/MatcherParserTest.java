@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -47,9 +47,9 @@ public class MatcherParserTest {
 
         // then
         assertThat(m.toDebugString(e1, null))
-        .isEqualTo("([[source:event.a]]1 == [[source:constant]]1)");
+                .isEqualTo("([[source:event.a]]1 == [[source:constant]]1)");
         assertThat(m.toDebugString(e2, null))
-        .isEqualTo(" >> ([[source:event.a]]2 == [[source:constant]]1) << ");
+                .isEqualTo(" >> ([[source:event.a]]2 == [[source:constant]]1) << ");
         assertThat(m.matches(e1, null)).isTrue();
         assertThat(m.matches(e2, null)).isFalse();
     }
@@ -66,11 +66,11 @@ public class MatcherParserTest {
 
         // then
         assertThat(m.toDebugString(e1, null))
-        .isEqualTo("([[source:event.a]]1 <= [[source:constant]]2)");
+                .isEqualTo("([[source:event.a]]1 <= [[source:constant]]2)");
         assertThat(m.toDebugString(e2, null))
-        .isEqualTo("([[source:event.a]]2 <= [[source:constant]]2)");
+                .isEqualTo("([[source:event.a]]2 <= [[source:constant]]2)");
         assertThat(m.toDebugString(e3, null))
-        .isEqualTo(" >> ([[source:event.a]]5 <= [[source:constant]]2) << ");
+                .isEqualTo(" >> ([[source:event.a]]5 <= [[source:constant]]2) << ");
         assertThat(m.matches(e1, null)).isTrue();
         assertThat(m.matches(e2, null)).isTrue();
         assertThat(m.matches(e3, null)).isFalse();
@@ -85,9 +85,9 @@ public class MatcherParserTest {
         m = matcher("EventB", "a<2");
         // then
         assertThat(m.toDebugString(e1, null))
-        .isEqualTo("([[source:event.a]]1 < [[source:constant]]2)");
+                .isEqualTo("([[source:event.a]]1 < [[source:constant]]2)");
         assertThat(m.toDebugString(e2, null))
-        .isEqualTo(" >> ([[source:event.a]]2 < [[source:constant]]2) << ");
+                .isEqualTo(" >> ([[source:event.a]]2 < [[source:constant]]2) << ");
         assertThat(m.matches(e1, null)).isTrue();
         assertThat(m.matches(e2, null)).isFalse();
     }
@@ -101,11 +101,11 @@ public class MatcherParserTest {
         TestEvent e3 = fields("userid", "5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
-        .isEqualTo(" >> ([[source:event.a]]1 >= [[source:constant]]2) << ");
+                .isEqualTo(" >> ([[source:event.a]]1 >= [[source:constant]]2) << ");
         assertThat(m.toDebugString(e2, null))
-        .isEqualTo("([[source:event.a]]2 >= [[source:constant]]2)");
+                .isEqualTo("([[source:event.a]]2 >= [[source:constant]]2)");
         assertThat(m.toDebugString(e3, null))
-        .isEqualTo("([[source:event.a]]5 >= [[source:constant]]2)");
+                .isEqualTo("([[source:event.a]]5 >= [[source:constant]]2)");
 
         assertThat(m.matches(e1, null)).isFalse();
         assertThat(m.matches(e2, null)).isTrue();
@@ -121,11 +121,11 @@ public class MatcherParserTest {
         TestEvent e3 = fields("userid", "5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
-        .isEqualTo(" >> ([[source:event.a]]1 > [[source:constant]]2) << ");
+                .isEqualTo(" >> ([[source:event.a]]1 > [[source:constant]]2) << ");
         assertThat(m.toDebugString(e2, null))
-        .isEqualTo(" >> ([[source:event.a]]2 > [[source:constant]]2) << ");
+                .isEqualTo(" >> ([[source:event.a]]2 > [[source:constant]]2) << ");
         assertThat(m.toDebugString(e3, null))
-        .isEqualTo("([[source:event.a]]5 > [[source:constant]]2)");
+                .isEqualTo("([[source:event.a]]5 > [[source:constant]]2)");
 
         assertThat(m.matches(e1, null)).isFalse();
         assertThat(m.matches(e2, null)).isFalse();
@@ -141,11 +141,11 @@ public class MatcherParserTest {
         TestEvent e3 = fields("userid", "5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
-        .isEqualTo("([[source:constant]]2 >= [[source:event.a]]1)");
+                .isEqualTo("([[source:constant]]2 >= [[source:event.a]]1)");
         assertThat(m.toDebugString(e2, null))
-        .isEqualTo("([[source:constant]]2 >= [[source:event.a]]2)");
+                .isEqualTo("([[source:constant]]2 >= [[source:event.a]]2)");
         assertThat(m.toDebugString(e3, null))
-        .isEqualTo(" >> ([[source:constant]]2 >= [[source:event.a]]5) << ");
+                .isEqualTo(" >> ([[source:constant]]2 >= [[source:event.a]]5) << ");
 
         assertThat(m.matches(e1, null)).isTrue();
         assertThat(m.matches(e2, null)).isTrue();
@@ -160,9 +160,9 @@ public class MatcherParserTest {
         TestEvent e2 = fields("userid", "2", "3", "10");
 
         assertThat(m.toDebugString(e1, null))
-        .isEqualTo("([[source:constant]]2 > [[source:event.a]]1)");
+                .isEqualTo("([[source:constant]]2 > [[source:event.a]]1)");
         assertThat(m.toDebugString(e2, null))
-        .isEqualTo(" >> ([[source:constant]]2 > [[source:event.a]]2) << ");
+                .isEqualTo(" >> ([[source:constant]]2 > [[source:event.a]]2) << ");
 
         assertThat(m.matches(e1, null)).isTrue();
         assertThat(m.matches(e2, null)).isFalse();
@@ -177,11 +177,11 @@ public class MatcherParserTest {
         TestEvent e3 = fields("userid", "5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
-        .isEqualTo(" >> ([[source:constant]]2 <= [[source:event.a]]1) << ");
+                .isEqualTo(" >> ([[source:constant]]2 <= [[source:event.a]]1) << ");
         assertThat(m.toDebugString(e2, null))
-        .isEqualTo("([[source:constant]]2 <= [[source:event.a]]2)");
+                .isEqualTo("([[source:constant]]2 <= [[source:event.a]]2)");
         assertThat(m.toDebugString(e3, null))
-        .isEqualTo("([[source:constant]]2 <= [[source:event.a]]5)");
+                .isEqualTo("([[source:constant]]2 <= [[source:event.a]]5)");
 
         assertThat(m.matches(e1, null)).isFalse();
         assertThat(m.matches(e2, null)).isTrue();
@@ -197,11 +197,11 @@ public class MatcherParserTest {
         TestEvent e3 = fields("userid", "5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
-        .isEqualTo(" >> ([[source:constant]]2 < [[source:event.a]]1) << ");
+                .isEqualTo(" >> ([[source:constant]]2 < [[source:event.a]]1) << ");
         assertThat(m.toDebugString(e2, null))
-        .isEqualTo(" >> ([[source:constant]]2 < [[source:event.a]]2) << ");
+                .isEqualTo(" >> ([[source:constant]]2 < [[source:event.a]]2) << ");
         assertThat(m.toDebugString(e3, null))
-        .isEqualTo("([[source:constant]]2 < [[source:event.a]]5)");
+                .isEqualTo("([[source:constant]]2 < [[source:event.a]]5)");
 
         assertThat(m.matches(e1, null)).isFalse();
         assertThat(m.matches(e2, null)).isFalse();
@@ -217,11 +217,11 @@ public class MatcherParserTest {
         TestEvent e3 = fields("userid", "5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
-        .isEqualTo("([[source:event.a]]1 != [[source:constant]]2)");
+                .isEqualTo("([[source:event.a]]1 != [[source:constant]]2)");
         assertThat(m.toDebugString(e2, null))
-        .isEqualTo(" >> ([[source:event.a]]2 != [[source:constant]]2) << ");
+                .isEqualTo(" >> ([[source:event.a]]2 != [[source:constant]]2) << ");
         assertThat(m.toDebugString(e3, null))
-        .isEqualTo("([[source:event.a]]5 != [[source:constant]]2)");
+                .isEqualTo("([[source:event.a]]5 != [[source:constant]]2)");
 
         assertThat(m.matches(e1, null)).isTrue();
         assertThat(m.matches(e2, null)).isFalse();
@@ -237,11 +237,11 @@ public class MatcherParserTest {
         TestEvent e3 = fields("userid", "5", "6", "15");
 
         assertThat(m.toDebugString(e1, null))
-        .isEqualTo("!([[source:event.a]]1 == [[source:constant]]2)");
+                .isEqualTo("!([[source:event.a]]1 == [[source:constant]]2)");
         assertThat(m.toDebugString(e2, null))
-        .isEqualTo(" >> !([[source:event.a]]2 == [[source:constant]]2) << ");
+                .isEqualTo(" >> !([[source:event.a]]2 == [[source:constant]]2) << ");
         assertThat(m.toDebugString(e3, null))
-        .isEqualTo("!([[source:event.a]]5 == [[source:constant]]2)");
+                .isEqualTo("!([[source:event.a]]5 == [[source:constant]]2)");
 
         assertThat(m.matches(e1, null)).isTrue();
         assertThat(m.matches(e2, null)).isFalse();
@@ -295,9 +295,12 @@ public class MatcherParserTest {
         TestEvent e2 = fields("userid", "2", "3", "10");
         TestEvent e3 = fields("userid", "2", "6", "15");
 
-        assertThat(m.toDebugString(e1, null)).isEqualTo("([[source:constant]]1 == [[source:constant]]1)");
-        assertThat(m.toDebugString(e2, null)).isEqualTo("([[source:constant]]1 == [[source:constant]]1)");
-        assertThat(m.toDebugString(e3, null)).isEqualTo("([[source:constant]]1 == [[source:constant]]1)");
+        assertThat(m.toDebugString(e1, null))
+                .isEqualTo("([[source:constant]]1 == [[source:constant]]1)");
+        assertThat(m.toDebugString(e2, null))
+                .isEqualTo("([[source:constant]]1 == [[source:constant]]1)");
+        assertThat(m.toDebugString(e3, null))
+                .isEqualTo("([[source:constant]]1 == [[source:constant]]1)");
 
         assertThat(m.matches(e1, null)).isTrue();
         assertThat(m.matches(e2, null)).isTrue();
@@ -311,9 +314,12 @@ public class MatcherParserTest {
         TestEvent e2 = fields("userid", "2", "3", "10");
         TestEvent e3 = fields("userid", "2", "6", "15");
 
-        assertThat(m.toDebugString(e1, null)).isEqualTo(" >> ([[source:constant]]1 == [[source:constant]]2) << ");
-        assertThat(m.toDebugString(e2, null)).isEqualTo(" >> ([[source:constant]]1 == [[source:constant]]2) << ");
-        assertThat(m.toDebugString(e3, null)).isEqualTo(" >> ([[source:constant]]1 == [[source:constant]]2) << ");
+        assertThat(m.toDebugString(e1, null))
+                .isEqualTo(" >> ([[source:constant]]1 == [[source:constant]]2) << ");
+        assertThat(m.toDebugString(e2, null))
+                .isEqualTo(" >> ([[source:constant]]1 == [[source:constant]]2) << ");
+        assertThat(m.toDebugString(e3, null))
+                .isEqualTo(" >> ([[source:constant]]1 == [[source:constant]]2) << ");
 
         assertThat(m.matches(e1, null)).isFalse();
         assertThat(m.matches(e2, null)).isFalse();
@@ -327,9 +333,12 @@ public class MatcherParserTest {
         TestEvent e2 = fields("userid", "", "2", "3");
         TestEvent e3 = fields("userid", "", "6", "6");
 
-        assertThat(m.toDebugString(e1, null)).isEqualTo("([[source:event.b]]'2' == [[source:event.c]]'2')");
-        assertThat(m.toDebugString(e2, null)).isEqualTo(" >> ([[source:event.b]]'2' == [[source:event.c]]'3') << ");
-        assertThat(m.toDebugString(e3, null)).isEqualTo("([[source:event.b]]'6' == [[source:event.c]]'6')");
+        assertThat(m.toDebugString(e1, null))
+                .isEqualTo("([[source:event.b]]'2' == [[source:event.c]]'2')");
+        assertThat(m.toDebugString(e2, null))
+                .isEqualTo(" >> ([[source:event.b]]'2' == [[source:event.c]]'3') << ");
+        assertThat(m.toDebugString(e3, null))
+                .isEqualTo("([[source:event.b]]'6' == [[source:event.c]]'6')");
 
         assertThat(m.matches(e1, null)).isTrue();
         assertThat(m.matches(e2, null)).isFalse();
@@ -642,10 +651,10 @@ public class MatcherParserTest {
         assertThat(m.matches(e, null)).isTrue();
     }
 
-
     @Test
     public void testMatchWithJsonFieldFunction() throws Exception {
-        TestEvent e = fields("userid", "", "{\"a\": \"apa\",\"o\":{\"p\": \"panther\"},\"c\":true}");
+        TestEvent e = fields("userid", "",
+                "{\"a\": \"apa\",\"o\":{\"p\": \"panther\"},\"c\":true}");
         m = matcher("EventB", "jsonfield('o.p',b)=='panther'");
 
         assertThat(m.toDebugString(e, null)).isEqualTo(
@@ -656,7 +665,8 @@ public class MatcherParserTest {
 
     @Test
     public void testMatchWithJsonFieldFunction2() throws Exception {
-        TestEvent e = fields("userid", "", "{\"a\": \"apa\",\"o\":{\"p\": \"panther\"},\"c\":true}");
+        TestEvent e = fields("userid", "",
+                "{\"a\": \"apa\",\"o\":{\"p\": \"panther\"},\"c\":true}");
         m = matcher("EventB", "jsonfield('c',b)");
 
         assertThat(m.toDebugString(e, null)).isEqualTo(
@@ -666,7 +676,8 @@ public class MatcherParserTest {
 
     @Test
     public void testMatchWithJsonFieldFunction3() throws Exception {
-        TestEvent e = fields("userid", "", "{\"a\": \"apa\",\"o\":{\"p\": \"panther\"},\"c\":1234}");
+        TestEvent e = fields("userid", "",
+                "{\"a\": \"apa\",\"o\":{\"p\": \"panther\"},\"c\":1234}");
         m = matcher("EventB", "jsonfield('c',b)>1233");
 
         assertThat(m.toDebugString(e, null)).isEqualTo(
@@ -689,7 +700,8 @@ public class MatcherParserTest {
 
     @Test
     public void testMatchWithJsonFieldWhenJsonPathIsIncorrect() throws Exception {
-        TestEvent e = fields("userid", "", "{\"a\": \"apa\",\"o\":{\"p\": \"panther\"},\"c\":true}");
+        TestEvent e = fields("userid", "",
+                "{\"a\": \"apa\",\"o\":{\"p\": \"panther\"},\"c\":true}");
         m = matcher("EventB", "jsonfield('x',b)=='panther'");
 
         assertThat(m.toDebugString(e, null)).isEqualTo(

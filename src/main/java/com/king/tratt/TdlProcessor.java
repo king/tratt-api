@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -45,7 +45,8 @@ class TdlProcessor {
 
     List<SequenceResult> processTdl(Tdl tdl) {
         MatcherParser matcherParser = new MatcherParser(started.valueFactory);
-        Map<String, String> tdlVariables = VariableParser.parse(VARIABLE_PREFIX, tdl.getVariables());
+        Map<String, String> tdlVariables = VariableParser.parse(VARIABLE_PREFIX,
+                tdl.getVariables());
         CopyOnWriteArrayList<SequenceProcessor> processors;
         processors = IntStream.range(0, tdl.getSequences().size()).mapToObj(seqIndex -> {
             Sequence sequence = tdl.getSequences().get(seqIndex);
@@ -54,7 +55,7 @@ class TdlProcessor {
             SetterToValueMapper mapper = new SetterToValueMapper(started.valueFactory);
             env.sequenceVariables.putAll(
                     checkPoints.stream().flatMap(mapper::getValues)
-                    .collect(toMap(Entry::getKey, Entry::getValue)));
+                            .collect(toMap(Entry::getKey, Entry::getValue)));
             List<CheckPointMatcher> cpMatchers = IntStream.range(0, checkPoints.size())
                     .mapToObj(cpIndex -> {
                         CheckPoint cp = checkPoints.get(cpIndex);
@@ -70,7 +71,8 @@ class TdlProcessor {
             processor.setListeners(started.sequenceListeners);
             processor.setSequence(sequence);
             return processor;
-        }).collect(Collectors.collectingAndThen(toList(), CopyOnWriteArrayList<SequenceProcessor>::new));
+        }).collect(Collectors.collectingAndThen(toList(),
+                CopyOnWriteArrayList<SequenceProcessor>::new));
         processors.parallelStream().forEach(processor -> processor.beforeStart());
         try {
             return startProcessing(processors);
@@ -97,7 +99,8 @@ class TdlProcessor {
         return createSequenceResults(started.progressListener);
     }
 
-    private List<SequenceResult> createSequenceResults(ProgressSequenceProcessorListener progressListener) {
+    private List<SequenceResult> createSequenceResults(
+            ProgressSequenceProcessorListener progressListener) {
         final List<SequenceResult> result = new ArrayList<>();
         for (SequenceStatus s : progressListener.getStatus()) {
             String name = s.getName().toString();

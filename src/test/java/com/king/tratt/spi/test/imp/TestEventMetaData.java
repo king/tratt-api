@@ -1,16 +1,16 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi.test.imp;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.king.tratt.spi.EventMetaData;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class TestEventMetaData implements EventMetaData {
 

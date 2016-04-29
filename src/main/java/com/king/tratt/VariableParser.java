@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -68,10 +68,10 @@ class VariableParser {
             this.name = name;
             this.value = value;
         }
-        
+
         @Override
         public String toString() {
-        	return name + "=" + value;
+            return name + "=" + value;
         }
     }
 }

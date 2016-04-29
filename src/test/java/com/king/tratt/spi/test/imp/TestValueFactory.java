@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi.test.imp;
 
@@ -19,7 +19,8 @@ public class TestValueFactory implements ValueFactory {
 
     @Override
     public Value getValue(String eventName, String parameterName) {
-        TestEventMetaData metaData = (TestEventMetaData) metaDataFactory.getEventMetaData(eventName);
+        TestEventMetaData metaData = (TestEventMetaData) metaDataFactory
+                .getEventMetaData(eventName);
         if (metaData == null) {
             return notFound();
         }
@@ -50,6 +51,4 @@ public class TestValueFactory implements ValueFactory {
             throw new IllegalArgumentException(format(message, type, eventName, parameterName));
         }
     }
-
-
 }

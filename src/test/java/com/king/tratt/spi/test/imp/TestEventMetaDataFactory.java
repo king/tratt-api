@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi.test.imp;
 
@@ -23,7 +23,8 @@ public class TestEventMetaDataFactory implements EventMetaDataFactory {
     private static Map<String, JsonObject> eventTypes = new HashMap<>();
 
     public TestEventMetaDataFactory() {
-        Reader reader = new InputStreamReader(getSystemResourceAsStream("com/king/tratt/test/imp/EventType.json"));
+        Reader reader = new InputStreamReader(
+                getSystemResourceAsStream("com/king/tratt/test/imp/EventType.json"));
         JsonArray array = new Gson().fromJson(reader, JsonElement.class).getAsJsonArray();
         array.forEach(e -> {
             JsonObject o = (JsonObject) e;

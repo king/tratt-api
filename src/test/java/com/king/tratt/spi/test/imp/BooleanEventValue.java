@@ -1,13 +1,12 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi.test.imp;
 
 import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.Value;
-
 
 public class BooleanEventValue extends Value {
 

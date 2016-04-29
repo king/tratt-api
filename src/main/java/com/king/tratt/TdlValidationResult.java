@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 /*
  * // (C) king.com Ltd 2014
@@ -20,12 +20,12 @@ class TdlValidationResult {
     }
 
     TdlValidationResult(boolean isValid, String errorSummary,
-    		List<TdlFileFieldErrorDescriptor> fieldErrorDescriptors) {
+            List<TdlFileFieldErrorDescriptor> fieldErrorDescriptors) {
         this.isValid = isValid;
         this.errorSummary = errorSummary;
         this.fieldErrorDescriptors = fieldErrorDescriptors;
     }
-    
+
     @Override
     public String toString() {
         return "TdlValidationToolResult{" +

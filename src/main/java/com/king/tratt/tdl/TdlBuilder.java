@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.tdl;
 
@@ -62,7 +62,8 @@ public final class TdlBuilder {
     public TdlBuilder addSequence(SequenceBuilder sequenceBuilder) {
         requireNonNull(sequenceBuilder, "sequenceBuilder");
         if (sequenceBuilder.name == null || sequenceBuilder.name.isEmpty()) {
-            throw new IllegalArgumentException("Sequence name must be set! " + sequenceBuilder.name);
+            throw new IllegalArgumentException(
+                    "Sequence name must be set! " + sequenceBuilder.name);
         }
         sequenceBuilders.put(sequenceBuilder.name, sequenceBuilder);
         return this;

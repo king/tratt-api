@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -24,7 +24,8 @@ class ProcessorLogger implements SequenceProcessorListener {
         int seqIndex = on.getSequenceIndex();
         int cpIndex = on.getCheckPointIndex();
         String failureString = "\n" + on.getFailureString();
-        LOG.info(String.format(FAILURE_LOG_TEMPLATE, seqIndex, cpIndex, "FAILURE", on.getEvent(), failureString));
+        LOG.info(String.format(FAILURE_LOG_TEMPLATE, seqIndex, cpIndex, "FAILURE", on.getEvent(),
+                failureString));
     }
 
     @Override
@@ -47,7 +48,8 @@ class ProcessorLogger implements SequenceProcessorListener {
         int cpIndex = on.getCheckPointIndex();
         CheckPoint cp = on.getCheckPoint();
         String template = "%s : match: %s, valid: %s";
-        String matchValidDef = String.format(template, cp.getEventType(), cp.getMatch(), cp.getValidate());
+        String matchValidDef = String.format(template, cp.getEventType(), cp.getMatch(),
+                cp.getValidate());
         LOG.info(String.format(LOG_TEMPLATE, seqIndex, cpIndex, "TIMEOUT", matchValidDef));
     }
 
@@ -66,6 +68,7 @@ class ProcessorLogger implements SequenceProcessorListener {
                 .collect(Collectors.joining(delimiter, prefix, ""));
         LOG.info(logMessage.toString());
     }
+
     @Override
     public void onSequenceTimeout(OnSequenceTimeout on) {
         LOG.info("[TIMEOUT] Sequence " + on.getSequenceName() + " timedout.");

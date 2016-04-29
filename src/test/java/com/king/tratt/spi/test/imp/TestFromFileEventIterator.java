@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt.spi.test.imp;
 
@@ -39,7 +39,8 @@ public class TestFromFileEventIterator implements EventIterator {
     public TestEvent next() {
         String eventString = iterator.next();
         String[] parameters = eventString.split("\\s+");
-        TestEvent e = new TestEvent(parameters[0], parameters[1], Arrays.copyOfRange(parameters, 2, parameters.length));
+        TestEvent e = new TestEvent(parameters[0], parameters[1],
+                Arrays.copyOfRange(parameters, 2, parameters.length));
         return e;
     }
 

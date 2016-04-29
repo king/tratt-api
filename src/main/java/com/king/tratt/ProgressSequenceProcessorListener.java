@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -20,7 +20,8 @@ class ProgressSequenceProcessorListener implements CompletionStrategy {
     private Processors processors;
 
     ProgressSequenceProcessorListener(List<Sequence> sequences) {
-        processorMap = sequences.stream().map(Sequence::getName).collect(toMap(identity(), SequenceStatus::new));
+        processorMap = sequences.stream().map(Sequence::getName)
+                .collect(toMap(identity(), SequenceStatus::new));
         open = new AtomicInteger(sequences.size());
     }
 
@@ -61,7 +62,6 @@ class ProgressSequenceProcessorListener implements CompletionStrategy {
         status(on).timeout = true;
     }
 
-    
     SequenceStatus status(OnBase base) {
         return processorMap.get(base.getSequenceName());
     }

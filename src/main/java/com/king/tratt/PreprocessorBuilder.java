@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -25,7 +25,7 @@ public final class PreprocessorBuilder {
     PreprocessorBuilder() {
         /* for package private usage only */
     }
-    
+
     public PreprocessorBuilder addEventIterator(EventIterator eventIterator) {
         requireNonNull(eventIterator, "eventIterator");
         eventIterators.add(eventIterator);

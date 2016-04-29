@@ -1,6 +1,6 @@
 /*******************************************************************************
  * (C) king.com Ltd 2016
- *  
+ *
  *******************************************************************************/
 package com.king.tratt;
 
@@ -98,17 +98,20 @@ abstract class SequenceProcessor {
                     new OnSequenceTimeout(seqName, context)));
         }
 
-        final void notifyCheckPointMatch(Event event, CheckPointMatcher cpMatcher, Context context) {
+        final void notifyCheckPointMatch(Event event, CheckPointMatcher cpMatcher,
+                Context context) {
             notify(listener -> listener.onCheckPointMatch(
                     new OnCheckPointMatch(seqName, event, cpMatcher, context)));
         }
 
-        final void notifyCheckPointFailure(Event event, CheckPointMatcher cpMatcher, Context context) {
+        final void notifyCheckPointFailure(Event event, CheckPointMatcher cpMatcher,
+                Context context) {
             notify(listener -> listener.onCheckPointFailure(
                     new OnCheckPointFailure(seqName, event, cpMatcher, context)));
         }
 
-        final void notifyCheckPointSuccess(Event event, CheckPointMatcher cpMatcher, Context context) {
+        final void notifyCheckPointSuccess(Event event, CheckPointMatcher cpMatcher,
+                Context context) {
             notify(listener -> listener.onCheckPointSuccess(
                     new OnCheckPointSuccess(seqName, event, cpMatcher, context)));
         }
