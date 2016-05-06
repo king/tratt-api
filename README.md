@@ -7,7 +7,7 @@ When a user interacts with a system, e.g. makes a purchase in an app or clicks a
 For additional information See [User Guide](../../wiki).
 
 
-### How to build from command line
+#### How to build from command line
 From the project root folder execute the following command:
 ```
 > gradlew build
