@@ -5,7 +5,7 @@
 package com.king.tratt;
 
 class Operator {
-    public static enum Type {
+    public enum Type {
         PRE, MIDDLE, GROUPING_START, GROUPING_END, ARRAY_START, ARRAY_END, ARRAY_DELIMITER, STRING_SIGN, FUNCTION_START,
     }
 
@@ -79,50 +79,51 @@ class Operator {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        }
-        if (!(o instanceof Operator)) {
+        if (obj == null)
             return false;
-        }
-
-        Operator operator = (Operator) o;
-
-        if (caseSensitive != operator.caseSensitive) {
+        if (getClass() != obj.getClass())
             return false;
-        }
-        if (spaceSensitive != operator.spaceSensitive) {
+        Operator other = (Operator) obj;
+        if (caseSensitive != other.caseSensitive)
             return false;
-        }
-        if (strength != operator.strength) {
+        if (closingOperator == null) {
+            if (other.closingOperator != null)
+                return false;
+        } else if (!closingOperator.equals(other.closingOperator))
             return false;
-        }
-        if (!closingOperator.equals(operator.closingOperator)) {
+        if (preOperator == null) {
+            if (other.preOperator != null)
+                return false;
+        } else if (!preOperator.equals(other.preOperator))
             return false;
-        }
-        if (!preOperator.equals(operator.preOperator)) {
+        if (spaceSensitive != other.spaceSensitive)
             return false;
-        }
-        if (!symbol.equals(operator.symbol)) {
+        if (strength != other.strength)
             return false;
-        }
-        if (type != operator.type) {
+        if (symbol == null) {
+            if (other.symbol != null)
+                return false;
+        } else if (!symbol.equals(other.symbol))
             return false;
-        }
-
+        if (type != other.type)
+            return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = symbol.hashCode();
-        result = 31 * result + type.hashCode();
-        result = 31 * result + strength;
-        result = 31 * result + (spaceSensitive ? 1 : 0);
-        result = 31 * result + (caseSensitive ? 1 : 0);
-        result = 31 * result + closingOperator.hashCode();
-        result = 31 * result + preOperator.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (caseSensitive ? 1231 : 1237);
+        result = prime * result + ((closingOperator == null) ? 0 : closingOperator.hashCode());
+        result = prime * result + ((preOperator == null) ? 0 : preOperator.hashCode());
+        result = prime * result + (spaceSensitive ? 1231 : 1237);
+        result = prime * result + strength;
+        result = prime * result + ((symbol == null) ? 0 : symbol.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
 }
