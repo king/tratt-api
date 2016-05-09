@@ -5,18 +5,8 @@
 package com.king.tratt.spi;
 
 /**
- * Example (pseudo code)
- *
- * <pre>
- * public EventMetaData getEventMetaData(String eventName) {
- *     if (isKnownEvent(eventName)) {
- *         return getKnownEventMetaData(eventName);
- *     } else {
- *         return unknownEventType();
- *     }
- * }
- * </pre>
- *
+ * Implementations of this interface should create EventMetaData instances for
+ * each CheckPoint's eventType field in the TDL file.
  */
 @FunctionalInterface
 public interface EventMetaDataFactory {
@@ -37,7 +27,20 @@ public interface EventMetaDataFactory {
      * If your event structure does not specify a unique id for each event type
      * there is a convenient method that returns an {@link EventMetaData}
      * instance that maps id to name. Use it only for your known event types.
-     * See {@link #equalNameAndIdEventMetaData(String)}.
+     * <p>
+     * Example (pseudo code)
+     *
+     * <pre>
+     * public EventMetaData getEventMetaData(String eventName) {
+     *     if (isKnownEvent(eventName)) {
+     *         return getKnownEventMetaData(eventName);
+     *     } else {
+     *         return unknownEventType();
+     *     }
+     * }
+     * </pre>
+     *
+     * * See {@link #equalNameAndIdEventMetaData(String)}.
      *
      * @param eventName
      *            a string that may or may NOT correspond to a known event type
