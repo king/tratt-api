@@ -21,7 +21,7 @@ import com.king.tratt.spi.SufficientContextAware;
 import com.king.tratt.spi.Value;
 
 abstract class Matcher implements DebugStringAware, SufficientContextAware {
-    private final static Logger LOG = LoggerFactory.getLogger(Matcher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Matcher.class);
     private final List<? extends SufficientContextAware> awares;
 
     private Matcher(SufficientContextAware aware) {
@@ -83,7 +83,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
     /*
      * Anonymous Matchers goes below
      */
-    static <E extends Event> Matcher lessThan(final Value left, final Value right) {
+    static Matcher lessThan(final Value left, final Value right) {
         return new Matcher(left, right) {
 
             @Override
@@ -177,7 +177,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
         };
     }
 
-    static Matcher equal(Value left, Value right) {
+    static Matcher equalTo(Value left, Value right) {
         return new Matcher(left, right) {
 
             @Override

@@ -103,11 +103,10 @@ class ContainerSequenceProcessor extends SequenceProcessor {
     }
 
     @Override
-    public void _beforeStart(SequenceProcessorHelper helper) {
+    public void beforeStartImp(SequenceProcessorHelper helper) {
         this.helper = helper;
         maxTimeMillis = helper.getMaxTimeMillis();
         resetSequence();
-        System.out.println("*********** beforeStart: ");
     }
 
     private void resetSequence() {
@@ -120,22 +119,15 @@ class ContainerSequenceProcessor extends SequenceProcessor {
     }
 
     @Override
-    public void _onTimeout() {
+    public void onTimeoutImp() {
         for (String eventId : checkPointMatchers.keySet()) {
             for (CheckPointMatcher cpMatcher : checkPointMatchers.get(eventId)) {
                 helper.notifyCheckPointTimeout(cpMatcher, context);
-                // listenerHandler.fire(of((Event) null, TIMEOUT,
-                // cpMatcher.index, EMPTY_LABEL, context));
             }
         }
         helper.notifySequenceTimeout(context);
-        // listenerHandler.fire(of((Event) null, TIMEOUT, FAKE_STATE,
-        // EMPTY_LABEL, context));
         helper.notifySequenceEnd(context);
-        // listenerHandler.fire(of((Event) null, END, FAKE_STATE, EMPTY_LABEL,
-        // context));
         resetSequence();
-        System.out.println("*********** onTimeout: ");
     }
 
     private static class Memory {
@@ -164,11 +156,10 @@ class ContainerSequenceProcessor extends SequenceProcessor {
     }
 
     @Override
-    public void _process(Event event) {
-        System.out.println("*********** processing: " + event);
+    public void processImp(Event event) {
         try {
             if (hasSequenceMaxtimePassed(event)) {
-                _onTimeout();
+                onTimeoutImp();
             }
             if (!checkPointMatchers.containsKey(event.getId())) {
                 return;

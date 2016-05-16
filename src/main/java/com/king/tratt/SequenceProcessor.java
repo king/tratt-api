@@ -27,22 +27,22 @@ abstract class SequenceProcessor {
     private Sequence sequence;
     private List<CheckPointMatcher> checkPointMatchers;
 
-    protected abstract void _beforeStart(SequenceProcessorHelper helper);
+    protected abstract void beforeStartImp(SequenceProcessorHelper helper);
 
-    protected abstract void _onTimeout();
+    protected abstract void onTimeoutImp();
 
-    protected abstract void _process(Event e);
+    protected abstract void processImp(Event e);
 
     final void onTimeout() {
-        _onTimeout();
+        onTimeoutImp();
     }
 
     final void process(Event e) {
-        _process(e);
+        processImp(e);
     }
 
     final void beforeStart() {
-        _beforeStart(new SequenceProcessorHelper(checkPointMatchers, sequence, sequenceListeners));
+        beforeStartImp(new SequenceProcessorHelper(checkPointMatchers, sequence, sequenceListeners));
     }
 
     final void setCheckPointMatchers(List<CheckPointMatcher> cpMatchers) {
@@ -61,7 +61,7 @@ abstract class SequenceProcessor {
         return sequence.getName();
     }
 
-    final static class SequenceProcessorHelper {
+    final class SequenceProcessorHelper {
         private final List<CheckPointMatcher> checkPointMatchers;
         private final Sequence sequence;
         private final List<SequenceProcessorListener> sequenceListeners;

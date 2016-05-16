@@ -44,9 +44,7 @@ final class PipelineEventMulticaster implements Runnable {
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 Event event = blockingQueue.take();
-                simpleProcessors.parallelStream().forEach(processor -> {
-                    processor.process(event);
-                });
+                simpleProcessors.parallelStream().forEach(processor -> processor.process(event));
             }
         } catch (InterruptedException e) {
             // exit thread gracefully.

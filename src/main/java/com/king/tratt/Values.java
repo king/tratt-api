@@ -22,11 +22,10 @@ class Values {
     private static final String SOURCE_CONSTANT = "[[source:constant]]%s";
 
     Value constant(Object value) {
-        Value result = parseValue(value,
+        return parseValue(value,
                 this::constantLong,
                 this::constantString,
                 this::constantBoolean);
-        return result;
     }
 
     Value constantString(final String str) {

@@ -38,7 +38,8 @@ public final class SequenceResult {
     @Override
     public String toString() {
         String template = "Sequence '%s' is %s, with causes: %s";
-        return String.format(template, name, (isValid ? "VALID" : "INVALID"), causes);
+        String result = isValid ? "VALID" : "INVALID";
+        return String.format(template, name, result, causes);
     }
 
 }

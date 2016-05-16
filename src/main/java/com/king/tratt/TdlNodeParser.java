@@ -6,23 +6,22 @@ package com.king.tratt;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 class TdlNodeParser {
+    private static final String ESCAPE_CHAR = "\\";
+    private static final String LITERAL_QUOTE_CHAR = "'";
     private final Collection<Operator> operators;
     private final OperatorMatcher operatorMatcher;
-    private final String escapeChar = "\\";
-    private final String literalQuoteChar = "'";
     private final Pattern symbolForbiddenChars = Pattern.compile("[^a-zA-Z0-9_$]");
     private final Pattern functionName = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
 
     TdlNodeParser() {
         operators = setupOperators();
-        operatorMatcher = new OperatorMatcher(operators, escapeChar.charAt(0));
+        operatorMatcher = new OperatorMatcher(operators, ESCAPE_CHAR.charAt(0));
     }
 
     void addFunctions(Collection<String> names) {
@@ -54,12 +53,7 @@ class TdlNodeParser {
     }
 
     private Collection<Operator> setupOperators() {
-        Set<Operator> out = new TreeSet<Operator>(new Comparator<Operator>() {
-            @Override
-            public int compare(Operator o1, Operator o2) {
-                return o1.getStrength() - o2.getStrength();
-            }
-        });
+        Set<Operator> out = new TreeSet<>((m1, m2) -> m1.getStrength() - m2.getStrength());
 
         final Operator bracketEnd = new Operator(")", Operator.Type.GROUPING_END, 55001);
         out.add(bracketEnd);
@@ -90,12 +84,12 @@ class TdlNodeParser {
 
         out.add(new Operator("!", Operator.Type.PRE, 20100));
 
-        out.add(new Operator(literalQuoteChar, Operator.Type.STRING_SIGN, 50010));
+        out.add(new Operator(LITERAL_QUOTE_CHAR, Operator.Type.STRING_SIGN, 50010));
 
         return out;
     }
 
-    Node parse(String expression) throws MatchExpressionParseException {
+    Node parse(String expression) {
         final List<Match> matches = operatorMatcher.matches(expression);
         final Range range = new Range(expression);
 
@@ -136,69 +130,55 @@ class TdlNodeParser {
     }
 
     private Node createGroupNode(List<Match> matches, Range expression) {
-        final List<Match> regionMatches = matches.subList(1, matches.size() - 1);
-        final Range regionRange = expression.getRegion(matches.get(0),
+        List<Match> regionMatches = matches.subList(1, matches.size() - 1);
+        Range regionRange = expression.getRegion(matches.get(0),
                 matches.get(matches.size() - 1));
-        final Node content = createNode(regionMatches, regionRange);
-
-        final Node out = new Node(matches.get(0).getOperator(), expression, content);
-
-        return out;
+        Node content = createNode(regionMatches, regionRange);
+        return new Node(matches.get(0).getOperator(), expression, content);
     }
 
     private Node createPreNode(List<Match> matches, Range expression) {
-        final List<Match> rightMatches = matches.subList(1, matches.size());
-        final Range rightRange = expression.getRightSplit(matches.get(0));
-
-        final Node right = createNode(rightMatches, rightRange);
-        final Node out = new Node(matches.get(0).getOperator(), expression, right);
-
-        return out;
+        List<Match> rightMatches = matches.subList(1, matches.size());
+        Range rightRange = expression.getRightSplit(matches.get(0));
+        Node right = createNode(rightMatches, rightRange);
+        return new Node(matches.get(0).getOperator(), expression, right);
     }
 
     private Node createMiddleNode(List<Match> matches, Match root, Range expression) {
-        final int splitIndex = matches.indexOf(root);
+        int splitIndex = matches.indexOf(root);
         if (root.getIndex() == expression.getStart()) {
             return createPreNode(matches, expression);
         }
 
-        final List<Match> leftMatches = matches.subList(0, splitIndex);
-        final List<Match> rightMatches = matches.subList(splitIndex + 1, matches.size());
-        final Range leftRange = expression.getLeftSplit(root);
-        final Range rightRange = expression.getRightSplit(root);
-
-        final Node left = createNode(leftMatches, leftRange);
-        final Node right = createNode(rightMatches, rightRange);
-        final Node out = new Node(root.getOperator(), expression, left, right);
-
-        return out;
+        List<Match> leftMatches = matches.subList(0, splitIndex);
+        List<Match> rightMatches = matches.subList(splitIndex + 1, matches.size());
+        Range leftRange = expression.getLeftSplit(root);
+        Range rightRange = expression.getRightSplit(root);
+        Node left = createNode(leftMatches, leftRange);
+        Node right = createNode(rightMatches, rightRange);
+        return new Node(root.getOperator(), expression, left, right);
     }
 
     private Node createArrayNode(List<Match> matches, Range expression) {
         Range range = expression.getRightSplit(matches.get(0));
-
-        final List<Node> items = getArray(matches.subList(1, matches.size()), range);
-        final Node array = new Node(items, matches.get(0).getOperator(), expression);
-
-        return array;
+        List<Node> items = getArray(matches.subList(1, matches.size()), range);
+        return new Node(items, matches.get(0).getOperator(), expression);
     }
 
     private String cleanStringFromEscapeChars(Range range) {
-        return range.getExpression().replace(escapeChar + literalQuoteChar, literalQuoteChar);
+        return range.getExpression().replace(ESCAPE_CHAR + LITERAL_QUOTE_CHAR, LITERAL_QUOTE_CHAR);
     }
 
     private Node createStringNode(List<Match> matches, Range expression) {
-        final String string = cleanStringFromEscapeChars(
+        String string = cleanStringFromEscapeChars(
                 expression.getRegion(matches.get(0), matches.get(matches.size() - 1)));
-        final Node stringNode = new Node(string);
-        final Node out = new Node(matches.get(0).getOperator(), expression, stringNode);
-        return out;
+        Node stringNode = new Node(string);
+        return new Node(matches.get(0).getOperator(), expression, stringNode);
     }
 
     private Node createNode(List<Match> matches, Range expression) {
         if (matches.isEmpty()) {
-            final Node node = createNode(expression);
-            return node;
+            return createNode(expression);
         }
 
         final Match root = getRootMatch(matches);
@@ -223,11 +203,8 @@ class TdlNodeParser {
 
     private Node createFunctionNode(List<Match> matches, Range expression) {
         Range range = expression.getRightSplit(matches.get(1));
-
-        final List<Node> items = getArray(matches.subList(2, matches.size()), range);
-        final Node array = new Node(items, matches.get(0).getOperator(), expression);
-
-        return array;
+        List<Node> items = getArray(matches.subList(2, matches.size()), range);
+        return new Node(items, matches.get(0).getOperator(), expression);
     }
 
     private List<Node> getArray(List<Match> matches, Range expression) {

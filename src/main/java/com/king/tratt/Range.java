@@ -48,8 +48,7 @@ class Range {
     }
 
     private int getEndIndex(Match match) {
-        final int out = match.getIndex() + match.getOperator().getSymbol().length();
-        return out;
+        return match.getIndex() + match.getOperator().getSymbol().length();
     }
 
     Range getRightSplit(Match match) {

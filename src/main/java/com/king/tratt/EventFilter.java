@@ -6,6 +6,7 @@ package com.king.tratt;
 
 import com.king.tratt.spi.Event;
 
+@FunctionalInterface
 public interface EventFilter {
 
     boolean accept(Event event);

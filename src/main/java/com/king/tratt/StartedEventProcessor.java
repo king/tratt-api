@@ -32,8 +32,8 @@ import com.king.tratt.tdl.Tdl;
 
 public class StartedEventProcessor {
 
-    private static Logger LOG = LoggerFactory.getLogger(StartedEventProcessor.class);
-    private static String ERROR_MESSAGE = "Sequence '%s' is not valid due to: %s \n";
+    private static final Logger LOG = LoggerFactory.getLogger(StartedEventProcessor.class);
+    private static final String ERROR_MESSAGE = "Sequence '%s' is not valid due to: %s \n";
     private Future<CompletedEventProcessor> tdlProcessorResults;
     final ExecutorService executor = util.newThreadPool();
     final Tdl tdl;
@@ -193,7 +193,7 @@ public class StartedEventProcessor {
             List<SequenceResult> results = tdlProcessor.processTdl(tdl);
             return new CompletedEventProcessor(results);
         };
-        FutureTask<CompletedEventProcessor> task = new FutureTask<CompletedEventProcessor>(r);
+        FutureTask<CompletedEventProcessor> task = new FutureTask<>(r);
         new Thread(task).start();
         return task;
     }

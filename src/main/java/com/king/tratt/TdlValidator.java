@@ -39,7 +39,7 @@ public class TdlValidator {
     private void validateTdl(final Tdl tdl) {
         String nodePath = "root";
 
-        Map<String, String> variablesMap = new HashMap<String, String>();
+        Map<String, String> variablesMap = new HashMap<>();
         List<String> tdlVariables = tdl.getVariables();
         if (tdlVariables != null) {
             for (int i = 0; i < tdlVariables.size(); i++) {
@@ -157,7 +157,7 @@ public class TdlValidator {
     public String getError() {
         String ret = "";
         if (numParseErrors > 0) {
-            ret += "" + numParseErrors + " TDL parse errors.\n";
+            ret += numParseErrors + " TDL parse errors.\n";
         }
         if (errors.isEmpty() && ret.isEmpty()) {
             return null;

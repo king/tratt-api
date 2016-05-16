@@ -16,7 +16,8 @@ class ProcessorLogger implements SequenceProcessorListener {
     private static final String FAILURE_LOG_TEMPLATE = "[CHECKPOINT[%s.%s]:%s]  %s%s";
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorLogger.class);
 
-    public ProcessorLogger() {
+    ProcessorLogger() {
+        /* for package private usage only */
     }
 
     @Override
@@ -66,7 +67,7 @@ class ProcessorLogger implements SequenceProcessorListener {
         String logMessage = on.getContext().entrySet().stream()
                 .map(e -> e.toString())
                 .collect(Collectors.joining(delimiter, prefix, ""));
-        LOG.info(logMessage.toString());
+        LOG.info(logMessage);
     }
 
     @Override

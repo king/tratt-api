@@ -26,8 +26,6 @@ public final class Preprocessor {
     Preprocessor(PreprocessorBuilder builder) {
         // first copy...
         pipeline = builder.pipeline; // don't copy!
-        // statisticsDataHolder =
-        // StatisticsDataHolder.copyOf(builder.statisticsDataHolder);
         eventIterators = new ArrayList<>(builder.eventIterators);
         simpleProcessors = new ArrayList<>(builder.simpleProcessors);
         stoppables = new ArrayList<>(builder.stoppables);
@@ -43,8 +41,7 @@ public final class Preprocessor {
         return this;
     }
 
-    private void checkEventIteratorsNotEmpty() { // TODO move to baseClass or
-                                                 // Util?
+    private void checkEventIteratorsNotEmpty() {
         if (eventIterators.isEmpty()) {
             String message = "No EventIterators added!";
             throw new IllegalStateException(message);

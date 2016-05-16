@@ -32,7 +32,7 @@ class SetterToValueMapper {
         return VariableParser.parse(set).entrySet().stream()
                 .map(entry -> {
                     Value value = getValue(eventName, entry.getValue());
-                    return new AbstractMap.SimpleEntry<String, Value>(entry.getKey(), value);
+                    return new AbstractMap.SimpleEntry<>(entry.getKey(), value);
                 });
     }
 

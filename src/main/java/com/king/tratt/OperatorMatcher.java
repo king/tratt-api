@@ -6,7 +6,6 @@ package com.king.tratt;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -21,18 +20,13 @@ class OperatorMatcher {
     }
 
     List<Match> matches(String expression) {
-        List<Match> operators = getOperatorMatches(expression);
-        modifyPreOperators(expression, operators);
-        return operators;
+        List<Match> result = getOperatorMatches(expression);
+        modifyPreOperators(expression, result);
+        return result;
     }
 
     private List<Match> getOperatorMatches(String expression) {
-        SortedSet<Match> matchSet = new TreeSet<Match>(new Comparator<Match>() {
-            @Override
-            public int compare(Match o1, Match o2) {
-                return o1.getIndex() - o2.getIndex();
-            }
-        });
+        SortedSet<Match> matchSet = new TreeSet<>((m1, m2) -> m1.getIndex() - m2.getIndex());
         for (Operator o : operators) {
             for (int index = expression.indexOf(o.getSymbol(), 0); index >= 0; index = expression
                     .indexOf(o.getSymbol(), index + 1)) {

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
@@ -41,14 +42,14 @@ final class CheckPointMatcher {
     }
 
     private List<Matcher> createMatchers() {
-        List<Matcher> matchers = new ArrayList<>();
+        List<Matcher> result = new ArrayList<>();
         Matcher eventMatcher = matcherParser.createEventTypeMatcher(eventMetaData);
-        matchers.add(eventMatcher);
+        result.add(eventMatcher);
         Matcher matcher = matcherParser.parseMatcher(eventMetaData, checkPoint.getMatch(), env);
         if (matcher != null) { // TODO remove null check?
-            matchers.add(matcher);
+            result.add(matcher);
         }
-        return matchers;
+        return result;
     }
 
     private List<Matcher> createValidators() {
@@ -56,12 +57,12 @@ final class CheckPointMatcher {
         if (validate == null || validate.isEmpty()) {
             return Collections.emptyList();
         }
-        List<Matcher> validators = new ArrayList<>();
+        List<Matcher> result = new ArrayList<>();
         Matcher validator = matcherParser.parseMatcher(eventMetaData, validate, env);
         if (validator != null) { // TODO remove null check?
-            validators.add(validator);
+            result.add(validator);
         }
-        return validators;
+        return result;
     }
 
     public String getEventId() {
@@ -103,9 +104,9 @@ final class CheckPointMatcher {
     }
 
     public void updateContext(Event event, Context context) {
-        for (String key : valuesToStore.keySet()) {
-            Object value = valuesToStore.get(key).get(event, context);
-            context.set(key, value);
+        for (Entry<String, Value> e : valuesToStore.entrySet()) {
+            Object value = e.getValue().get(event, context);
+            context.set(e.getKey(), value);
         }
     }
 
@@ -118,7 +119,7 @@ final class CheckPointMatcher {
         if (validators.isEmpty()) {
             return "";
         }
-        String INDENT = "      ";
+        String indent = "      ";
         Matcher matcher = validators.get(0);
         String message = matcher.toDebugString(event, context);
         //
@@ -127,7 +128,7 @@ final class CheckPointMatcher {
                 .replaceAll("source:", "")
                 .replaceAll("\\s*\\(\\s*", "")
                 .replaceAll("\\s*\\)\\s*", "")
-                .replaceAll("\\s*&&\\s*", " &&\n" + INDENT);
-        return INDENT + message;
+                .replaceAll("\\s*&&\\s*", " &&\n" + indent);
+        return indent + message;
     }
 }

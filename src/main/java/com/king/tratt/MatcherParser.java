@@ -33,7 +33,7 @@ class MatcherParser {
 
     Matcher createEventTypeMatcher(EventMetaData eventMetaData) {
         Value left = values.constantString(eventMetaData.getId());
-        return Matcher.equal(left, values.eventId());
+        return Matcher.equalTo(left, values.eventId());
     }
 
     Matcher parseMatcher(EventMetaData eventMetaData, String expression, Environment env) {
@@ -45,9 +45,7 @@ class MatcherParser {
         }
 
         Node node = tdlNodeParser.parse(expression);
-        Matcher matcher = buildMatcher(eventMetaData, node, env);
-
-        return matcher;
+        return buildMatcher(eventMetaData, node, env);
     }
 
     private Matcher buildMatcher(EventMetaData eventMetaData, Node node, Environment env) {
@@ -96,7 +94,7 @@ class MatcherParser {
     }
 
     private Matcher buildPreMatcher(EventMetaData eventType, Node node, Environment env) {
-        if (!node.getOperatorSymbol().equals("!")) {
+        if (!"!".equals(node.getOperatorSymbol())) {
             return null;
         }
 
@@ -119,8 +117,9 @@ class MatcherParser {
             return Matcher.and(left, right);
         case "||":
             return Matcher.or(left, right);
+        default:
+            return null;
         }
-        return null;
     }
 
     private Value getValue(EventMetaData eventMetaData, Node node, Environment env) {
@@ -128,17 +127,15 @@ class MatcherParser {
             switch (node.getOperatorSymbol()) {
             case "'":
                 String nodeValue = node.getNode(0).getExpression();
-                // return new Constant(nodeValue);
                 return values.constantString(nodeValue);
             case "%":
                 Value value = getValue(eventMetaData, node.getNode(0), env);
                 Value modulus = getValue(eventMetaData, node.getNode(1), env);
-                // return new Modulus(value, modulus);
                 return values.modulus(value, modulus);
             case "+": {
                 Value left = getValue(eventMetaData, node.getNode(0), env);
                 Value right = getValue(eventMetaData, node.getNode(1), env);
-                return values.sum(left, right); // new Plus(left, right);
+                return values.sum(left, right);
             }
             case "-": {
                 Value left;
@@ -151,14 +148,12 @@ class MatcherParser {
                     left = values.constantLong(0);
                     right = getValue(eventMetaData, node.getNode(0), env);
                 }
-                return values.subtract(left, right); // new Minus(left,
-                                                     // right);
+                return values.subtract(left, right);
             }
             case "*": {
                 Value left = getValue(eventMetaData, node.getNode(0), env);
                 Value right = getValue(eventMetaData, node.getNode(1), env);
-                return values.multiply(left, right); // new Times(left,
-                                                     // right);
+                return values.multiply(left, right);
             }
             case "/": {
                 Value left = getValue(eventMetaData, node.getNode(0), env);
@@ -208,7 +203,7 @@ class MatcherParser {
 
         switch (node.getOperatorSymbol()) {
         case "==":
-            return Matcher.equal(left, right);
+            return Matcher.equalTo(left, right);
         case "!=":
             return Matcher.notEqual(left, right);
         case "<":
@@ -219,8 +214,9 @@ class MatcherParser {
             return Matcher.greaterThan(left, right);
         case ">=":
             return Matcher.greaterThanOrEqual(left, right);
+        default:
+            return null;
         }
-        return null;
     }
 
     private Matcher buildMiddleMatcher(EventMetaData eventType, Node node, Environment env) {
@@ -235,8 +231,9 @@ class MatcherParser {
         case ">":
         case "!=":
             return buildCompareMatcher(eventType, node, env);
+        default:
+            return null;
         }
-        return null;
     }
 
 }
