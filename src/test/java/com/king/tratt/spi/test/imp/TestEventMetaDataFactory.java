@@ -37,7 +37,7 @@ public class TestEventMetaDataFactory implements EventMetaDataFactory {
         if (eventTypes.containsKey(eventName)) {
             return new TestEventMetaData(eventTypes.get(eventName));
         }
-        return unknownEventType();
+        return unknown();
     }
 
 }

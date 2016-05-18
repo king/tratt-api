@@ -20,8 +20,8 @@ public interface EventMetaDataFactory {
      * <p>
      * If {@code EventName} is not recognized as a known event type,
      * {@code null} should be returned. Note! Instead of returning {@code null}
-     * you can return the value from method {@link #unknownEventType()} to make
-     * your code more readable.
+     * you can return the value from method {@link #unknown()} to make your code
+     * more readable.
      * <p>
      * Note:</br>
      * If your event structure does not specify a unique id for each event type
@@ -35,7 +35,7 @@ public interface EventMetaDataFactory {
      *     if (isKnownEvent(eventName)) {
      *         return getKnownEventMetaData(eventName);
      *     } else {
-     *         return unknownEventType();
+     *         return unknown();
      *     }
      * }
      * </pre>
@@ -57,7 +57,7 @@ public interface EventMetaDataFactory {
      *
      * @return null
      */
-    default EventMetaData unknownEventType() {
+    default EventMetaData unknown() {
         return null;
     }
 

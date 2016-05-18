@@ -22,12 +22,12 @@ public class TestValueFactory implements ValueFactory {
         TestEventMetaData metaData = (TestEventMetaData) metaDataFactory
                 .getEventMetaData(eventName);
         if (metaData == null) {
-            return notFound();
+            return unknown();
         }
 
         Field field = metaData.getField(parameterName);
         if (field == null) {
-            return notFound();
+            return unknown();
         }
 
         switch (parameterName) {

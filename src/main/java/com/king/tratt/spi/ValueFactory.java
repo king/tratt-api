@@ -6,9 +6,9 @@ package com.king.tratt.spi;
 
 public interface ValueFactory {
 
-    Value getValue(String eventName, String parameterName);
+    Value getValue(String eventName, String nodeName);
 
-    default Value notFound() {
+    default Value unknown() {
         return null;
     }
 

@@ -45,7 +45,7 @@ public final class EventProcessorBuilder {
     }
 
     /**
-     * Starts the EventProcessor that process the events from the Kafka queue.
+     * Starts the EventProcessor that process the events from the event source.
      *
      * @return
      */
