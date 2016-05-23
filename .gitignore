@@ -2,6 +2,7 @@
 .project
 .settings/
 .gradle/
+.idea/
 bin/
 build/
 test-output/
