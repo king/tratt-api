@@ -6,6 +6,8 @@ sourceCompatibility = 1.8
 group = 'com.king.tratt'
 archivesBaseName = 'tratt-api'
 
+version='0.1.0'
+
 task wrapper(type: Wrapper) {
    gradleVersion = '2.10' //version required
 }
@@ -15,14 +17,14 @@ repositories {
 }
 
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.+'
-    compile 'com.google.code.gson:gson:2.+'
-    testCompile 'ch.qos.logback:logback-classic:1+'
-    testCompile 'junit:junit:4.+'
-    testCompile 'org.mockito:mockito-core:1.+'
-    testCompile 'org.jmockit:jmockit:+'
-    testCompile 'org.assertj:assertj-core:3.+'
-    testCompile 'org.slf4j:slf4j-simple:1.+'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'com.google.code.gson:gson:2.6.2'
+    testCompile 'ch.qos.logback:logback-classic:1.1.7'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'org.jmockit:jmockit:1.24'
+    testCompile 'org.assertj:assertj-core:3.4.1'
+    testCompile 'org.slf4j:slf4j-simple:1.7.21'
 }
 
 task javadocJar(type: Jar) {
@@ -40,6 +42,7 @@ artifacts {
 }
 
 signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
     sign configurations.archives
 }
 
