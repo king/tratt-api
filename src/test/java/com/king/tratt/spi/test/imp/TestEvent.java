@@ -3,6 +3,8 @@
 // License: Apache 2.0, https://raw.github.com/king/PROJECT/LICENSE-APACHE
 package com.king.tratt.spi.test.imp;
 
+import static java.util.Arrays.copyOf;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -25,7 +27,7 @@ public class TestEvent implements Event {
         this.timestamp = timestamp;
         this.time = toTime(timestamp);
         this.eventId = eventId;
-        this.values = values;
+        this.values = copyOf(values, values.length);
     }
 
     @Override

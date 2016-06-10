@@ -61,7 +61,7 @@ abstract class SequenceProcessor {
         return sequence.getName();
     }
 
-    final class SequenceProcessorHelper {
+    static final class SequenceProcessorHelper {
         private final List<CheckPointMatcher> checkPointMatchers;
         private final Sequence sequence;
         private final List<SequenceProcessorListener> sequenceListeners;

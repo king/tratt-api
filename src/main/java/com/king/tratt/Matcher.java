@@ -44,7 +44,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
         try {
             return matchesImp(event, context);
         } catch (Throwable t) {
-            String message = "Unexpected crash! See underlying exceptions for more info.\n"
+            String message = "Unexpected crash! See underlying exceptions for more info.%n"
                     + "  matcher: %s; event: %s; context: %s";
             message = format(message, this, event, context);
             LOG.error(message, t);
@@ -60,7 +60,7 @@ abstract class Matcher implements DebugStringAware, SufficientContextAware {
             try {
                 return format(" >> %s << ", toDebugStringImp(event, context));
             } catch (Exception ex) {
-                String message = "Unexpected crash! See underlying exceptions for more info.\n"
+                String message = "Unexpected crash! See underlying exceptions for more info.%n"
                         + "  matcher: %s; event: %s; context: %s";
                 message = format(message, this, event, context);
                 LOG.error(message, ex);

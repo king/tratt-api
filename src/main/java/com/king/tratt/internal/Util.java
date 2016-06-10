@@ -23,7 +23,7 @@ public final class Util {
     }
 
     public static <T> List<T> concat(T first, @SuppressWarnings("unchecked") T... rest) {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         list.add(first);
         list.addAll(asList(rest));
         return list;
@@ -54,7 +54,7 @@ public final class Util {
     public static void requireNoneNegative(long duration, String argName) {
         if (duration < 0) {
             String message = "'%s' must not be negative!";
-            throw new IllegalArgumentException(message);
+            throw new IllegalArgumentException(format(message, argName));
         }
     }
 

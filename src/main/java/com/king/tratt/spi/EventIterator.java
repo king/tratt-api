@@ -14,7 +14,7 @@ import com.king.tratt.StartedEventProcessor;
  * Clients are expected to implement this to provide {@code tratt-api} with
  * {@link Event} instances.
  * <p>
- * NOTE!</br>
+ * NOTE!<br>
  * The {@link #stop()} method will be called from a separate thread.
  * Implementation needs to cope with this.
  */
@@ -28,7 +28,7 @@ public interface EventIterator extends Iterator<Event>, Stoppable {
      * Shall only return false after {@link #stop()} method has been called, or
      * if current thread is interrupted.
      * <p>
-     * NOTE!</br>
+     * NOTE!<br>
      * The {@link #stop()} method is called from another thread. If this method
      * is blocking while {@link #stop()} method is called, this method should
      * release and return {@code false}.
@@ -68,7 +68,7 @@ public interface EventIterator extends Iterator<Event>, Stoppable {
      * <li>{@link StartedEventProcessor#awaitSuccess()}</li>
      * </ol>
      * <p>
-     * NOTE!</br>
+     * NOTE!<br>
      * This method will be called from a separate thread. Implementation needs
      * to cope with this.
      */

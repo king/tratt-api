@@ -51,7 +51,7 @@ public abstract class Value implements DebugStringAware, SufficientContextAware 
                 .filter(m -> !supportedReturnTypes().contains(m.getReturnType()))
                 .collect(toList());
         if (!methodWithUnsupportedReturnTypes.isEmpty()) {
-            String message = "Method 'getImp' has unsupported return type. Supported are: %s\n%s";
+            String message = "Method 'getImp' has unsupported return type. Supported are: %s%n%s";
             message = String.format(message, supportedReturnTypes(),
                     methodWithUnsupportedReturnTypes);
             throw new UnsupportedReturnTypeException(message);
@@ -75,7 +75,7 @@ public abstract class Value implements DebugStringAware, SufficientContextAware 
         try {
             return getImp(event, context);
         } catch (Throwable t) {
-            String message = "Unexpected crash! See underlying exceptions for more info.\n"
+            String message = "Unexpected crash! See underlying exceptions for more info.%n"
                     + "  value: %s; event: %s; context: %s";
             message = String.format(message, this, event, context);
             throw new IllegalStateException(message, t);

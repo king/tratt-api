@@ -155,17 +155,17 @@ public class TdlValidator {
     }
 
     public String getError() {
-        String ret = "";
+        StringBuilder ret = new StringBuilder();
         if (numParseErrors > 0) {
-            ret += numParseErrors + " TDL parse errors.\n";
+            ret.append(numParseErrors).append(" TDL parse errors.\n");
         }
-        if (errors.isEmpty() && ret.isEmpty()) {
+        if (errors.isEmpty() && ret.length() == 0) {
             return null;
         }
         for (String e : errors) {
-            ret += e;
+            ret.append(e);
         }
-        return ret;
+        return ret.toString();
     }
 
     public List<TdlFileFieldErrorDescriptor> getFieldErrorDescriptors() {

@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.king.tratt.spi.Context;
@@ -120,8 +121,8 @@ class ContainerSequenceProcessor extends SequenceProcessor {
 
     @Override
     public void onTimeoutImp() {
-        for (String eventId : checkPointMatchers.keySet()) {
-            for (CheckPointMatcher cpMatcher : checkPointMatchers.get(eventId)) {
+        for (Entry<String, List<CheckPointMatcher>> entry : checkPointMatchers.entrySet()) {
+            for (CheckPointMatcher cpMatcher : entry.getValue()) {
                 helper.notifyCheckPointTimeout(cpMatcher, context);
             }
         }

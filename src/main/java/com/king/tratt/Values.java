@@ -100,9 +100,9 @@ class Values {
     private <T> T parseValue(Object value, Function<Long, T> longFunc,
             Function<String, T> strFunc, Function<Boolean, T> boolFunc) {
         if (value instanceof Long) {
-            return longFunc.apply((long) value);
+            return longFunc.apply((Long) value);
         } else if (value instanceof Boolean) {
-            return boolFunc.apply((boolean) value);
+            return boolFunc.apply((Boolean) value);
         } else if (value instanceof String) {
             String str = (String) value;
             if (util.isLong(str)) {

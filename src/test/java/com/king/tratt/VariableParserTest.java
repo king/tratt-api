@@ -55,7 +55,7 @@ public class VariableParserTest {
     public void shouldThrowWhenNameValueIsNull() throws Exception {
         assertThatExceptionOfType(NullPointerException.class)
                 .isThrownBy(() -> parse(PREFIX, (String) null))
-                .withMessage("Name/Value cannot be null: 'null'");
+                .withMessage("Name/Value cannot be null.");
     }
 
     @Test

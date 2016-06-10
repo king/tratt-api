@@ -1,17 +1,18 @@
 apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 sourceCompatibility = 1.8
-group = 'com.king.tracking'
-version = '0.1.0'
+group = 'com.king.tratt'
+archivesBaseName = 'tratt-api'
+version = '0.1.0-SNAPSHOT'
 
 task wrapper(type: Wrapper) {
    gradleVersion = '2.10' //version required
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -23,4 +24,67 @@ dependencies {
     testCompile 'org.jmockit:jmockit:+'
     testCompile 'org.assertj:assertj-core:3.+'
     testCompile 'org.slf4j:slf4j-simple:1.+'
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'Tratt-API'
+        packaging 'jar'
+        // optionally artifactId can be defined here 
+        description 'A QA tool for testing an event tracking system on an end-to-end level.'
+        url 'https://github.com/king/tratt-api'
+
+        scm {
+          connection 'scm:git:https://github.com/king/tratt-api.git'
+          developerConnection 'scm:git:https://github.com/king/tratt-api.git'
+          url 'https://github.com/king/tratt-api'
+        }
+
+        licenses {
+          license {
+            name 'The Apache License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id 'alexander-poulikakos'
+            name 'Alexander Poulikakos'
+            email 'alexander.poulikakos@king.com'
+          }
+        }
+      }
+    }
+  }
 }

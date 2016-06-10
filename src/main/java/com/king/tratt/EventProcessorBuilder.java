@@ -67,7 +67,7 @@ public final class EventProcessorBuilder {
 
     /**
      *
-     * @param provider
+     * @param valueFactory
      * @return this builder
      */
     public EventProcessorBuilder setValueFactory(ValueFactory valueFactory) {
@@ -180,8 +180,7 @@ public final class EventProcessorBuilder {
     /**
      * Set max allowed duration for the {@link StartedEventProcessor} as
      * returned from {@link #start()} method. If max allowed duration is passed
-     * then the {@link StartedEventProcessor#await*()} methods will throw an
-     * exception.
+     * then the StartedEventProcessor#await*() methods will throw an exception.
      * <p>
      * Default value is 900 seconds.
      *

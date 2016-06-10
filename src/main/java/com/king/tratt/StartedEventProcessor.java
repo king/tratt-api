@@ -33,7 +33,7 @@ import com.king.tratt.tdl.Tdl;
 public class StartedEventProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(StartedEventProcessor.class);
-    private static final String ERROR_MESSAGE = "Sequence '%s' is not valid due to: %s \n";
+    private static final String ERROR_MESSAGE = "Sequence '%s' is not valid due to: %s %n";
     private Future<CompletedEventProcessor> tdlProcessorResults;
     final ExecutorService executor = util.newThreadPool();
     final Tdl tdl;
@@ -234,9 +234,9 @@ public class StartedEventProcessor {
      * if only the console logger is enabled) and EventProcessors are not
      * shutdown.
      *
-     * @throws TimeoutException
-     *             when at least one EventProcessor (Sequence) fails, or a
-     *             timeout occurs.
+     * @throws IllegalStateException
+     *             when interrupted or unexpected crash occurs in underlying
+     *             threads.
      */
     public CompletedEventProcessor awaitCompletion() {
         try {

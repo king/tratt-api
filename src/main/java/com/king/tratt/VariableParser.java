@@ -39,8 +39,7 @@ class VariableParser {
 
     static NameValue parse(String keyPrefix, String nameValue) {
         if (nameValue == null) {
-            String message = "Name/Value cannot be null: '%s'";
-            throw new NullPointerException(String.format(message, nameValue));
+            throw new NullPointerException("Name/Value cannot be null.");
         }
         if (nameValue.isEmpty()) {
             String message = "Name/Value cannot be an empty string: '%s'";

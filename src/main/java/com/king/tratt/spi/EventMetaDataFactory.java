@@ -23,7 +23,7 @@ public interface EventMetaDataFactory {
      * you can return the value from method {@link #unknown()} to make your code
      * more readable.
      * <p>
-     * Note:</br>
+     * Note:<br>
      * If your event structure does not specify a unique id for each event type
      * there is a convenient method that returns an {@link EventMetaData}
      * instance that maps id to name. Use it only for your known event types.
@@ -65,7 +65,7 @@ public interface EventMetaDataFactory {
      * Returns a convenient {@link EventMetaData} implementation that maps
      * {@code id} to {@code eventName}.
      * <p>
-     * NOTE!</br>
+     * NOTE!<br>
      * Use this only for KNOWN event types.
      *
      * @param eventName

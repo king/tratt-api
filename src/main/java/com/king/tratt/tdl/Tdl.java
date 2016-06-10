@@ -273,7 +273,7 @@ public final class Tdl {
         if (containsVariable(name)) {
             return variables.get(name);
         }
-        String message = "Variable '%s' not found in: s%";
+        String message = "Variable '%s' not found in: %s";
         throw new IllegalArgumentException(format(message, name, variables));
     }
 

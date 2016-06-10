@@ -19,7 +19,6 @@ public final class SequenceBuilder {
 
     private List<CheckPointBuilder> checkPointBuilders = new ArrayList<>();
     Type type;
-    List<CheckPoint> checkPoints = new ArrayList<>();
     String name;
     String sequenceMaxTime = "pt15m";
 

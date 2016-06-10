@@ -35,7 +35,7 @@ public final class CompletedEventProcessor {
     }
 
     /**
-     * @return false, if at least one {@link Sequence} has failed.
+     * @return false, if at least one Sequence in the TDL file has failed.
      */
     public boolean isValid() {
         return isValid;
