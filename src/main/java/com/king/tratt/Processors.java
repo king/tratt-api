@@ -6,7 +6,7 @@ package com.king.tratt;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public final class Processors {
+final class Processors {
 
     /*
      * This List needs to handle removals of its elements during iteration.

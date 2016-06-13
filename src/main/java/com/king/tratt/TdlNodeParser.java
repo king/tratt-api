@@ -16,7 +16,7 @@ class TdlNodeParser {
     private static final String LITERAL_QUOTE_CHAR = "'";
     private final Collection<Operator> operators;
     private final OperatorMatcher operatorMatcher;
-    private final Pattern symbolForbiddenChars = Pattern.compile("[^a-zA-Z0-9_$]");
+    private final Pattern symbolForbiddenChars = Pattern.compile("[^a-zA-Z0-9_$\\.]");
     private final Pattern functionName = Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*");
 
     TdlNodeParser() {

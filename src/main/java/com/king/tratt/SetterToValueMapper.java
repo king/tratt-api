@@ -36,27 +36,19 @@ class SetterToValueMapper {
                 });
     }
 
-    Value getValue(String eventName, String value) {
-        return Optional
-                .ofNullable(valueFactory.getValue(eventName, value))
-                .orElseGet(() -> tryGetConstantValue(value));
-    }
-
-    private Value tryGetConstantValue(final String str) {
-        String value = null;
-        if (util.isLong(str) || util.isBoolean(str)) {
-            value = str;
-        } else if (str.length() < 2) {
-            // do nothing
-        } else if (str.startsWith("'") && str.endsWith("'")) {
+    Value getValue(String eventName, String strValue) {
+        if (util.isLong(strValue) || util.isBoolean(strValue)) {
+            return values.constant(strValue);
+        }
+        if (strValue.startsWith("'") && strValue.endsWith("'")) {
             // remove leading and trailing single quote (')
-            value = str.replaceAll("^'|'$", "");
+            return values.constant(strValue.replaceAll("^'|'$", ""));
         }
-        if (value == null) {
-            String message = "Bad set value '%s'. Valid examples are: myVar=fieldName or myVar='string' or myVar=123";
-            throw new IllegalStateException(String.format(message, str));
-        }
-        return values.constant(value);
+        return Optional
+                .ofNullable(valueFactory.getValue(eventName, strValue))
+                .orElseThrow(() -> {
+                    String message = "Bad set value '%s'. Valid examples are: myVar=fieldName or myVar='string' or myVar=123";
+                    return new IllegalStateException(String.format(message, strValue));
+                });
     }
-
 }

@@ -175,12 +175,10 @@ class MatcherParser {
             }
         }
 
+        Value valueFromFactory;
         String nodeValue = node.getExpression();
         String eventName = eventMetaData.getName();
-        Value value = valueFactory.getValue(eventName, nodeValue);
-        if (value != null) {
-            return value;
-        } else if (env.sequenceVariables.containsKey(nodeValue)) {
+        if (env.sequenceVariables.containsKey(nodeValue)) {
             return values.context(nodeValue);
         } else if (env.tdlVariables.containsKey(nodeValue)) {
             return values.constant(env.tdlVariables.get(nodeValue));
@@ -188,6 +186,8 @@ class MatcherParser {
             return values.constantLong(parseLong(nodeValue));
         } else if (util.isBoolean(nodeValue)) {
             return values.constantBoolean(parseBoolean(nodeValue));
+        } else if ((valueFromFactory = valueFactory.getValue(eventName, nodeValue)) != null) {
+            return valueFromFactory;
         }
         String message = "Faulty value is '%s', where possible problems could be: "
                 + "No field with that name defined in  '%s' event, or "
