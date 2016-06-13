@@ -1,0 +1,28 @@
+[{
+        "logTime": 1445551862001,
+        "type": "EventA",
+        "fieldY": "value-y",
+        "eventData": {
+            "a0": "value-a0",
+            "a1": "5",
+            "a2": "qqq"
+        }
+    },{
+        "logTime": 1445551862002,
+        "type": "EventB",
+        "fieldZ": "value-z",
+        "eventData": {
+            "b0": "123",
+            "b1": "value-b1",
+            "b2": "qqq"
+        }
+    },{
+        "logTime": 1445551862003,
+        "type": "EventC",
+        "fieldV": "value-v",
+        "eventData": {
+            "c0": 123,
+            "c1": false,
+            "c2": "qqq"
+        }
+    }]
