@@ -17,11 +17,11 @@ class OnBase {
         this.context = context;
     }
 
-    final String getSequenceName() {
+    public final String getSequenceName() {
         return seqName;
     }
 
-    final Context getContext() {
+    public final Context getContext() {
         return context;
     }
 
@@ -33,15 +33,15 @@ class OnBase {
             this.cpMatcher = cpMatcher;
         }
 
-        int getSequenceIndex() {
+        public int getSequenceIndex() {
             return cpMatcher.seqIndex;
         }
 
-        int getCheckPointIndex() {
+        public int getCheckPointIndex() {
             return cpMatcher.cpIndex;
         }
 
-        CheckPoint getCheckPoint() {
+        public CheckPoint getCheckPoint() {
             return cpMatcher.checkPoint;
         }
     }
@@ -55,7 +55,7 @@ class OnBase {
             this.event = event;
         }
 
-        Event getEvent() {
+        public Event getEvent() {
             return event;
         }
     }
