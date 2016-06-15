@@ -13,7 +13,7 @@ import static java.util.Arrays.asList;
  * Tratt API entry point.
  */
 public final class Tratt {
-    static final InternalUtil util = new InternalUtil();
+    public static final InternalUtil util = new InternalUtil();
     static final Values values = new Values();
 
     private Tratt() {

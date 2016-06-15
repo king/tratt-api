@@ -5,7 +5,6 @@
 package com.king.tratt;
 
 import static com.king.tratt.Tratt.util;
-import static com.king.tratt.Tratt.values;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,7 +88,7 @@ class FunctionFactoryProvider {
                         } catch (Throwable t) {
                             result = "[@ERROR malformed json string]";
                         }
-                        return values.parseSupportedType(result);
+                        return util.parseSupportedType(result);
                     }
 
                     private String getJsonFieldValue(String path, String json) {

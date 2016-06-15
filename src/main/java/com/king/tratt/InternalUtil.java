@@ -4,7 +4,9 @@
 
 package com.king.tratt;
 
-import static com.king.tratt.Tratt.values;
+import static com.king.tratt.Tratt.util;
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.Long.parseLong;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +33,7 @@ import com.king.tratt.spi.EventIterator;
 import com.king.tratt.spi.Stoppable;
 import com.king.tratt.spi.Value;
 
-class InternalUtil {
+public final class InternalUtil {
     private static final Logger LOG = LoggerFactory.getLogger(InternalUtil.class);
     private static final Pattern IS_BOOLEAN = Pattern.compile("true|false", CASE_INSENSITIVE);
     private static final Pattern CONVERSION_PATTERN = Pattern.compile("(~[vdsq])");
@@ -38,6 +41,35 @@ class InternalUtil {
 
     InternalUtil() {
         /* For package private usage only */
+    }
+
+    public Object parseSupportedType(String value) {
+        return parseValue(value, l -> l, s -> s, b -> b);
+    }
+
+    String quoted(Object value) {
+        return parseValue(value, String::valueOf,
+                s -> String.format("'%s'", s), String::valueOf);
+    }
+
+    <T> T parseValue(Object value, Function<Long, T> longFunc,
+            Function<String, T> strFunc, Function<Boolean, T> boolFunc) {
+        if (value instanceof Long) {
+            return longFunc.apply((Long) value);
+        } else if (value instanceof Boolean) {
+            return boolFunc.apply((Boolean) value);
+        } else if (value instanceof String) {
+            String str = (String) value;
+            if (util.isLong(str)) {
+                return longFunc.apply(parseLong(str));
+            } else if (util.isBoolean(str)) {
+                return boolFunc.apply(parseBoolean(str));
+            }
+            return strFunc.apply(str);
+        }
+        String message = "Unsupported type for Value.get(...): '%s' [%s]";
+        throw new IllegalStateException(String.format(message,
+                value.getClass(), value));
     }
 
     /*
@@ -106,7 +138,7 @@ class InternalUtil {
         case "~s":
             return o.toString();
         case "~q":
-            return values.quoted(((Value) o).get(e, context));
+            return quoted(((Value) o).get(e, context));
         default:
             String message = "Unsupported conversion: '%s'";
             throw new IllegalStateException(String.format(message, action));

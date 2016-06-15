@@ -5,24 +5,20 @@
 package com.king.tratt;
 
 import static com.king.tratt.Tratt.util;
-import static java.lang.Boolean.parseBoolean;
-import static java.lang.Long.parseLong;
-
-import java.util.function.Function;
 
 import com.king.tratt.spi.Context;
 import com.king.tratt.spi.Event;
 import com.king.tratt.spi.Value;
 
 /*
- * Static factory method for various Values:
+ * Static factory methods for various Values:
  */
 class Values {
 
     private static final String SOURCE_CONSTANT = "[[source:constant]]%s";
 
     Value constant(Object value) {
-        return parseValue(value,
+        return util.parseValue(value,
                 this::constantLong,
                 this::constantString,
                 this::constantBoolean);
@@ -86,35 +82,6 @@ class Values {
                 return toDebugString(null, null);
             }
         };
-    }
-
-    Object parseSupportedType(String value) {
-        return parseValue(value, l -> l, s -> s, b -> b);
-    }
-
-    String quoted(Object value) {
-        return parseValue(value, String::valueOf,
-                s -> String.format("'%s'", s), String::valueOf);
-    }
-
-    private <T> T parseValue(Object value, Function<Long, T> longFunc,
-            Function<String, T> strFunc, Function<Boolean, T> boolFunc) {
-        if (value instanceof Long) {
-            return longFunc.apply((Long) value);
-        } else if (value instanceof Boolean) {
-            return boolFunc.apply((Boolean) value);
-        } else if (value instanceof String) {
-            String str = (String) value;
-            if (util.isLong(str)) {
-                return longFunc.apply(parseLong(str));
-            } else if (util.isBoolean(str)) {
-                return boolFunc.apply(parseBoolean(str));
-            }
-            return strFunc.apply(str);
-        }
-        String message = "Unsupported type for Value.get(...): '%s' [%s]";
-        throw new IllegalStateException(String.format(message,
-                value.getClass(), value));
     }
 
     Value modulus(final Value value, final Value modulus) {
