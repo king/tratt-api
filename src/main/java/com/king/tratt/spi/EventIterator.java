@@ -4,8 +4,6 @@
 
 package com.king.tratt.spi;
 
-import java.util.Iterator;
-
 import com.king.tratt.EventProcessorBuilder;
 import com.king.tratt.StartedEventProcessor;
 
@@ -18,26 +16,27 @@ import com.king.tratt.StartedEventProcessor;
  * The {@link #stop()} method will be called from a separate thread.
  * Implementation needs to cope with this.
  */
-public interface EventIterator extends Iterator<Event>, Stoppable {
+public interface EventIterator extends Stoppable {
 
     /**
      * This method shall block the current thread until there is a next
      * {@link Event} to consume by {@link EventIterator#next()} method. Shall
      * return true when the next event is ready to be consumed.
      * <p>
-     * Shall only return false after {@link #stop()} method has been called, or
-     * if current thread is interrupted.
+     * Shall only return false after {@link #stop()} method has been called.
      * <p>
      * NOTE!<br>
      * The {@link #stop()} method is called from another thread. If this method
      * is blocking while {@link #stop()} method is called, this method should
-     * release and return {@code false}.
+     * release and return {@code false}, or throw a {@link InterruptedException}
+     * .
      *
      * @return true when there is a new event to consume, or false when the
-     *         {@link EventIterator} has been stopped or thread is interrupted.
+     *         {@link EventIterator} has been stopped.
+     * @throws InterruptedException
+     *             when the {@link EventIterator} has been stopped.
      */
-    @Override
-    boolean hasNext();
+    boolean hasNext() throws InterruptedException;
 
     /**
      * Should return an {@link Event} instance that basically wraps the client
@@ -45,7 +44,6 @@ public interface EventIterator extends Iterator<Event>, Stoppable {
      *
      * @return the next {@link Event}.
      */
-    @Override
     Event next();
 
     /**

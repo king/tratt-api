@@ -23,8 +23,12 @@ class PipelineProducerFromEventIterator implements Runnable {
 
     @Override
     public void run() {
-        while (iterator.hasNext() && !currentThread().isInterrupted()) {
-            blockingQueue.add(iterator.next());
+        try {
+            while (iterator.hasNext() && !currentThread().isInterrupted()) {
+                blockingQueue.add(iterator.next());
+            }
+        } catch (InterruptedException e) {
+            // gracefully exit thread.
         }
     }
 
