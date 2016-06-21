@@ -1,12 +1,14 @@
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'signing'
+plugins {
+  id 'net.researchgate.release' version '2.4.0'
+  id 'java'
+  id 'maven'
+  id 'signing'
+}
 
 sourceCompatibility = 1.8
 group = 'com.king.tratt'
 archivesBaseName = 'tratt-api'
-
-version='0.1.1-SNAPSHOT'
+afterReleaseBuild.dependsOn uploadArchives
 
 task wrapper(type: Wrapper) {
    gradleVersion = '2.10' //version required
@@ -89,4 +91,13 @@ uploadArchives {
       }
     }
   }
+}
+
+release {
+    tagTemplate = '$name-$version'
+    preTagCommitMessage = '[Gradle Release Plugin] - release $tagTemplate'
+    tagCommitMessage = '[Gradle Release Plugin] - creating tag $tagTemplate '
+    newVersionCommitMessage = '[Gradle Release Plugin] - prepare for next development iteration '
+    tagTemplate = '$name-$version'
+    buildTasks = ['build']
 }
