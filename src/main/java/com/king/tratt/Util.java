@@ -33,7 +33,7 @@ import com.king.tratt.spi.EventIterator;
 import com.king.tratt.spi.Stoppable;
 import com.king.tratt.spi.Value;
 
-final class Util {
+public final class Util {
     private static final Logger LOG = LoggerFactory.getLogger(Util.class);
     private static final Pattern IS_BOOLEAN = Pattern.compile("true|false", CASE_INSENSITIVE);
     private static final Pattern CONVERSION_PATTERN = Pattern.compile("(~[vdsq])");
