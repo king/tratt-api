@@ -33,13 +33,13 @@ import com.king.tratt.spi.EventIterator;
 import com.king.tratt.spi.Stoppable;
 import com.king.tratt.spi.Value;
 
-public final class InternalUtil {
-    private static final Logger LOG = LoggerFactory.getLogger(InternalUtil.class);
+final class Util {
+    private static final Logger LOG = LoggerFactory.getLogger(Util.class);
     private static final Pattern IS_BOOLEAN = Pattern.compile("true|false", CASE_INSENSITIVE);
     private static final Pattern CONVERSION_PATTERN = Pattern.compile("(~[vdsq])");
     private static final AtomicInteger counter = new AtomicInteger();
 
-    InternalUtil() {
+    Util() {
         /* For package private usage only */
     }
 
@@ -47,7 +47,7 @@ public final class InternalUtil {
         return parseValue(value, l -> l, s -> s, b -> b);
     }
 
-    String quoted(Object value) {
+    public String quoted(Object value) {
         return parseValue(value, String::valueOf,
                 s -> String.format("'%s'", s), String::valueOf);
     }
