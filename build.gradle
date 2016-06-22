@@ -94,9 +94,9 @@ uploadArchives {
 }
 
 release {
-    tagTemplate = '$name-$version'
     preTagCommitMessage = '[Gradle Release Plugin] - release '
-    tagCommitMessage = '[Gradle Release Plugin] - creating tag '$tagTemplate' '
+    tagCommitMessage = '[Gradle Release Plugin] - creating tag '
     newVersionCommitMessage = '[Gradle Release Plugin] - prepare for next development iteration '
+    tagTemplate = '$name-$version'
     buildTasks = ['build']
 }
