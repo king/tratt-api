@@ -698,6 +698,22 @@ public class MatcherParserTest {
     }
 
     @Test
+    public void testMatchWithConcatAndJsonFieldFunctionWhenValueIsArray() throws Exception {
+        String json = "{\"texts\": [\"ABCD\"], \"images\": []}";
+        TestEvent e = fields("userid", "", json);
+        env.tdlVariables.put("$var", "ABCD");
+
+        m = matcher("EventB", "jsonfield('texts',b)==concat('[\"', $var, '\"]')");
+
+        System.out.println(m.toDebugString(e, null));
+        System.out.println(m.toString());
+
+        assertThat(m.toDebugString(e, null)).isEqualTo(
+                "([[source:jsonfield('texts', '{\"texts\": [\"ABCD\"], \"images\": []}')]]'[\"ABCD\"]' == [[source:concat('[\"', 'ABCD', '\"]')]]'[\"ABCD\"]')");
+        assertThat(m.matches(e, null)).isTrue();
+    }
+
+    @Test
     public void testMatchWithJsonFieldWhenJsonPathIsIncorrect() throws Exception {
         TestEvent e = fields("userid", "",
                 "{\"a\": \"apa\",\"o\":{\"p\": \"panther\"},\"c\":true}");

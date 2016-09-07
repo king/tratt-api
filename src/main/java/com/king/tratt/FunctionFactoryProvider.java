@@ -100,10 +100,10 @@ class FunctionFactoryProvider {
                                 return String.format("[@ERROR incorrect json path: '%s']", path);
                             }
                         }
-                        if (jsonElem.isJsonObject()) {
-                            return jsonElem.toString();
+                        if (jsonElem.isJsonPrimitive()) {
+                            return jsonElem.getAsString();
                         }
-                        return jsonElem.getAsString();
+                        return jsonElem.toString();
 
                     }
                 };
